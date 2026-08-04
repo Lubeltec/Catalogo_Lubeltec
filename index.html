@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lubeltec - Catálogo Digital de Licencias</title>
+    <style>
+        /* Estilos base */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #0d1117;
+            color: #e6edf3;
+            padding-bottom: 50px;
+        }
+
+        /* Encabezado y Logo */
+        header {
+            background: linear-gradient(135deg, #0d1b2a, #1b263b);
+            color: #ffffff;
+            text-align: center;
+            padding: 30px 20px;
+            border-bottom: 2px solid #00b4d8;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .header-logo {
+            height: 65px;
+            width: 65px;
+            object-fit: cover;
+            border-radius: 50%; /* Hace que el fondo del logo se vea circular */
+            box-shadow: 0 4px 8px rgba(0, 180, 216, 0.3); /* Resplandor azul */
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            color: #00b4d8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        header p {
+            font-size: 1rem;
+            color: #94a3b8;
+        }
+
+        /* Contenedor de productos */
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 15px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+        }
+
+        /* Tarjeta de producto */
+        .card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: #00b4d8;
+        }
+
+        .card-img-container {
+            width: 100%;
+            height: 220px;
+            background-color: #090d16;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+
+        .card-description {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .badge-out-of-stock {
+            display: inline-block;
+            background-color: #e63946;
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .card-price {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #38bdf8;
+            margin-bottom: 15px;
+        }
+
+        /* Botón WhatsApp */
+        .btn-whatsapp {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: #25d366;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-whatsapp:hover {
+            background-color: #1ebd5a;
+        }
+
+        .btn-disabled {
+            background-color: #475569;
+            color: #94a3b8;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Encabezado con Logo -->
+    <header>
+        <div class="header-brand">
+            <img src="lubeltec.png" alt="Logo Lubeltec" class="header-logo">
+            <h1>Lubeltec</h1>
+        </div>
+        <p>Licencias Digitales Originales a tu Alcance</p>
+    </header>
+
+    <main class="container">
+
+        <!-- Office 365 -->
+        <article class="card">
+            <div class="card-img-container">
+                <img src="office365.png" alt="Office 365 (1 año)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">Office 365 (1 año)</h2>
+                    <p class="card-description">Instálalo en hasta 5 dispositivos. Incluye Word, Excel, PowerPoint, Outlook, Teams y 1TB en OneDrive.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 45.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Office%20365%20(1%20año)%20-%20S/.45.00" target="_blank" class="btn-whatsapp">
+                        Pedir por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Canva (1 año) -->
+        <article class="card">
+            <div class="card-img-container">
+                <img src="canva.png" alt="Canva Pro (1 año)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">Canva Pro (1 año)</h2>
+                    <p class="card-description">Herramienta de diseño gráfico con acceso a imágenes premium, vídeos, quita fondos e IA.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 35.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(1%20año)%20-%20S/.35.00" target="_blank" class="btn-whatsapp">
+                        Pedir por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Canva (2 años) -->
+        <article class="card">
+            <div class="card-img-container">
+                <img src="canva.png" alt="Canva Pro (2 años)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">Canva Pro (2 años)</h2>
+                    <p class="card-description">Acceso Pro extendido para diseñar plantillas exclusivas, kit de marca y elementos ilimitados.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 45.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(2%20años)%20-%20S/.45.00" target="_blank" class="btn-whatsapp">
+                        Pedir por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Canva (3 años) -->
+        <article class="card">
+            <div class="card-img-container">
+                <img src="canva.png" alt="Canva Pro (3 años)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">Canva Pro (3 años)</h2>
+                    <p class="card-description">Suscripción por 3 años con todas las herramientas de diseño avanzadas e inteligencia artificial.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 55.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(3%20años)%20-%20S/.55.00" target="_blank" class="btn-whatsapp">
+                        Pedir por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Canva (para siempre) - Agotado -->
+        <article class="card">
+            <div class="card-img-container">
+                <img src="canva.png" alt="Canva Pro (para siempre)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <span class="badge-out-of-stock">Sin Stock</span>
+                    <h2 class="card-title">Canva Pro (para siempre)</h2>
+                    <p class="card-description">Licencia vitalicia con acceso completo a funciones de diseño premium.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 99.00</div>
+                    <a href="#" class="btn-whatsapp btn-disabled">Agotado</a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Gemini Pro (18 meses) -->
+        <article class="card">
+            <div class="card-img-container">
+                <img src="gemini18.png" alt="Gemini Pro (18 meses)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">Gemini Pro 3.6 (18 meses)</h2>
+                    <p class="card-description">Incluye IA avanzada Gemini Pro, generación de video en Veo 3, NotebookLM y 5TB en Google Drive.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 70.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(18%20meses)%20-%20S/.70.00" target="_blank" class="btn-whatsapp">
+                        Pedir por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Gemini Pro (12 meses) -->
+        <article class="card">
+            <div class="card-img-container">
+                <img src="gemini12.png" alt="Gemini Pro (12 meses)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">Gemini Pro 3.6 (12 meses)</h2>
+                    <p class="card-description">Potencia tu trabajo con la IA de Google One por 1 año y almacenamiento masivo de 5TB.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 50.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(12%20meses)%20-%20S/.50.00" target="_blank" class="btn-whatsapp">
+                        Pedir por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Windows 10/11 Pro -->
+        <article class="card">
+            <div class="card-img-container">
+                <img src="windows11.png" alt="Windows 10/11 Pro">
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">Windows 10/11 Pro (Siempre)</h2>
+                    <p class="card-description">Licencia digital permanente (OEM). Reactivación para tu sistema operativo de por vida.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 50.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Windows%2010/11%20Pro%20-%20S/.50.00" target="_blank" class="btn-whatsapp">
+                        Pedir por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Windows 10/11 Home -->
+        <article class="card">
+            <div class="card-img-container">
+                <img src="windows11.png" alt="Windows 10/11 Home">
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">Windows 10/11 Home (Siempre)</h2>
+                    <p class="card-description">Activación permanente y original para uso doméstico o personal según tu requerimiento.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 50.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Windows%2010/11%20Home%20-%20S/.50.00" target="_blank" class="btn-whatsapp">
+                        Pedir por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Duolingo (12 meses) -->
+        <article class="card">
+            <div class="card-img-container">
+                <img src="duolingo.png" alt="Duolingo (12 meses)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">Duolingo Super (12 meses)</h2>
+                    <p class="card-description">Aprende idiomas de forma interactiva con vidas ilimitadas y 100% libre de anuncios por 1 año.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 144.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Duolingo%20(12%20meses)%20-%20S/.144.00" target="_blank" class="btn-whatsapp">
+                        Pedir por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Flujo TV -->
+        <article class="card">
+            <div class="card-img-container">
+                <img src="flujotv.png" alt="Flujo TV">
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">Flujo TV (1 mes)</h2>
+                    <p class="card-description">Para 3 TVs o celulares. Full VOD, más de 69 canales deportivos y +1000 canales en vivo.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 20.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Flujo%20TV%20-%20S/.20.00" target="_blank" class="btn-whatsapp">
+                        Pedir por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Capcut Pro -->
+        <article class="card">
+            <div class="card-img-container">
+                <img src="capcut.png" alt="Capcut pro (1 mes)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">Capcut Pro (1 mes)</h2>
+                    <p class="card-description">Desbloquea herramientas premium, efectos, plantillas exclusivas, subtítulos e integración sin marca de agua.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 23.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Capcut%20Pro%20(1%20mes)%20-%20S/.23.00" target="_blank" class="btn-whatsapp">
+                        Pedir por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Autodesk (1 año) -->
+        <article class="card">
+            <div class="card-img-container">
+                <img src="autodesk.png" alt="Autodesk All Apps (1 año)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">Autodesk All Apps (1 año)</h2>
+                    <p class="card-description">Acceso a suite completa: AutoCAD, Revit, Inventor, Civil 3D, Maya, 3ds Max y Fusion 360.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 75.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(1%20año)%20-%20S/.75.00" target="_blank" class="btn-whatsapp">
+                        Pedir por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Autodesk (6 meses) -->
+        <article class="card">
+            <div class="card-img-container">
+                <img src="autodesk.png" alt="Autodesk All Apps (6 meses)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">Autodesk All Apps (6 meses)</h2>
+                    <p class="card-description">Todas las aplicaciones profesionales de diseño, arquitectura e ingeniería por medio año.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 49.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(6%20meses)%20-%20S/.49.00" target="_blank" class="btn-whatsapp">
+                        Pedir por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Autodesk (3 meses) -->
+        <article class="card">
+            <div class="card-img-container">
+                <img src="autodesk.png" alt="Autodesk All Apps (3 meses)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">Autodesk All Apps (3 meses)</h2>
+                    <p class="card-description">Acceso trimestral a AutoCAD, Civil 3D, Revit y todo el catálogo de programas de Autodesk.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 29.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(3%20meses)%20-%20S/.29.00" target="_blank" class="btn-whatsapp">
+                        Pedir por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Crunchyroll - 1 perfil (1 año) -->
+        <article class="card">
+            <div class="card-img-container">
+                <img src="crunchyroll.png" alt="Crunchyroll Mega Fan (1 año)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">Crunchyroll 1 Perfil (1 año)</h2>
+                    <p class="card-description">Cuenta Mega Fan para 1 perfil individual. Animes de estreno, sin anuncios y descargas sin conexión.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 99.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%201%20Perfil%20(1%20año)%20-%20S/.99.00" target="_blank" class="btn-whatsapp">
+                        Pedir por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Crunchyroll - 1 perfil (3 meses) -->
+        <article class="card">
+            <div class="card-img-container">
+                <img src="crunchyroll.png" alt="Crunchyroll Mega Fan (3 meses)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">Crunchyroll 1 Perfil (3 meses)</h2>
+                    <p class="card-description">Suscripción Mega Fan de 3 meses para disfrutar del catálogo completo de anime sin publicidad.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 35.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%201%20Perfil%20(3%20meses)%20-%20S/.35.00" target="_blank" class="btn-whatsapp">
+                        Pedir por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Crunchyroll - Completo (6 meses) -->
+        <article class="card">
+            <div class="card-img-container">
+                <img src="crunchyroll.png" alt="Crunchyroll Completo (6 meses)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">Crunchyroll Completo (6 meses)</h2>
+                    <p class="card-description">Cuenta completa por 6 meses para disfrutar en múltiples dispositivos en simultáneo.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 89.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%20Completo%20(6%20meses)%20-%20S/.89.00" target="_blank" class="btn-whatsapp">
+                        Pedir por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Spotify (1 mes) -->
+        <article class="card">
+            <div class="card-img-container">
+                <img src="spotify.png" alt="Spotify Premium (1 mes)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">Spotify Premium (1 mes)</h2>
+                    <p class="card-description">Música en alta calidad, reproducción sin conexión a internet y cero interrupciones de publicidad.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 15.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Spotify%20Premium%20(1%20mes)%20-%20S/.15.00" target="_blank" class="btn-whatsapp">
+                        Pedir por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </article>
+
+    </main>
+
+    <footer>
+        <p>&copy; Catálogo Digital Lubeltec. Todos los derechos reservados.</p>
+    </footer>
+
+</body>
+</html>
