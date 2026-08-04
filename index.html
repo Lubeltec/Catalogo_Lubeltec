@@ -33,19 +33,52 @@
             backdrop-filter: blur(12px);
             color: #ffffff;
             text-align: center;
-            padding: 15px 10px 12px 10px;
+            padding: 10px 12px;
             border-bottom: 2px solid #00b4d8;
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
-        .header-brand {
+        /* Estructura de cabecera: Hamburguesa Izquierda | Marca Centrada */
+        .header-top {
+            display: grid;
+            grid-template-columns: 38px 1fr 38px;
+            align-items: center;
+            max-width: 600px;
+            margin: 0 auto 8px auto;
+        }
+
+        /* Botón Hamburguesa posicionado a la izquierda */
+        .hamburger-btn {
+            grid-column: 1;
+            justify-self: start;
+            background: rgba(0, 180, 216, 0.15);
+            color: #38bdf8;
+            border: 1px solid #00b4d8;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-btn:hover, .hamburger-btn.active {
+            background: #00b4d8;
+            color: #080c14;
+            box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
+        }
+
+        .header-brand {
+            grid-column: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         @keyframes pulseGlow {
@@ -55,50 +88,53 @@
         }
 
         .header-logo {
-            height: 42px;
-            width: 42px;
+            height: 38px;
+            width: 38px;
             object-fit: cover;
             border-radius: 50%;
             animation: pulseGlow 3s infinite ease-in-out;
         }
 
         header h1 {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             color: #00b4d8;
             text-transform: uppercase;
             letter-spacing: 1px;
             margin: 0;
         }
 
-        /* Contenedor de Categorías Centrado */
-        .centered-nav {
+        /* Menú Desplegable Controlado Exclusivamente por la Hamburguesa */
+        .menu-dropdown {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease-out, opacity 0.25s ease;
+            opacity: 0;
             display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding: 4px 5px 10px 5px;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            justify-content: center;
             flex-wrap: wrap;
-            max-width: 900px;
-            margin: 0 auto 10px auto;
+            gap: 6px;
+            justify-content: center;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        .centered-nav::-webkit-scrollbar {
-            display: none;
+        .menu-dropdown.open {
+            max-height: 200px;
+            opacity: 1;
+            margin-bottom: 10px;
+            padding-top: 4px;
         }
 
+        /* Botones de Categorías */
         .cat-chip {
-            background: rgba(20, 32, 48, 0.85);
+            background: rgba(20, 32, 48, 0.95);
             color: #94a3b8;
-            border: 1px solid rgba(0, 180, 216, 0.4);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            border: 1px solid rgba(0, 180, 216, 0.3);
+            padding: 5px 12px;
+            border-radius: 14px;
+            font-size: 0.75rem;
             font-weight: 600;
-            white-space: nowrap;
             cursor: pointer;
-            transition: all 0.25s ease;
+            transition: all 0.2s ease;
         }
 
         .cat-chip:hover {
@@ -110,40 +146,40 @@
             background: linear-gradient(135deg, #00b4d8, #0083a0);
             color: #080c14;
             border-color: #38bdf8;
-            box-shadow: 0 0 12px rgba(0, 180, 216, 0.6);
+            box-shadow: 0 0 8px rgba(0, 180, 216, 0.5);
             font-weight: bold;
         }
 
-        /* Barra de Búsqueda y Filtros Centrada */
+        /* Barra de Filtros Compacta */
         .controls-container {
             max-width: 600px;
             margin: 0 auto;
             display: flex;
-            gap: 6px;
+            gap: 5px;
             justify-content: center;
             align-items: center;
         }
 
         .search-input {
             flex: 2;
-            padding: 8px 12px;
-            border-radius: 15px;
+            padding: 6px 10px;
+            border-radius: 12px;
             border: 1px solid #00b4d8;
             background: rgba(13, 22, 35, 0.95);
             color: #ffffff;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             outline: none;
             text-align: center;
         }
 
         .select-control {
             flex: 1;
-            padding: 8px 6px;
-            border-radius: 15px;
+            padding: 6px 4px;
+            border-radius: 12px;
             border: 1px solid #00b4d8;
             background: rgba(13, 22, 35, 0.95);
             color: #ffffff;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             outline: none;
             cursor: pointer;
             text-align: center;
@@ -152,11 +188,11 @@
         /* Contenedor de Productos */
         .container {
             max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 12px;
+            margin: 15px auto;
+            padding: 0 10px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 15px;
         }
 
         /* Tarjeta de producto */
@@ -173,13 +209,13 @@
         }
 
         .card:hover {
-            transform: translateY(-6px);
+            transform: translateY(-5px);
             border-color: #00b4d8;
         }
 
         .card-img-container {
             width: 100%;
-            height: 190px;
+            height: 180px;
             background-color: #080c14;
             display: flex;
             align-items: center;
@@ -195,11 +231,11 @@
         }
 
         .card:hover .card img {
-            transform: scale(1.2) rotate(1deg);
+            transform: scale(1.18) rotate(1deg);
         }
 
         .card-content {
-            padding: 15px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
             flex-grow: 1;
@@ -207,28 +243,28 @@
         }
 
         .card-title {
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
             color: #ffffff;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .card-description {
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             color: #94a3b8;
-            margin-bottom: 12px;
-            line-height: 1.35;
+            margin-bottom: 10px;
+            line-height: 1.3;
         }
 
         .badge-tag {
             display: inline-block;
             background-color: #00b4d8;
             color: #080c14;
-            font-size: 0.65rem;
+            font-size: 0.62rem;
             font-weight: bold;
-            padding: 2px 6px;
+            padding: 2px 5px;
             border-radius: 4px;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             text-transform: uppercase;
         }
 
@@ -236,19 +272,19 @@
             display: inline-block;
             background-color: #e63946;
             color: #ffffff;
-            font-size: 0.65rem;
+            font-size: 0.62rem;
             font-weight: bold;
-            padding: 2px 6px;
+            padding: 2px 5px;
             border-radius: 4px;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             text-transform: uppercase;
         }
 
         .card-price {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: #38bdf8;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         /* Botón WhatsApp */
@@ -264,10 +300,10 @@
             background: linear-gradient(135deg, #25d366, #1ebd5a);
             color: #ffffff;
             text-decoration: none;
-            padding: 10px;
+            padding: 9px;
             border-radius: 8px;
             font-weight: bold;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             position: relative;
             overflow: hidden;
         }
@@ -294,39 +330,39 @@
             pointer-events: none;
         }
 
-        /* Banners Próximamente (Juegos y Antivirus) */
+        /* Banners Próximamente */
         .banner-upcoming {
             grid-column: 1 / -1;
             background: rgba(20, 26, 35, 0.95);
             border: 2px dashed #00b4d8;
-            border-radius: 16px;
-            padding: 35px 15px;
+            border-radius: 14px;
+            padding: 30px 12px;
             text-align: center;
         }
 
         .banner-upcoming h2 {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             color: #38bdf8;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .banner-upcoming p {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #94a3b8;
         }
 
         /* Botón Flotante */
         .float-whatsapp {
             position: fixed;
-            width: 50px;
-            height: 50px;
-            bottom: 20px;
-            right: 20px;
+            width: 48px;
+            height: 48px;
+            bottom: 18px;
+            right: 18px;
             background-color: #25d366;
             color: #FFF;
             border-radius: 50px;
             text-align: center;
-            font-size: 24px;
+            font-size: 22px;
             box-shadow: 0px 4px 12px rgba(37, 211, 102, 0.5);
             z-index: 1000;
             display: flex;
@@ -337,15 +373,9 @@
 
         footer {
             text-align: center;
-            margin-top: 30px;
+            margin-top: 25px;
             color: #64748b;
-            font-size: 0.8rem;
-        }
-
-        @media (max-width: 600px) {
-            .centered-nav {
-                justify-content: flex-start;
-            }
+            font-size: 0.75rem;
         }
     </style>
 </head>
@@ -354,24 +384,30 @@
     <a href="https://wa.me/51933907930?text=Hola,%20quisiera%20consultar%20sobre%20sus%20licencias%20digitales" class="float-whatsapp" target="_blank" title="Contactar por WhatsApp">💬</a>
 
     <header>
-        <div class="header-brand">
-            <img src="lubeltec.png" alt="Logo Lubeltec" class="header-logo">
-            <h1>Lubeltec</h1>
+        <div class="header-top">
+            <!-- Hamburguesa a la izquierda -->
+            <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMenu()" title="Menú de Categorías">☰</button>
+            <div class="header-brand">
+                <img src="lubeltec.png" alt="Logo Lubeltec" class="header-logo">
+                <h1>Lubeltec</h1>
+            </div>
+            <div></div> <!-- Espaciador simétrico -->
         </div>
 
-        <!-- Categorías Centradas -->
-        <div class="centered-nav">
+        <!-- Categorías dentro de la Hamburguesa -->
+        <div class="menu-dropdown" id="menuDropdown">
             <button class="cat-chip active" onclick="filterCategory('principal', event)">🏠 Principal</button>
             <button class="cat-chip" onclick="filterCategory('win', event)">💻 Windows 10/11</button>
             <button class="cat-chip" onclick="filterCategory('diseno', event)">🎨 Diseño</button>
             <button class="cat-chip" onclick="filterCategory('ia', event)">🤖 IA</button>
+            <button class="cat-chip" onclick="filterCategory('iptv', event)">📺 IPTV</button>
             <button class="cat-chip" onclick="filterCategory('musica', event)">🎵 Música</button>
             <button class="cat-chip" onclick="filterCategory('edu', event)">📚 Educación</button>
             <button class="cat-chip" onclick="filterCategory('antivirus', event)">🛡️ Antivirus</button>
             <button class="cat-chip" onclick="filterCategory('juegos', event)">🎮 Juegos</button>
         </div>
 
-        <!-- Barra de Búsqueda y Filtros Compacta -->
+        <!-- Búsqueda y Filtros Compactos -->
         <div class="controls-container">
             <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar licencia..." oninput="updateProducts()">
             
@@ -653,7 +689,7 @@
         </article>
 
         <!-- Flujo TV -->
-        <article class="card" data-category="streaming" data-price="20.00" data-name="Flujo TV (1 mes)" data-stock="true">
+        <article class="card" data-category="iptv" data-price="20.00" data-name="Flujo TV (1 mes)" data-stock="true">
             <div class="card-img-container">
                 <img src="flujotv.png" alt="Flujo TV">
             </div>
@@ -670,7 +706,7 @@
         </article>
 
         <!-- Crunchyroll (1 año) -->
-        <article class="card" data-category="streaming" data-price="99.00" data-name="Crunchyroll 1 Perfil (1 año)" data-stock="true">
+        <article class="card" data-category="iptv" data-price="99.00" data-name="Crunchyroll 1 Perfil (1 año)" data-stock="true">
             <div class="card-img-container">
                 <img src="crunchyroll.png" alt="Crunchyroll Mega Fan (1 año)">
             </div>
@@ -687,7 +723,7 @@
         </article>
 
         <!-- Crunchyroll (3 meses) -->
-        <article class="card" data-category="streaming" data-price="35.00" data-name="Crunchyroll 1 Perfil (3 meses)" data-stock="true">
+        <article class="card" data-category="iptv" data-price="35.00" data-name="Crunchyroll 1 Perfil (3 meses)" data-stock="true">
             <div class="card-img-container">
                 <img src="crunchyroll.png" alt="Crunchyroll Mega Fan (3 meses)">
             </div>
@@ -704,7 +740,7 @@
         </article>
 
         <!-- Crunchyroll (6 meses) -->
-        <article class="card" data-category="streaming" data-price="89.00" data-name="Crunchyroll Cuenta Completa (6 meses)" data-stock="true">
+        <article class="card" data-category="iptv" data-price="89.00" data-name="Crunchyroll Cuenta Completa (6 meses)" data-stock="true">
             <div class="card-img-container">
                 <img src="crunchyroll.png" alt="Crunchyroll Completo (6 meses)">
             </div>
@@ -720,13 +756,12 @@
             </div>
         </article>
 
-        <!-- Banner de aviso para Antivirus -->
+        <!-- Banners Próximamente -->
         <div class="banner-upcoming" id="bannerAntivirus" style="display: none;">
             <h2>🛡️ Próximamente Licencias de Antivirus</h2>
             <p>Estamos incorporando las mejores licencias originales para la protección de tus dispositivos (ESET, Kaspersky, McAfee y más) al mejor precio. ¡Muy pronto disponibles!</p>
         </div>
 
-        <!-- Banner de aviso para Juegos -->
         <div class="banner-upcoming" id="bannerJuegos" style="display: none;">
             <h2>🎮 Próximamente Juegos Económicos</h2>
             <p>Estamos preparando un catálogo especial de licencias y juegos para PC y consolas a precios súper accesibles. ¡Atento a nuestras actualizaciones!</p>
@@ -741,6 +776,15 @@
     <script>
         let currentFilter = 'principal';
 
+        // Abre o cierra únicamente al pulsar la hamburguesa
+        function toggleMenu() {
+            const menu = document.getElementById('menuDropdown');
+            const btn = document.getElementById('hamburgerBtn');
+            menu.classList.toggle('open');
+            btn.classList.toggle('active');
+        }
+
+        // Filtra la categoría SIN cerrar el menú
         function filterCategory(category, event) {
             currentFilter = category;
             
@@ -761,7 +805,6 @@
             const sortValue = document.getElementById('sortSelect').value;
             const stockValue = document.getElementById('stockSelect').value;
 
-            // Manejo de banners de "Próximamente"
             if (currentFilter === 'antivirus') {
                 cardsArray.forEach(card => card.style.display = "none");
                 bannerJuegos.style.display = "none";
