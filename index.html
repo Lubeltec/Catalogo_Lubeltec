@@ -27,13 +27,13 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Encabezado compacto */
+        /* Encabezado fijo */
         header {
             background: rgba(9, 19, 29, 0.95);
             backdrop-filter: blur(12px);
             color: #ffffff;
             text-align: center;
-            padding: 15px 10px 10px 10px;
+            padding: 15px 10px 12px 10px;
             border-bottom: 2px solid #00b4d8;
             position: sticky;
             top: 0;
@@ -45,7 +45,7 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
 
         @keyframes pulseGlow {
@@ -63,66 +63,58 @@
         }
 
         header h1 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             color: #00b4d8;
             text-transform: uppercase;
             letter-spacing: 1px;
             margin: 0;
         }
 
-        /* Pestañas Principales en Celular */
-        .nav-tabs {
+        /* Contenedor de Categorías Centrado */
+        .centered-nav {
             display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 4px 5px 10px 5px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
             justify-content: center;
-            gap: 6px;
-            margin-bottom: 8px;
-        }
-
-        .tab-btn {
-            background: rgba(13, 22, 35, 0.8);
-            color: #94a3b8;
-            border: 1px solid #00b4d8;
-            padding: 6px 14px;
-            border-radius: 15px;
-            font-weight: 600;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .tab-btn.active {
-            background: #00b4d8;
-            color: #080c14;
-            box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
-        }
-
-        /* Subpestañas / Subcategorías de Software */
-        .sub-nav-container {
-            display: none;
-            justify-content: center;
-            gap: 5px;
-            margin-bottom: 8px;
             flex-wrap: wrap;
+            max-width: 900px;
+            margin: 0 auto 10px auto;
         }
 
-        .sub-tab-btn {
-            background: rgba(20, 32, 48, 0.9);
-            color: #38bdf8;
-            border: 1px solid rgba(56, 189, 248, 0.4);
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.75rem;
+        .centered-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .cat-chip {
+            background: rgba(20, 32, 48, 0.85);
+            color: #94a3b8;
+            border: 1px solid rgba(0, 180, 216, 0.4);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
         }
 
-        .sub-tab-btn.active {
-            background: #38bdf8;
+        .cat-chip:hover {
+            border-color: #00b4d8;
+            color: #ffffff;
+        }
+
+        .cat-chip.active {
+            background: linear-gradient(135deg, #00b4d8, #0083a0);
             color: #080c14;
+            border-color: #38bdf8;
+            box-shadow: 0 0 12px rgba(0, 180, 216, 0.6);
             font-weight: bold;
         }
 
-        /* Panel de Controles Reducido */
+        /* Barra de Búsqueda y Filtros Centrada */
         .controls-container {
             max-width: 600px;
             margin: 0 auto;
@@ -141,6 +133,7 @@
             color: #ffffff;
             font-size: 0.8rem;
             outline: none;
+            text-align: center;
         }
 
         .select-control {
@@ -153,9 +146,10 @@
             font-size: 0.75rem;
             outline: none;
             cursor: pointer;
+            text-align: center;
         }
 
-        /* Contenedor de la tienda */
+        /* Contenedor de Productos */
         .container {
             max-width: 1200px;
             margin: 20px auto;
@@ -300,13 +294,13 @@
             pointer-events: none;
         }
 
-        /* Banner de Próximamente (Juegos) */
+        /* Banners Próximamente (Juegos y Antivirus) */
         .banner-upcoming {
             grid-column: 1 / -1;
             background: rgba(20, 26, 35, 0.95);
             border: 2px dashed #00b4d8;
             border-radius: 16px;
-            padding: 30px 15px;
+            padding: 35px 15px;
             text-align: center;
         }
 
@@ -347,39 +341,39 @@
             color: #64748b;
             font-size: 0.8rem;
         }
+
+        @media (max-width: 600px) {
+            .centered-nav {
+                justify-content: flex-start;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!-- Botón Flotante de WhatsApp -->
     <a href="https://wa.me/51933907930?text=Hola,%20quisiera%20consultar%20sobre%20sus%20licencias%20digitales" class="float-whatsapp" target="_blank" title="Contactar por WhatsApp">💬</a>
 
-    <!-- Encabezado -->
     <header>
         <div class="header-brand">
             <img src="lubeltec.png" alt="Logo Lubeltec" class="header-logo">
             <h1>Lubeltec</h1>
         </div>
-        
-        <!-- Pestañas Principales -->
-        <div class="nav-tabs">
-            <button class="tab-btn active" onclick="switchTab('principal', event)">Principal</button>
-            <button class="tab-btn" onclick="switchTab('software', event)">Software</button>
-            <button class="tab-btn" onclick="switchTab('juegos', event)">Juegos</button>
+
+        <!-- Categorías Centradas -->
+        <div class="centered-nav">
+            <button class="cat-chip active" onclick="filterCategory('principal', event)">🏠 Principal</button>
+            <button class="cat-chip" onclick="filterCategory('win', event)">💻 Windows 10/11</button>
+            <button class="cat-chip" onclick="filterCategory('diseno', event)">🎨 Diseño</button>
+            <button class="cat-chip" onclick="filterCategory('ia', event)">🤖 IA</button>
+            <button class="cat-chip" onclick="filterCategory('musica', event)">🎵 Música</button>
+            <button class="cat-chip" onclick="filterCategory('edu', event)">📚 Educación</button>
+            <button class="cat-chip" onclick="filterCategory('antivirus', event)">🛡️ Antivirus</button>
+            <button class="cat-chip" onclick="filterCategory('juegos', event)">🎮 Juegos</button>
         </div>
 
-        <!-- Subpestañas exclusivas para Software -->
-        <div class="sub-nav-container" id="softwareSubTabs">
-            <button class="sub-tab-btn active" onclick="filterSubTab('all', event)">Todos</button>
-            <button class="sub-tab-btn" onclick="filterSubTab('diseno', event)">Diseño</button>
-            <button class="sub-tab-btn" onclick="filterSubTab('so', event)">Windows 10 /11</button>
-            <button class="sub-tab-btn" onclick="filterSubTab('ia', event)">IA / Prod.</button>
-            <button class="sub-tab-btn" onclick="filterSubTab('edu', event)">Educación</button>
-        </div>
-
-        <!-- Barra de Control Ultra Compacta -->
+        <!-- Barra de Búsqueda y Filtros Compacta -->
         <div class="controls-container">
-            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar..." oninput="updateProducts()">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar licencia..." oninput="updateProducts()">
             
             <select id="sortSelect" class="select-control" onchange="updateProducts()">
                 <option value="default">Ordenar</option>
@@ -397,131 +391,8 @@
 
     <main class="container" id="productContainer">
 
-        <!-- Office 365 -->
-        <article class="card" data-category="software" data-subcategory="ia" data-price="45.00" data-name="Office 365 (1 año)" data-stock="true">
-            <div class="card-img-container">
-                <img src="office365.png" alt="Office 365 (1 año)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <span class="badge-tag">Garantizado</span>
-                    <h2 class="card-title">Office 365 (1 año)</h2>
-                    <p class="card-description">Instálalo en hasta 5 dispositivos. Incluye Word, Excel, PowerPoint, Outlook, Teams y 1TB en OneDrive.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 45.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Office%20365%20(1%20año)%20-%20S/.45.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
-                </div>
-            </div>
-        </article>
-
-        <!-- Canva (1 año) -->
-        <article class="card" data-category="software" data-subcategory="diseno" data-price="35.00" data-name="Canva Pro (1 año)" data-stock="true">
-            <div class="card-img-container">
-                <img src="canva.png" alt="Canva Pro (1 año)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <span class="badge-tag">Popular</span>
-                    <h2 class="card-title">Canva Pro (1 año)</h2>
-                    <p class="card-description">Herramienta de diseño gráfico con acceso a imágenes premium, vídeos, quita fondos e IA.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 35.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(1%20año)%20-%20S/.35.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
-                </div>
-            </div>
-        </article>
-
-        <!-- Canva (2 años) -->
-        <article class="card" data-category="software" data-subcategory="diseno" data-price="45.00" data-name="Canva Pro (2 años)" data-stock="true">
-            <div class="card-img-container">
-                <img src="canva.png" alt="Canva Pro (2 años)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <h2 class="card-title">Canva Pro (2 años)</h2>
-                    <p class="card-description">Acceso Pro extendido para diseñar plantillas exclusivas, kit de marca y elementos ilimitados.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 45.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(2%20años)%20-%20S/.45.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
-                </div>
-            </div>
-        </article>
-
-        <!-- Canva (3 años) -->
-        <article class="card" data-category="software" data-subcategory="diseno" data-price="55.00" data-name="Canva Pro (3 años)" data-stock="true">
-            <div class="card-img-container">
-                <img src="canva.png" alt="Canva Pro (3 años)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <h2 class="card-title">Canva Pro (3 años)</h2>
-                    <p class="card-description">Suscripción por 3 años con todas las herramientas de diseño avanzadas e inteligencia artificial.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 55.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(3%20años)%20-%20S/.55.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
-                </div>
-            </div>
-        </article>
-
-        <!-- Canva (para siempre) -->
-        <article class="card" data-category="software" data-subcategory="diseno" data-price="99.00" data-name="Canva Pro (para siempre)" data-stock="false">
-            <div class="card-img-container">
-                <img src="canva.png" alt="Canva Pro (para siempre)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <span class="badge-out-of-stock">Sin Stock</span>
-                    <h2 class="card-title">Canva Pro (para siempre)</h2>
-                    <p class="card-description">Licencia vitalicia con acceso completo a funciones de diseño premium.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 99.00</div>
-                    <a href="#" class="btn-whatsapp btn-disabled">Agotado</a>
-                </div>
-            </div>
-        </article>
-
-        <!-- Gemini Pro (18 meses) -->
-        <article class="card" data-category="software" data-subcategory="ia" data-price="70.00" data-name="Gemini Pro 3.6 (18 meses)" data-stock="true">
-            <div class="card-img-container">
-                <img src="gemini18.png" alt="Gemini Pro (18 meses)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <span class="badge-tag">Top IA</span>
-                    <h2 class="card-title">Gemini Pro 3.6 (18 meses)</h2>
-                    <p class="card-description">Incluye IA avanzada Gemini Pro, generación de video en Veo 3, NotebookLM y 5TB en Google Drive.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 70.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(18%20meses)%20-%20S/.70.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
-                </div>
-            </div>
-        </article>
-
-        <!-- Gemini Pro (12 meses) -->
-        <article class="card" data-category="software" data-subcategory="ia" data-price="50.00" data-name="Gemini Pro 3.6 (12 meses)" data-stock="true">
-            <div class="card-img-container">
-                <img src="gemini12.png" alt="Gemini Pro (12 meses)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <h2 class="card-title">Gemini Pro 3.6 (12 meses)</h2>
-                    <p class="card-description">Potencia tu trabajo con la IA de Google One por 1 año y almacenamiento masivo de 5TB.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 50.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(12%20meses)%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
-                </div>
-            </div>
-        </article>
-
         <!-- Windows 10/11 Pro -->
-        <article class="card" data-category="software" data-subcategory="so" data-price="50.00" data-name="Windows 10/11 Pro (Siempre)" data-stock="true">
+        <article class="card" data-category="win" data-price="50.00" data-name="Windows 10/11 Pro (Siempre)" data-stock="true">
             <div class="card-img-container">
                 <img src="windows11.png" alt="Windows 10/11 Pro">
             </div>
@@ -539,7 +410,7 @@
         </article>
 
         <!-- Windows 10/11 Home -->
-        <article class="card" data-category="software" data-subcategory="so" data-price="50.00" data-name="Windows 10/11 Home (Siempre)" data-stock="true">
+        <article class="card" data-category="win" data-price="50.00" data-name="Windows 10/11 Home (Siempre)" data-stock="true">
             <div class="card-img-container">
                 <img src="windows11.png" alt="Windows 10/11 Home">
             </div>
@@ -555,8 +426,131 @@
             </div>
         </article>
 
+        <!-- Office 365 -->
+        <article class="card" data-category="ia" data-price="45.00" data-name="Office 365 (1 año)" data-stock="true">
+            <div class="card-img-container">
+                <img src="office365.png" alt="Office 365 (1 año)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <span class="badge-tag">Garantizado</span>
+                    <h2 class="card-title">Office 365 (1 año)</h2>
+                    <p class="card-description">Instálalo en hasta 5 dispositivos. Incluye Word, Excel, PowerPoint, Outlook, Teams y 1TB en OneDrive.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 45.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Office%20365%20(1%20año)%20-%20S/.45.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Canva (1 año) -->
+        <article class="card" data-category="diseno" data-price="35.00" data-name="Canva Pro (1 año)" data-stock="true">
+            <div class="card-img-container">
+                <img src="canva.png" alt="Canva Pro (1 año)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <span class="badge-tag">Popular</span>
+                    <h2 class="card-title">Canva Pro (1 año)</h2>
+                    <p class="card-description">Herramienta de diseño gráfico con acceso a imágenes premium, vídeos, quita fondos e IA.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 35.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(1%20año)%20-%20S/.35.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Canva (2 años) -->
+        <article class="card" data-category="diseno" data-price="45.00" data-name="Canva Pro (2 años)" data-stock="true">
+            <div class="card-img-container">
+                <img src="canva.png" alt="Canva Pro (2 años)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">Canva Pro (2 años)</h2>
+                    <p class="card-description">Acceso Pro extendido para diseñar plantillas exclusivas, kit de marca y elementos ilimitados.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 45.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(2%20años)%20-%20S/.45.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Canva (3 años) -->
+        <article class="card" data-category="diseno" data-price="55.00" data-name="Canva Pro (3 años)" data-stock="true">
+            <div class="card-img-container">
+                <img src="canva.png" alt="Canva Pro (3 años)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">Canva Pro (3 años)</h2>
+                    <p class="card-description">Suscripción por 3 años con todas las herramientas de diseño avanzadas e inteligencia artificial.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 55.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(3%20años)%20-%20S/.55.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Canva (para siempre) -->
+        <article class="card" data-category="diseno" data-price="99.00" data-name="Canva Pro (para siempre)" data-stock="false">
+            <div class="card-img-container">
+                <img src="canva.png" alt="Canva Pro (para siempre)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <span class="badge-out-of-stock">Sin Stock</span>
+                    <h2 class="card-title">Canva Pro (para siempre)</h2>
+                    <p class="card-description">Licencia vitalicia con acceso completo a funciones de diseño premium.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 99.00</div>
+                    <a href="#" class="btn-whatsapp btn-disabled">Agotado</a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Gemini Pro (18 meses) -->
+        <article class="card" data-category="ia" data-price="70.00" data-name="Gemini Pro 3.6 (18 meses)" data-stock="true">
+            <div class="card-img-container">
+                <img src="gemini18.png" alt="Gemini Pro (18 meses)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <span class="badge-tag">Top IA</span>
+                    <h2 class="card-title">Gemini Pro 3.6 (18 meses)</h2>
+                    <p class="card-description">Incluye IA avanzada Gemini Pro, generación de video en Veo 3, NotebookLM y 5TB en Google Drive.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 70.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(18%20meses)%20-%20S/.70.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Gemini Pro (12 meses) -->
+        <article class="card" data-category="ia" data-price="50.00" data-name="Gemini Pro 3.6 (12 meses)" data-stock="true">
+            <div class="card-img-container">
+                <img src="gemini12.png" alt="Gemini Pro (12 meses)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">Gemini Pro 3.6 (12 meses)</h2>
+                    <p class="card-description">Potencia tu trabajo con la IA de Google One por 1 año y almacenamiento masivo de 5TB.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 50.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(12%20meses)%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                </div>
+            </div>
+        </article>
+
         <!-- Duolingo (12 meses) -->
-        <article class="card" data-category="software" data-subcategory="edu" data-price="144.00" data-name="Duolingo Super (12 meses)" data-stock="true">
+        <article class="card" data-category="edu" data-price="144.00" data-name="Duolingo Super (12 meses)" data-stock="true">
             <div class="card-img-container">
                 <img src="duolingo.png" alt="Duolingo (12 meses)">
             </div>
@@ -572,25 +566,8 @@
             </div>
         </article>
 
-        <!-- Flujo TV -->
-        <article class="card" data-category="streaming" data-subcategory="streaming" data-price="20.00" data-name="Flujo TV (1 mes)" data-stock="true">
-            <div class="card-img-container">
-                <img src="flujotv.png" alt="Flujo TV">
-            </div>
-            <div class="card-content">
-                <div>
-                    <h2 class="card-title">Flujo TV (1 mes)</h2>
-                    <p class="card-description">Para 3 TVs o celulares. Full VOD, más de 69 canales deportivos y +1000 canales en vivo.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 20.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Flujo%20TV%20-%20S/.20.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
-                </div>
-            </div>
-        </article>
-
         <!-- Capcut Pro -->
-        <article class="card" data-category="software" data-subcategory="diseno" data-price="23.00" data-name="Capcut Pro (1 mes)" data-stock="true">
+        <article class="card" data-category="diseno" data-price="23.00" data-name="Capcut Pro (1 mes)" data-stock="true">
             <div class="card-img-container">
                 <img src="capcut.png" alt="Capcut pro (1 mes)">
             </div>
@@ -607,7 +584,7 @@
         </article>
 
         <!-- Autodesk (1 año) -->
-        <article class="card" data-category="software" data-subcategory="diseno" data-price="75.00" data-name="Autodesk All Apps (1 año)" data-stock="true">
+        <article class="card" data-category="diseno" data-price="75.00" data-name="Autodesk All Apps (1 año)" data-stock="true">
             <div class="card-img-container">
                 <img src="autodesk.png" alt="Autodesk All Apps (1 año)">
             </div>
@@ -625,7 +602,7 @@
         </article>
 
         <!-- Autodesk (6 meses) -->
-        <article class="card" data-category="software" data-subcategory="diseno" data-price="49.00" data-name="Autodesk All Apps (6 meses)" data-stock="true">
+        <article class="card" data-category="diseno" data-price="49.00" data-name="Autodesk All Apps (6 meses)" data-stock="true">
             <div class="card-img-container">
                 <img src="autodesk.png" alt="Autodesk All Apps (6 meses)">
             </div>
@@ -642,7 +619,7 @@
         </article>
 
         <!-- Autodesk (3 meses) -->
-        <article class="card" data-category="software" data-subcategory="diseno" data-price="29.00" data-name="Autodesk All Apps (3 meses)" data-stock="true">
+        <article class="card" data-category="diseno" data-price="29.00" data-name="Autodesk All Apps (3 meses)" data-stock="true">
             <div class="card-img-container">
                 <img src="autodesk.png" alt="Autodesk All Apps (3 meses)">
             </div>
@@ -658,8 +635,42 @@
             </div>
         </article>
 
+        <!-- Spotify (1 mes) -->
+        <article class="card" data-category="musica" data-price="15.00" data-name="Spotify Premium (1 mes)" data-stock="true">
+            <div class="card-img-container">
+                <img src="spotify.png" alt="Spotify Premium (1 mes)">
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">Spotify Premium (1 mes)</h2>
+                    <p class="card-description">Música en alta calidad, reproducción sin conexión a internet y cero interrupciones de publicidad.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 15.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Spotify%20Premium%20(1%20mes)%20-%20S/.15.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Flujo TV -->
+        <article class="card" data-category="streaming" data-price="20.00" data-name="Flujo TV (1 mes)" data-stock="true">
+            <div class="card-img-container">
+                <img src="flujotv.png" alt="Flujo TV">
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">Flujo TV (1 mes)</h2>
+                    <p class="card-description">Para 3 TVs o celulares. Full VOD, más de 69 canales deportivos y +1000 canales en vivo.</p>
+                </div>
+                <div>
+                    <div class="card-price">S/. 20.00</div>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Flujo%20TV%20-%20S/.20.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                </div>
+            </div>
+        </article>
+
         <!-- Crunchyroll (1 año) -->
-        <article class="card" data-category="streaming" data-subcategory="streaming" data-price="99.00" data-name="Crunchyroll 1 Perfil (1 año)" data-stock="true">
+        <article class="card" data-category="streaming" data-price="99.00" data-name="Crunchyroll 1 Perfil (1 año)" data-stock="true">
             <div class="card-img-container">
                 <img src="crunchyroll.png" alt="Crunchyroll Mega Fan (1 año)">
             </div>
@@ -676,7 +687,7 @@
         </article>
 
         <!-- Crunchyroll (3 meses) -->
-        <article class="card" data-category="streaming" data-subcategory="streaming" data-price="35.00" data-name="Crunchyroll 1 Perfil (3 meses)" data-stock="true">
+        <article class="card" data-category="streaming" data-price="35.00" data-name="Crunchyroll 1 Perfil (3 meses)" data-stock="true">
             <div class="card-img-container">
                 <img src="crunchyroll.png" alt="Crunchyroll Mega Fan (3 meses)">
             </div>
@@ -693,7 +704,7 @@
         </article>
 
         <!-- Crunchyroll (6 meses) -->
-        <article class="card" data-category="streaming" data-subcategory="streaming" data-price="89.00" data-name="Crunchyroll Cuenta Completa (6 meses)" data-stock="true">
+        <article class="card" data-category="streaming" data-price="89.00" data-name="Crunchyroll Cuenta Completa (6 meses)" data-stock="true">
             <div class="card-img-container">
                 <img src="crunchyroll.png" alt="Crunchyroll Completo (6 meses)">
             </div>
@@ -709,22 +720,11 @@
             </div>
         </article>
 
-        <!-- Spotify (1 mes) -->
-        <article class="card" data-category="streaming" data-subcategory="streaming" data-price="15.00" data-name="Spotify Premium (1 mes)" data-stock="true">
-            <div class="card-img-container">
-                <img src="spotify.png" alt="Spotify Premium (1 mes)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <h2 class="card-title">Spotify Premium (1 mes)</h2>
-                    <p class="card-description">Música en alta calidad, reproducción sin conexión a internet y cero interrupciones de publicidad.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 15.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Spotify%20Premium%20(1%20mes)%20-%20S/.15.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
-                </div>
-            </div>
-        </article>
+        <!-- Banner de aviso para Antivirus -->
+        <div class="banner-upcoming" id="bannerAntivirus" style="display: none;">
+            <h2>🛡️ Próximamente Licencias de Antivirus</h2>
+            <p>Estamos incorporando las mejores licencias originales para la protección de tus dispositivos (ESET, Kaspersky, McAfee y más) al mejor precio. ¡Muy pronto disponibles!</p>
+        </div>
 
         <!-- Banner de aviso para Juegos -->
         <div class="banner-upcoming" id="bannerJuegos" style="display: none;">
@@ -738,40 +738,14 @@
         <p>&copy; Catálogo Digital Lubeltec. Todos los derechos reservados.</p>
     </footer>
 
-    <!-- Lógica de Pestañas, Subpestañas y Filtros -->
     <script>
-        let currentTab = 'principal';
-        let currentSubTab = 'all';
+        let currentFilter = 'principal';
 
-        function switchTab(tabName, event) {
-            currentTab = tabName;
-            currentSubTab = 'all';
+        function filterCategory(category, event) {
+            currentFilter = category;
             
-            // Marcar pestaña activa
-            const buttons = document.querySelectorAll('.tab-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-
-            // Mostrar/Ocultar subpestañas de Software
-            const softwareSubTabs = document.getElementById('softwareSubTabs');
-            if (currentTab === 'software') {
-                softwareSubTabs.style.display = 'flex';
-                // Resetear subpestañas activas
-                const subButtons = document.querySelectorAll('.sub-tab-btn');
-                subButtons.forEach(btn => btn.classList.remove('active'));
-                subButtons[0].classList.add('active');
-            } else {
-                softwareSubTabs.style.display = 'none';
-            }
-
-            updateProducts();
-        }
-
-        function filterSubTab(subTabName, event) {
-            currentSubTab = subTabName;
-            
-            const subButtons = document.querySelectorAll('.sub-tab-btn');
-            subButtons.forEach(btn => btn.classList.remove('active'));
+            const chips = document.querySelectorAll('.cat-chip');
+            chips.forEach(chip => chip.classList.remove('active'));
             event.target.classList.add('active');
 
             updateProducts();
@@ -780,52 +754,46 @@
         function updateProducts() {
             const container = document.getElementById('productContainer');
             const cardsArray = Array.from(container.getElementsByClassName('card'));
+            const bannerAntivirus = document.getElementById('bannerAntivirus');
             const bannerJuegos = document.getElementById('bannerJuegos');
             
             const searchText = document.getElementById('searchInput').value.toLowerCase();
             const sortValue = document.getElementById('sortSelect').value;
             const stockValue = document.getElementById('stockSelect').value;
 
-            // Manejo de la pestaña Juegos
-            if (currentTab === 'juegos') {
+            // Manejo de banners de "Próximamente"
+            if (currentFilter === 'antivirus') {
                 cardsArray.forEach(card => card.style.display = "none");
+                bannerJuegos.style.display = "none";
+                bannerAntivirus.style.display = "block";
+                return;
+            } else if (currentFilter === 'juegos') {
+                cardsArray.forEach(card => card.style.display = "none");
+                bannerAntivirus.style.display = "none";
                 bannerJuegos.style.display = "block";
                 return;
             } else {
+                bannerAntivirus.style.display = "none";
                 bannerJuegos.style.display = "none";
             }
 
-            // Filtrar productos
             cardsArray.forEach(card => {
                 const category = card.getAttribute('data-category');
-                const subcategory = card.getAttribute('data-subcategory');
                 const title = card.getAttribute('data-name').toLowerCase();
                 const desc = card.querySelector('.card-description').innerText.toLowerCase();
                 const isStock = card.getAttribute('data-stock') === 'true';
 
-                // Lógica de visualización
-                let matchesTab = false;
-                if (currentTab === 'principal') {
-                    matchesTab = true; // Principal muestra todos los software y servicios
-                } else if (currentTab === 'software') {
-                    if (currentSubTab === 'all') {
-                        matchesTab = (category === 'software');
-                    } else {
-                        matchesTab = (category === 'software' && subcategory === currentSubTab);
-                    }
-                }
-
+                const matchesCategory = (currentFilter === 'principal') || (category === currentFilter);
                 const matchesSearch = title.includes(searchText) || desc.includes(searchText);
                 const matchesStock = stockValue === 'all' || (stockValue === 'instock' && isStock);
 
-                if (matchesTab && matchesSearch && matchesStock) {
+                if (matchesCategory && matchesSearch && matchesStock) {
                     card.style.display = "flex";
                 } else {
                     card.style.display = "none";
                 }
             });
 
-            // Ordenar productos
             if (sortValue !== 'default') {
                 cardsArray.sort((a, b) => {
                     const priceA = parseFloat(a.getAttribute('data-price'));
