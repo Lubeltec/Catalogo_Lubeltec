@@ -40,16 +40,14 @@
             z-index: 100;
         }
 
-        /* Estructura de cabecera: Hamburguesa Izquierda | Marca Centrada */
         .header-top {
             display: grid;
             grid-template-columns: 38px 1fr 38px;
             align-items: center;
             max-width: 600px;
-            margin: 0 auto 8px auto;
+            margin: 0 auto 6px auto;
         }
 
-        /* Botón Hamburguesa posicionado a la izquierda */
         .hamburger-btn {
             grid-column: 1;
             justify-self: start;
@@ -103,7 +101,19 @@
             margin: 0;
         }
 
-        /* Menú Desplegable Controlado Exclusivamente por la Hamburguesa */
+        /* Banner de Métodos de Pago */
+        .payment-methods-badge {
+            font-size: 0.72rem;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+
+        .payment-methods-badge span {
+            color: #00b4d8;
+            font-weight: bold;
+        }
+
+        /* Menú Desplegable */
         .menu-dropdown {
             max-height: 0;
             overflow: hidden;
@@ -124,7 +134,6 @@
             padding-top: 4px;
         }
 
-        /* Botones de Categorías */
         .cat-chip {
             background: rgba(20, 32, 48, 0.95);
             color: #94a3b8;
@@ -150,7 +159,7 @@
             font-weight: bold;
         }
 
-        /* Barra de Filtros Compacta */
+        /* Barra de Filtros */
         .controls-container {
             max-width: 600px;
             margin: 0 auto;
@@ -191,7 +200,7 @@
             margin: 15px auto;
             padding: 0 10px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 15px;
         }
 
@@ -287,40 +296,56 @@
             margin-bottom: 8px;
         }
 
-        /* Botón WhatsApp */
+        /* Grupo de Botones de Acción */
+        .card-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
         @keyframes shimmer {
             0% { left: -100%; }
             100% { left: 200%; }
         }
 
+        /* Botón de Pago con Tarjeta / Pasarela */
+        .btn-pay-online {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #00b4d8, #0077b6);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 8px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .btn-pay-online:hover {
+            background: linear-gradient(135deg, #00c4ec, #0088c7);
+            box-shadow: 0 0 10px rgba(0, 180, 216, 0.4);
+        }
+
+        /* Botón de WhatsApp */
         .btn-whatsapp {
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 6px;
             background: linear-gradient(135deg, #25d366, #1ebd5a);
             color: #ffffff;
             text-decoration: none;
-            padding: 9px;
+            padding: 8px;
             border-radius: 8px;
             font-weight: bold;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             position: relative;
             overflow: hidden;
-        }
-
-        .btn-whatsapp::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-            transform: skewX(-25deg);
-        }
-
-        .btn-whatsapp:hover::before {
-            animation: shimmer 1s ease-in-out infinite;
         }
 
         .btn-disabled {
@@ -385,13 +410,16 @@
 
     <header>
         <div class="header-top">
-            <!-- Hamburguesa a la izquierda -->
             <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMenu()" title="Menú de Categorías">☰</button>
             <div class="header-brand">
                 <img src="lubeltec.png" alt="Logo Lubeltec" class="header-logo">
                 <h1>Lubeltec</h1>
             </div>
-            <div></div> <!-- Espaciador simétrico -->
+            <div></div>
+        </div>
+
+        <div class="payment-methods-badge">
+            Aceptamos <span>Tarjetas Crédito/Débito, Yape, Plin y PagoEfectivo</span>
         </div>
 
         <!-- Categorías dentro de la Hamburguesa -->
@@ -428,7 +456,7 @@
     <main class="container" id="productContainer">
 
         <!-- Windows 10/11 Pro -->
-        <article class="card" data-category="win" data-price="50.00" data-name="Windows 10/11 Pro (Siempre)" data-stock="true">
+        <article class="card" data-category="win" data-price="50.00" data-name="Windows 10/11 Pro (Siempre)" data-stock="true" data-link-pago="https://mpago.la/pos/windows1011pro">
             <div class="card-img-container">
                 <img src="windows11.png" alt="Windows 10/11 Pro">
             </div>
@@ -440,7 +468,10 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 50.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Windows%2010/11%20Pro%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    <div class="card-actions">
+                        <a href="https://mpago.la/pos/windows1011pro" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Windows%2010/11%20Pro%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    </div>
                 </div>
             </div>
         </article>
@@ -457,7 +488,10 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 50.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Windows%2010/11%20Home%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    <div class="card-actions">
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Windows%2010/11%20Home%20-%20S/.50.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Windows%2010/11%20Home%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    </div>
                 </div>
             </div>
         </article>
@@ -475,7 +509,10 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 45.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Office%20365%20(1%20año)%20-%20S/.45.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    <div class="card-actions">
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Office%20365%20(1%20año)%20-%20S/.45.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Office%20365%20(1%20año)%20-%20S/.45.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    </div>
                 </div>
             </div>
         </article>
@@ -493,7 +530,10 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 35.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(1%20año)%20-%20S/.35.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    <div class="card-actions">
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(1%20año)%20-%20S/.35.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(1%20año)%20-%20S/.35.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    </div>
                 </div>
             </div>
         </article>
@@ -510,7 +550,10 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 45.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(2%20años)%20-%20S/.45.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    <div class="card-actions">
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(2%20años)%20-%20S/.45.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(2%20años)%20-%20S/.45.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    </div>
                 </div>
             </div>
         </article>
@@ -527,7 +570,10 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 55.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(3%20años)%20-%20S/.55.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    <div class="card-actions">
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(3%20años)%20-%20S/.55.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(3%20años)%20-%20S/.55.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    </div>
                 </div>
             </div>
         </article>
@@ -545,7 +591,10 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 99.00</div>
-                    <a href="#" class="btn-whatsapp btn-disabled">Agotado</a>
+                    <div class="card-actions">
+                        <a href="#" class="btn-pay-online btn-disabled">Agotado</a>
+                        <a href="#" class="btn-whatsapp btn-disabled">Agotado</a>
+                    </div>
                 </div>
             </div>
         </article>
@@ -563,7 +612,10 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 70.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(18%20meses)%20-%20S/.70.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    <div class="card-actions">
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(18%20meses)%20-%20S/.70.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(18%20meses)%20-%20S/.70.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    </div>
                 </div>
             </div>
         </article>
@@ -580,7 +632,10 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 50.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(12%20meses)%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    <div class="card-actions">
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(12%20meses)%20-%20S/.50.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(12%20meses)%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    </div>
                 </div>
             </div>
         </article>
@@ -597,7 +652,10 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 144.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Duolingo%20(12%20meses)%20-%20S/.144.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    <div class="card-actions">
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Duolingo%20(12%20meses)%20-%20S/.144.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Duolingo%20(12%20meses)%20-%20S/.144.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    </div>
                 </div>
             </div>
         </article>
@@ -614,7 +672,10 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 23.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Capcut%20Pro%20(1%20mes)%20-%20S/.23.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    <div class="card-actions">
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Capcut%20Pro%20(1%20mes)%20-%20S/.23.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Capcut%20Pro%20(1%20mes)%20-%20S/.23.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    </div>
                 </div>
             </div>
         </article>
@@ -632,7 +693,10 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 75.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(1%20año)%20-%20S/.75.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    <div class="card-actions">
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(1%20año)%20-%20S/.75.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(1%20año)%20-%20S/.75.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    </div>
                 </div>
             </div>
         </article>
@@ -649,7 +713,10 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 49.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(6%20meses)%20-%20S/.49.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    <div class="card-actions">
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(6%20meses)%20-%20S/.49.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(6%20meses)%20-%20S/.49.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    </div>
                 </div>
             </div>
         </article>
@@ -666,7 +733,10 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 29.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(3%20meses)%20-%20S/.29.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    <div class="card-actions">
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(3%20meses)%20-%20S/.29.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(3%20meses)%20-%20S/.29.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    </div>
                 </div>
             </div>
         </article>
@@ -683,7 +753,10 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 15.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Spotify%20Premium%20(1%20mes)%20-%20S/.15.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    <div class="card-actions">
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Spotify%20Premium%20(1%20mes)%20-%20S/.15.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Spotify%20Premium%20(1%20mes)%20-%20S/.15.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    </div>
                 </div>
             </div>
         </article>
@@ -700,7 +773,10 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 20.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Flujo%20TV%20-%20S/.20.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    <div class="card-actions">
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Flujo%20TV%20-%20S/.20.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Flujo%20TV%20-%20S/.20.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    </div>
                 </div>
             </div>
         </article>
@@ -717,7 +793,10 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 99.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%201%20Perfil%20(1%20año)%20-%20S/.99.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    <div class="card-actions">
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%201%20Perfil%20(1%20año)%20-%20S/.99.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%201%20Perfil%20(1%20año)%20-%20S/.99.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    </div>
                 </div>
             </div>
         </article>
@@ -734,7 +813,10 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 35.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%201%20Perfil%20(3%20meses)%20-%20S/.35.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    <div class="card-actions">
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%201%20Perfil%20(3%20meses)%20-%20S/.35.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%201%20Perfil%20(3%20meses)%20-%20S/.35.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    </div>
                 </div>
             </div>
         </article>
@@ -751,7 +833,10 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 89.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%20Completo%20(6%20meses)%20-%20S/.89.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    <div class="card-actions">
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%20Completo%20(6%20meses)%20-%20S/.89.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%20Completo%20(6%20meses)%20-%20S/.89.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                    </div>
                 </div>
             </div>
         </article>
@@ -771,12 +856,12 @@
 
     <footer>
         <p>&copy; Catálogo Digital Lubeltec. Todos los derechos reservados.</p>
+        <p style="margin-top: 5px; color: #475569;">Aceptamos pagos directos mediante Mercado Pago, Visa, Mastercard, Yape y Plin.</p>
     </footer>
 
     <script>
         let currentFilter = 'principal';
 
-        // Abre o cierra únicamente al pulsar la hamburguesa
         function toggleMenu() {
             const menu = document.getElementById('menuDropdown');
             const btn = document.getElementById('hamburgerBtn');
@@ -784,7 +869,6 @@
             btn.classList.toggle('active');
         }
 
-        // Filtra la categoría SIN cerrar el menú
         function filterCategory(category, event) {
             currentFilter = category;
             
