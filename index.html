@@ -395,7 +395,7 @@
 
         .card:hover {
             transform: translateY(-5px);
-            border-color: #38bdf8;
+            border-color: #00b4d8;
         }
 
         .card-img-container {
@@ -473,10 +473,22 @@
             margin-bottom: 8px;
         }
 
+        .card-price-container {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
         .card-price {
             font-size: 1.1rem;
             font-weight: 700;
             color: #38bdf8;
+        }
+
+        .original-price {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            text-decoration: line-through;
         }
 
         .discount-notice {
@@ -682,7 +694,9 @@
         }
 
         .cart-item-info { flex: 1; }
-        .cart-item-price { font-weight: bold; color: #38bdf8; margin: 0 6px; white-space: nowrap; }
+        .cart-item-price-box { display: flex; align-items: center; gap: 5px; }
+        .cart-item-price { font-weight: bold; color: #38bdf8; white-space: nowrap; }
+        .cart-item-orig-price { font-size: 0.72rem; color: #94a3b8; text-decoration: line-through; white-space: nowrap; }
         
         .cart-qty-controls {
             display: flex;
@@ -814,7 +828,7 @@
         <span>¡Agregado al carrito con éxito!</span>
     </div>
 
-    <!-- Modal de Cesta / Carrito -->
+    <!-- Modal de Carrito -->
     <div class="modal-overlay" id="cartModal">
         <div class="modal-card">
             <button class="close-modal" onclick="closeCartModal()">&times;</button>
@@ -937,7 +951,10 @@
                             </div>
                             <div>
                                 <div class="card-price-box">
-                                    <div class="card-price" id="price-win-pro">S/. 50.00</div>
+                                    <div class="card-price-container">
+                                        <div class="card-price" id="price-win-pro">S/. 50.00</div>
+                                        <div class="original-price" id="orig-price-win-pro" style="display:none;"></div>
+                                    </div>
                                     <div class="discount-notice" id="disc-win-pro" style="display:none;"></div>
                                 </div>
                                 <div class="calculator-box">
@@ -970,7 +987,10 @@
                             </div>
                             <div>
                                 <div class="card-price-box">
-                                    <div class="card-price" id="price-off-365">S/. 45.00</div>
+                                    <div class="card-price-container">
+                                        <div class="card-price" id="price-off-365">S/. 45.00</div>
+                                        <div class="original-price" id="orig-price-off-365" style="display:none;"></div>
+                                    </div>
                                     <div class="discount-notice" id="disc-off-365" style="display:none;"></div>
                                 </div>
                                 <div class="calculator-box">
@@ -1003,7 +1023,10 @@
                             </div>
                             <div>
                                 <div class="card-price-box">
-                                    <div class="card-price" id="price-gem-18">S/. 70.00</div>
+                                    <div class="card-price-container">
+                                        <div class="card-price" id="price-gem-18">S/. 70.00</div>
+                                        <div class="original-price" id="orig-price-gem-18" style="display:none;"></div>
+                                    </div>
                                     <div class="discount-notice" id="disc-gem-18" style="display:none;"></div>
                                 </div>
                                 <div class="calculator-box">
@@ -1036,7 +1059,10 @@
                             </div>
                             <div>
                                 <div class="card-price-box">
-                                    <div class="card-price" id="price-canva-3">S/. 55.00</div>
+                                    <div class="card-price-container">
+                                        <div class="card-price" id="price-canva-3">S/. 55.00</div>
+                                        <div class="original-price" id="orig-price-canva-3" style="display:none;"></div>
+                                    </div>
                                     <div class="discount-notice" id="disc-canva-3" style="display:none;"></div>
                                 </div>
                                 <div class="calculator-box">
@@ -1069,7 +1095,10 @@
                             </div>
                             <div>
                                 <div class="card-price-box">
-                                    <div class="card-price" id="price-auto-1">S/. 75.00</div>
+                                    <div class="card-price-container">
+                                        <div class="card-price" id="price-auto-1">S/. 75.00</div>
+                                        <div class="original-price" id="orig-price-auto-1" style="display:none;"></div>
+                                    </div>
                                     <div class="discount-notice" id="disc-auto-1" style="display:none;"></div>
                                 </div>
                                 <div class="calculator-box">
@@ -1102,7 +1131,10 @@
                             </div>
                             <div>
                                 <div class="card-price-box">
-                                    <div class="card-price" id="price-crunch-1">S/. 99.00</div>
+                                    <div class="card-price-container">
+                                        <div class="card-price" id="price-crunch-1">S/. 99.00</div>
+                                        <div class="original-price" id="orig-price-crunch-1" style="display:none;"></div>
+                                    </div>
                                     <div class="discount-notice" id="disc-crunch-1" style="display:none;"></div>
                                 </div>
                                 <div class="calculator-box">
@@ -1144,7 +1176,10 @@
                         </div>
                         <div>
                             <div class="card-price-box">
-                                <div class="card-price" id="price-g-win-pro">S/. 50.00</div>
+                                <div class="card-price-container">
+                                    <div class="card-price" id="price-g-win-pro">S/. 50.00</div>
+                                    <div class="original-price" id="orig-price-g-win-pro" style="display:none;"></div>
+                                </div>
                                 <div class="discount-notice" id="disc-g-win-pro" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
@@ -1176,7 +1211,10 @@
                         </div>
                         <div>
                             <div class="card-price-box">
-                                <div class="card-price" id="price-win-home">S/. 50.00</div>
+                                <div class="card-price-container">
+                                    <div class="card-price" id="price-win-home">S/. 50.00</div>
+                                    <div class="original-price" id="orig-price-win-home" style="display:none;"></div>
+                                </div>
                                 <div class="discount-notice" id="disc-win-home" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
@@ -1209,7 +1247,10 @@
                         </div>
                         <div>
                             <div class="card-price-box">
-                                <div class="card-price" id="price-g-off-365">S/. 45.00</div>
+                                <div class="card-price-container">
+                                    <div class="card-price" id="price-g-off-365">S/. 45.00</div>
+                                    <div class="original-price" id="orig-price-g-off-365" style="display:none;"></div>
+                                </div>
                                 <div class="discount-notice" id="disc-g-off-365" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
@@ -1242,7 +1283,10 @@
                         </div>
                         <div>
                             <div class="card-price-box">
-                                <div class="card-price" id="price-canva-1">S/. 35.00</div>
+                                <div class="card-price-container">
+                                    <div class="card-price" id="price-canva-1">S/. 35.00</div>
+                                    <div class="original-price" id="orig-price-canva-1" style="display:none;"></div>
+                                </div>
                                 <div class="discount-notice" id="disc-canva-1" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
@@ -1274,7 +1318,10 @@
                         </div>
                         <div>
                             <div class="card-price-box">
-                                <div class="card-price" id="price-canva-2">S/. 45.00</div>
+                                <div class="card-price-container">
+                                    <div class="card-price" id="price-canva-2">S/. 45.00</div>
+                                    <div class="original-price" id="orig-price-canva-2" style="display:none;"></div>
+                                </div>
                                 <div class="discount-notice" id="disc-canva-2" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
@@ -1306,7 +1353,10 @@
                         </div>
                         <div>
                             <div class="card-price-box">
-                                <div class="card-price" id="price-g-canva-3">S/. 55.00</div>
+                                <div class="card-price-container">
+                                    <div class="card-price" id="price-g-canva-3">S/. 55.00</div>
+                                    <div class="original-price" id="orig-price-g-canva-3" style="display:none;"></div>
+                                </div>
                                 <div class="discount-notice" id="disc-g-canva-3" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
@@ -1339,7 +1389,10 @@
                         </div>
                         <div>
                             <div class="card-price-box">
-                                <div class="card-price" id="price-canva-inf">S/. 99.00</div>
+                                <div class="card-price-container">
+                                    <div class="card-price" id="price-canva-inf">S/. 99.00</div>
+                                    <div class="original-price" id="orig-price-canva-inf" style="display:none;"></div>
+                                </div>
                                 <div class="discount-notice" id="disc-canva-inf" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
@@ -1372,7 +1425,10 @@
                         </div>
                         <div>
                             <div class="card-price-box">
-                                <div class="card-price" id="price-g-gem-18">S/. 70.00</div>
+                                <div class="card-price-container">
+                                    <div class="card-price" id="price-g-gem-18">S/. 70.00</div>
+                                    <div class="original-price" id="orig-price-g-gem-18" style="display:none;"></div>
+                                </div>
                                 <div class="discount-notice" id="disc-g-gem-18" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
@@ -1404,7 +1460,10 @@
                         </div>
                         <div>
                             <div class="card-price-box">
-                                <div class="card-price" id="price-gem-12">S/. 50.00</div>
+                                <div class="card-price-container">
+                                    <div class="card-price" id="price-gem-12">S/. 50.00</div>
+                                    <div class="original-price" id="orig-price-gem-12" style="display:none;"></div>
+                                </div>
                                 <div class="discount-notice" id="disc-gem-12" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
@@ -1436,7 +1495,10 @@
                         </div>
                         <div>
                             <div class="card-price-box">
-                                <div class="card-price" id="price-duo-12">S/. 144.00</div>
+                                <div class="card-price-container">
+                                    <div class="card-price" id="price-duo-12">S/. 144.00</div>
+                                    <div class="original-price" id="orig-price-duo-12" style="display:none;"></div>
+                                </div>
                                 <div class="discount-notice" id="disc-duo-12" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
@@ -1468,7 +1530,10 @@
                         </div>
                         <div>
                             <div class="card-price-box">
-                                <div class="card-price" id="price-capcut-1">S/. 23.00</div>
+                                <div class="card-price-container">
+                                    <div class="card-price" id="price-capcut-1">S/. 23.00</div>
+                                    <div class="original-price" id="orig-price-capcut-1" style="display:none;"></div>
+                                </div>
                                 <div class="discount-notice" id="disc-capcut-1" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
@@ -1501,7 +1566,10 @@
                         </div>
                         <div>
                             <div class="card-price-box">
-                                <div class="card-price" id="price-g-auto-1">S/. 75.00</div>
+                                <div class="card-price-container">
+                                    <div class="card-price" id="price-g-auto-1">S/. 75.00</div>
+                                    <div class="original-price" id="orig-price-g-auto-1" style="display:none;"></div>
+                                </div>
                                 <div class="discount-notice" id="disc-g-auto-1" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
@@ -1533,7 +1601,10 @@
                         </div>
                         <div>
                             <div class="card-price-box">
-                                <div class="card-price" id="price-auto-6">S/. 49.00</div>
+                                <div class="card-price-container">
+                                    <div class="card-price" id="price-auto-6">S/. 49.00</div>
+                                    <div class="original-price" id="orig-price-auto-6" style="display:none;"></div>
+                                </div>
                                 <div class="discount-notice" id="disc-auto-6" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
@@ -1565,7 +1636,10 @@
                         </div>
                         <div>
                             <div class="card-price-box">
-                                <div class="card-price" id="price-auto-3">S/. 29.00</div>
+                                <div class="card-price-container">
+                                    <div class="card-price" id="price-auto-3">S/. 29.00</div>
+                                    <div class="original-price" id="orig-price-auto-3" style="display:none;"></div>
+                                </div>
                                 <div class="discount-notice" id="disc-auto-3" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
@@ -1597,7 +1671,10 @@
                         </div>
                         <div>
                             <div class="card-price-box">
-                                <div class="card-price" id="price-spot-1">S/. 15.00</div>
+                                <div class="card-price-container">
+                                    <div class="card-price" id="price-spot-1">S/. 15.00</div>
+                                    <div class="original-price" id="orig-price-spot-1" style="display:none;"></div>
+                                </div>
                                 <div class="discount-notice" id="disc-spot-1" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
@@ -1629,7 +1706,10 @@
                         </div>
                         <div>
                             <div class="card-price-box">
-                                <div class="card-price" id="price-flujo-1">S/. 20.00</div>
+                                <div class="card-price-container">
+                                    <div class="card-price" id="price-flujo-1">S/. 20.00</div>
+                                    <div class="original-price" id="orig-price-flujo-1" style="display:none;"></div>
+                                </div>
                                 <div class="discount-notice" id="disc-flujo-1" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
@@ -1661,7 +1741,10 @@
                         </div>
                         <div>
                             <div class="card-price-box">
-                                <div class="card-price" id="price-g-crunch-1">S/. 99.00</div>
+                                <div class="card-price-container">
+                                    <div class="card-price" id="price-g-crunch-1">S/. 99.00</div>
+                                    <div class="original-price" id="orig-price-g-crunch-1" style="display:none;"></div>
+                                </div>
                                 <div class="discount-notice" id="disc-g-crunch-1" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
@@ -1693,7 +1776,10 @@
                         </div>
                         <div>
                             <div class="card-price-box">
-                                <div class="card-price" id="price-crunch-3">S/. 35.00</div>
+                                <div class="card-price-container">
+                                    <div class="card-price" id="price-crunch-3">S/. 35.00</div>
+                                    <div class="original-price" id="orig-price-crunch-3" style="display:none;"></div>
+                                </div>
                                 <div class="discount-notice" id="disc-crunch-3" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
@@ -1725,7 +1811,10 @@
                         </div>
                         <div>
                             <div class="card-price-box">
-                                <div class="card-price" id="price-crunch-6">S/. 89.00</div>
+                                <div class="card-price-container">
+                                    <div class="card-price" id="price-crunch-6">S/. 89.00</div>
+                                    <div class="original-price" id="orig-price-crunch-6" style="display:none;"></div>
+                                </div>
                                 <div class="discount-notice" id="disc-crunch-6" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
@@ -1845,19 +1934,33 @@
             const card = input.closest('.card');
             const basePrice = parseFloat(card.getAttribute('data-base-price'));
             const priceDisplay = document.getElementById('price-' + id);
+            const origPriceDisplay = document.getElementById('orig-price-' + id);
             const discNotice = document.getElementById('disc-' + id);
 
             let unitPrice = basePrice;
+            const originalTotal = basePrice * qty;
+
             if (qty >= 5) {
                 unitPrice = basePrice * 0.85;
                 discNotice.innerText = '¡15% dcto aplicado!';
                 discNotice.style.display = 'block';
+                if(origPriceDisplay) {
+                    origPriceDisplay.innerText = `S/. ${originalTotal.toFixed(2)}`;
+                    origPriceDisplay.style.display = 'inline';
+                }
             } else if (qty >= 3) {
                 unitPrice = basePrice * 0.90;
                 discNotice.innerText = '¡10% dcto aplicado!';
                 discNotice.style.display = 'block';
+                if(origPriceDisplay) {
+                    origPriceDisplay.innerText = `S/. ${originalTotal.toFixed(2)}`;
+                    origPriceDisplay.style.display = 'inline';
+                }
             } else {
                 discNotice.style.display = 'none';
+                if(origPriceDisplay) {
+                    origPriceDisplay.style.display = 'none';
+                }
             }
 
             const finalPrice = unitPrice * qty;
@@ -1867,8 +1970,15 @@
         function addToCart(productName, basePrice, qtyInputId) {
             const qty = parseInt(document.getElementById(qtyInputId).value);
             let unitPrice = basePrice;
-            if (qty >= 5) unitPrice = basePrice * 0.85;
-            else if (qty >= 3) unitPrice = basePrice * 0.90;
+            let discountPercent = 0;
+
+            if (qty >= 5) {
+                unitPrice = basePrice * 0.85;
+                discountPercent = 15;
+            } else if (qty >= 3) {
+                unitPrice = basePrice * 0.90;
+                discountPercent = 10;
+            }
 
             const totalPrice = unitPrice * qty;
 
@@ -1876,12 +1986,19 @@
             if (existing) {
                 existing.qty += qty;
                 let uP = basePrice;
-                if (existing.qty >= 5) uP = basePrice * 0.85;
-                else if (existing.qty >= 3) uP = basePrice * 0.90;
+                let dP = 0;
+                if (existing.qty >= 5) {
+                    uP = basePrice * 0.85;
+                    dP = 15;
+                } else if (existing.qty >= 3) {
+                    uP = basePrice * 0.90;
+                    dP = 10;
+                }
                 existing.unitPrice = uP;
+                existing.discountPercent = dP;
                 existing.totalPrice = uP * existing.qty;
             } else {
-                cart.push({ name: productName, basePrice: basePrice, qty: qty, unitPrice: unitPrice, totalPrice: totalPrice });
+                cart.push({ name: productName, basePrice: basePrice, qty: qty, unitPrice: unitPrice, discountPercent: discountPercent, totalPrice: totalPrice });
             }
 
             updateCartUI();
@@ -1895,9 +2012,16 @@
             } else {
                 let bp = cart[index].basePrice;
                 let uP = bp;
-                if (cart[index].qty >= 5) uP = bp * 0.85;
-                else if (cart[index].qty >= 3) uP = bp * 0.90;
+                let dP = 0;
+                if (cart[index].qty >= 5) {
+                    uP = bp * 0.85;
+                    dP = 15;
+                } else if (cart[index].qty >= 3) {
+                    uP = bp * 0.90;
+                    dP = 10;
+                }
                 cart[index].unitPrice = uP;
+                cart[index].discountPercent = dP;
                 cart[index].totalPrice = uP * cart[index].qty;
             }
             updateCartUI();
@@ -1927,6 +2051,21 @@
             let grandTotal = 0;
             cart.forEach((item, idx) => {
                 grandTotal += item.totalPrice;
+                let originalTotal = item.basePrice * item.qty;
+                let priceBoxHtml = '';
+                
+                if (item.discountPercent > 0) {
+                    priceBoxHtml = `
+                        <div class="cart-item-price-box">
+                            <span class="cart-item-price">S/. ${item.totalPrice.toFixed(2)}</span>
+                            <span class="cart-item-orig-price">S/. ${originalTotal.toFixed(2)}</span>
+                            <span style="color:#22c55e; font-size:0.65rem; font-weight:bold;">(${item.discountPercent}% dcto)</span>
+                        </div>
+                    `;
+                } else {
+                    priceBoxHtml = `<div class="cart-item-price">S/. ${item.totalPrice.toFixed(2)}</div>`;
+                }
+
                 html += `
                     <div class="cart-item-row">
                         <div class="cart-item-info">
@@ -1938,7 +2077,7 @@
                             <span style="font-size:0.8rem; padding: 0 4px;">${item.qty}</span>
                             <button class="cart-q-btn" onclick="updateCartItemQty(${idx}, 1)">+</button>
                         </div>
-                        <div class="cart-item-price">S/. ${item.totalPrice.toFixed(2)}</div>
+                        ${priceBoxHtml}
                         <button class="cart-item-remove" onclick="removeFromCart(${idx})">Eliminar</button>
                     </div>
                 `;
