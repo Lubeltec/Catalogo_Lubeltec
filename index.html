@@ -42,15 +42,82 @@
 
         .header-top {
             display: grid;
-            grid-template-columns: 38px 1fr 38px;
+            grid-template-columns: 55px 1fr 38px;
             align-items: center;
             max-width: 600px;
-            margin: 0 auto 6px auto;
+            margin: 0 auto 4px auto;
         }
 
-        .hamburger-btn {
+        /* Logo Grande en la izquierda */
+        .large-logo-container {
             grid-column: 1;
             justify-self: start;
+            display: flex;
+            align-items: center;
+        }
+
+        .large-logo {
+            height: 50px;
+            width: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #00b4d8;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .large-logo:hover {
+            transform: scale(1.08);
+        }
+
+        /* Marca y Título interactivo */
+        .header-brand {
+            grid-column: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 8px rgba(0, 180, 216, 0.4); }
+            50% { box-shadow: 0 0 18px rgba(0, 180, 216, 0.8); }
+            100% { box-shadow: 0 0 8px rgba(0, 180, 216, 0.4); }
+        }
+
+        .header-logo {
+            height: 32px;
+            width: 32px;
+            object-fit: cover;
+            border-radius: 50%;
+            animation: pulseGlow 3s infinite ease-in-out;
+        }
+
+        header h1 {
+            font-size: 1.3rem;
+            color: #00b4d8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        /* Slogan */
+        .slogan-text {
+            font-size: 0.76rem;
+            color: #38bdf8;
+            font-style: italic;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        /* Hamburguesa */
+        .hamburger-btn {
+            grid-column: 3;
+            justify-self: end;
             background: rgba(0, 180, 216, 0.15);
             color: #38bdf8;
             border: 1px solid #00b4d8;
@@ -71,54 +138,24 @@
             box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
         }
 
-        .header-brand {
-            grid-column: 2;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 8px rgba(0, 180, 216, 0.4); }
-            50% { box-shadow: 0 0 18px rgba(0, 180, 216, 0.8); }
-            100% { box-shadow: 0 0 8px rgba(0, 180, 216, 0.4); }
-        }
-
-        .header-logo {
-            height: 38px;
-            width: 38px;
-            object-fit: cover;
-            border-radius: 50%;
-            animation: pulseGlow 3s infinite ease-in-out;
-        }
-
-        header h1 {
-            font-size: 1.3rem;
-            color: #00b4d8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 0;
-        }
-
         .payment-methods-badge {
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             color: #94a3b8;
             margin-bottom: 6px;
         }
 
         .payment-methods-badge span {
-            color: #742284; /* Color Yape */
+            color: #742284;
             font-weight: bold;
             background: #ffffff;
-            padding: 1px 6px;
+            padding: 1px 5px;
             border-radius: 4px;
         }
 
-        /* Menú Desplegable */
+        /* Menú Desplegable Responsivo */
         .menu-dropdown {
             max-height: 0;
-            overflow: hidden;
+            overflow-y: auto;
             transition: max-height 0.35s ease-out, opacity 0.25s ease;
             opacity: 0;
             display: flex;
@@ -127,13 +164,15 @@
             justify-content: center;
             max-width: 600px;
             margin: 0 auto;
+            scrollbar-width: thin;
+            scrollbar-color: #00b4d8 transparent;
         }
 
         .menu-dropdown.open {
-            max-height: 200px;
+            max-height: 160px;
             opacity: 1;
             margin-bottom: 10px;
-            padding-top: 4px;
+            padding: 6px 4px;
         }
 
         .cat-chip {
@@ -304,7 +343,6 @@
             gap: 6px;
         }
 
-        /* Botón Yape/Plin Estilizado */
         .btn-yape {
             display: flex;
             align-items: center;
@@ -347,7 +385,7 @@
             pointer-events: none;
         }
 
-        /* Ventana Emergente (Modal de Yape/Plin) */
+        /* Modal Yape/Plin */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -417,7 +455,7 @@
             line-height: 1.4;
         }
 
-        /* Banners Próximamente */
+        /* Banners y Secciones Especiales */
         .banner-upcoming {
             grid-column: 1 / -1;
             background: rgba(20, 26, 35, 0.95);
@@ -436,6 +474,40 @@
         .banner-upcoming p {
             font-size: 0.85rem;
             color: #94a3b8;
+        }
+
+        /* Sección Misión y Visión */
+        .info-panel {
+            grid-column: 1 / -1;
+            background: rgba(13, 22, 35, 0.95);
+            border: 1px solid #00b4d8;
+            border-radius: 16px;
+            padding: 25px 20px;
+            box-shadow: 0 0 20px rgba(0, 180, 216, 0.2);
+        }
+
+        .info-panel h2 {
+            color: #38bdf8;
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .info-box {
+            margin-bottom: 18px;
+        }
+
+        .info-box h3 {
+            color: #00b4d8;
+            font-size: 1rem;
+            margin-bottom: 6px;
+        }
+
+        .info-box p {
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            line-height: 1.5;
         }
 
         .float-whatsapp {
@@ -469,7 +541,7 @@
 
     <a href="https://wa.me/51933907930?text=Hola,%20quisiera%20consultar%20sobre%20sus%20licencias%20digitales" class="float-whatsapp" target="_blank" title="Contactar por WhatsApp">💬</a>
 
-    <!-- Modal de Pago Yape / Plin -->
+    <!-- Modal Yape/Plin -->
     <div class="modal-overlay" id="paymentModal">
         <div class="modal-card">
             <button class="close-modal" onclick="closeModal()">&times;</button>
@@ -492,21 +564,30 @@
 
     <header>
         <div class="header-top">
-            <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMenu()" title="Menú de Categorías">☰</button>
-            <div class="header-brand">
+            <!-- Logo Grande en la izquierda -->
+            <div class="large-logo-container">
+                <img src="lubeltec.png" alt="Logo Lubeltec Grande" class="large-logo" onclick="resetToPrincipal()">
+            </div>
+
+            <!-- Marca y Título interactivo -->
+            <div class="header-brand" onclick="resetToPrincipal()" title="Ir al menú principal">
                 <img src="lubeltec.png" alt="Logo Lubeltec" class="header-logo">
                 <h1>Lubeltec</h1>
             </div>
-            <div></div>
+
+            <!-- Botón Hamburguesa -->
+            <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMenu()" title="Menú de Categorías">☰</button>
         </div>
+
+        <div class="slogan-text">✨ Software Original y Licencias Digitales a tu Alcance ✨</div>
 
         <div class="payment-methods-badge">
             Pagos inmediatos con <span>Yape</span> y <span>Plin</span>
         </div>
 
-        <!-- Categorías -->
+        <!-- Categorías desplegables -->
         <div class="menu-dropdown" id="menuDropdown">
-            <button class="cat-chip active" onclick="filterCategory('principal', event)">🏠 Principal</button>
+            <button class="cat-chip active" id="chip-principal" onclick="filterCategory('principal', event)">🏠 Principal</button>
             <button class="cat-chip" onclick="filterCategory('win', event)">💻 Windows 10/11</button>
             <button class="cat-chip" onclick="filterCategory('diseno', event)">🎨 Diseño</button>
             <button class="cat-chip" onclick="filterCategory('ia', event)">🤖 IA</button>
@@ -515,6 +596,7 @@
             <button class="cat-chip" onclick="filterCategory('edu', event)">📚 Educación</button>
             <button class="cat-chip" onclick="filterCategory('antivirus', event)">🛡️ Antivirus</button>
             <button class="cat-chip" onclick="filterCategory('juegos', event)">🎮 Juegos</button>
+            <button class="cat-chip" onclick="filterCategory('nosotros', event)">📌 Visión y Misión</button>
         </div>
 
         <!-- Filtros -->
@@ -934,6 +1016,21 @@
             <p>Estamos preparando un catálogo especial de licencias y juegos para PC y consolas a precios súper accesibles. ¡Atento a nuestras actualizaciones!</p>
         </div>
 
+        <!-- Sección Visión y Misión -->
+        <div class="info-panel" id="panelNosotros" style="display: none;">
+            <h2>Nuestra Misión y Visión</h2>
+            
+            <div class="info-box">
+                <h3>🚀 Misión</h3>
+                <p>En <strong>Lubeltec</strong>, facilitamos el acceso a software original y servicios digitales garantizados para estudiantes, profesionales y empresas en Perú. Nos comprometemos a brindar soluciones tecnológicas transparentes, accesibles y con soporte postventa inmediato, garantizando que cada cliente potencie sus herramientas de trabajo sin complicaciones.</p>
+            </div>
+
+            <div class="info-box">
+                <h3>👁️ Visión</h3>
+                <p>Ser reconocidos como el catálogo digital líder y más confiable en el mercado peruano para la adquisición de licencias de software, soluciones de inteligencia artificial y entretenimiento digital, destacando por nuestra honestidad, rapidez de entrega y atención personalizada constante.</p>
+            </div>
+        </div>
+
     </main>
 
     <footer>
@@ -952,13 +1049,30 @@
 
         function filterCategory(category, event) {
             currentFilter = category;
+            
             const chips = document.querySelectorAll('.cat-chip');
             chips.forEach(chip => chip.classList.remove('active'));
-            event.target.classList.add('active');
+            if(event) event.target.classList.add('active');
+
             updateProducts();
         }
 
-        // Lógica del Modal de Pago Yape/Plin
+        // Restablece la vista al estado 'Principal' al tocar el título o logo
+        function resetToPrincipal() {
+            currentFilter = 'principal';
+            const chips = document.querySelectorAll('.cat-chip');
+            chips.forEach(chip => chip.classList.remove('active'));
+            document.getElementById('chip-principal').classList.add('active');
+            
+            document.getElementById('searchInput').value = '';
+            document.getElementById('sortSelect').value = 'default';
+            document.getElementById('stockSelect').value = 'all';
+
+            updateProducts();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Modal Yape/Plin
         function openPaymentModal(productName, price) {
             document.getElementById('modalProductName').innerText = productName;
             document.getElementById('modalProductPrice').innerText = price;
@@ -978,10 +1092,22 @@
             const cardsArray = Array.from(container.getElementsByClassName('card'));
             const bannerAntivirus = document.getElementById('bannerAntivirus');
             const bannerJuegos = document.getElementById('bannerJuegos');
+            const panelNosotros = document.getElementById('panelNosotros');
             
             const searchText = document.getElementById('searchInput').value.toLowerCase();
             const sortValue = document.getElementById('sortSelect').value;
             const stockValue = document.getElementById('stockSelect').value;
+
+            // Muestra u oculta paneles según la categoría
+            if (currentFilter === 'nosotros') {
+                cardsArray.forEach(card => card.style.display = "none");
+                bannerAntivirus.style.display = "none";
+                bannerJuegos.style.display = "none";
+                panelNosotros.style.display = "block";
+                return;
+            } else {
+                panelNosotros.style.display = "none";
+            }
 
             if (currentFilter === 'antivirus') {
                 cardsArray.forEach(card => card.style.display = "none");
@@ -998,6 +1124,7 @@
                 bannerJuegos.style.display = "none";
             }
 
+            // Filtrar catálogo común
             cardsArray.forEach(card => {
                 const category = card.getAttribute('data-category');
                 const title = card.getAttribute('data-name').toLowerCase();
