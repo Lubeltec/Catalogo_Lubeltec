@@ -42,19 +42,16 @@
 
         .header-top {
             display: grid;
-            grid-template-columns: 55px 1fr 55px;
+            grid-template-columns: 38px 1fr 38px;
             align-items: center;
             max-width: 600px;
             margin: 0 auto 4px auto;
         }
 
         /* Hamburguesa a la Izquierda */
-        .hamburger-container {
+        .hamburger-btn {
             grid-column: 1;
             justify-self: start;
-        }
-
-        .hamburger-btn {
             background: rgba(0, 180, 216, 0.15);
             color: #38bdf8;
             border: 1px solid #00b4d8;
@@ -75,7 +72,7 @@
             box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
         }
 
-        /* Marca y Título central interativo */
+        /* Marca y Título central interactivo */
         .header-brand {
             grid-column: 2;
             display: flex;
@@ -108,30 +105,6 @@
             margin: 0;
         }
 
-        /* Logo Grande a la Derecha */
-        .large-logo-container {
-            grid-column: 3;
-            justify-self: end;
-            display: flex;
-            align-items: center;
-        }
-
-        .large-logo {
-            height: 45px;
-            width: 45px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 2px solid #00b4d8;
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
-            transition: transform 0.3s ease;
-        }
-
-        .large-logo:hover {
-            transform: scale(1.08);
-        }
-
-        /* Slogan */
         .slogan-text {
             font-size: 0.76rem;
             color: #38bdf8;
@@ -155,7 +128,7 @@
             border-radius: 4px;
         }
 
-        /* Menú Desplegable Principal */
+        /* Menú Desplegable */
         .menu-dropdown {
             max-height: 0;
             overflow-y: auto;
@@ -178,7 +151,6 @@
             padding: 6px 4px;
         }
 
-        /* Submenú de Software (Agrupado) */
         .submenu-software {
             display: none;
             flex-wrap: wrap;
@@ -268,11 +240,58 @@
             text-align: center;
         }
 
-        /* Contenedor de Productos */
+        /* Contenedor Principal */
         .container {
             max-width: 1200px;
             margin: 15px auto;
             padding: 0 10px;
+        }
+
+        /* Títulos de Sección */
+        .section-title {
+            font-size: 1.1rem;
+            color: #38bdf8;
+            margin: 20px 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Estilo del Carrusel Automático para Destacados */
+        .carousel-container {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            padding: 5px 0 15px 0;
+        }
+
+        .carousel-track {
+            display: flex;
+            gap: 15px;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform;
+        }
+
+        .carousel-track .card.destacada {
+            min-width: 250px;
+            flex: 0 0 calc(25% - 12px); /* 4 tarjetas en escritorio */
+        }
+
+        @media (max-width: 1024px) {
+            .carousel-track .card.destacada {
+                flex: 0 0 calc(33.333% - 10px); /* 3 tarjetas en tablets */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .carousel-track .card.destacada {
+                flex: 0 0 calc(85% - 10px); /* 1 tarjeta amplia visible en celulares */
+            }
+        }
+
+        .grid-layout {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
             gap: 15px;
@@ -291,9 +310,14 @@
             transition: all 0.3s ease;
         }
 
+        .card.destacada {
+            border: 1.5px solid #00b4d8;
+            background: rgba(13, 25, 38, 0.95);
+        }
+
         .card:hover {
             transform: translateY(-5px);
-            border-color: #00b4d8;
+            border-color: #38bdf8;
         }
 
         .card-img-container {
@@ -418,7 +442,7 @@
             pointer-events: none;
         }
 
-        /* Modal Yape/Plin */
+        /* Modal Yape / Plin */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -488,14 +512,14 @@
             line-height: 1.4;
         }
 
-        /* Banners y Secciones Especiales */
+        /* Banners y Secciones */
         .banner-upcoming {
-            grid-column: 1 / -1;
             background: rgba(20, 26, 35, 0.95);
             border: 2px dashed #00b4d8;
             border-radius: 14px;
             padding: 30px 12px;
             text-align: center;
+            margin-top: 15px;
         }
 
         .banner-upcoming h2 {
@@ -509,14 +533,13 @@
             color: #94a3b8;
         }
 
-        /* Sección Misión y Visión */
         .info-panel {
-            grid-column: 1 / -1;
             background: rgba(13, 22, 35, 0.95);
             border: 1px solid #00b4d8;
             border-radius: 16px;
             padding: 25px 20px;
             box-shadow: 0 0 20px rgba(0, 180, 216, 0.2);
+            margin-top: 15px;
         }
 
         .info-panel h2 {
@@ -574,7 +597,7 @@
 
     <a href="https://wa.me/51933907930?text=Hola,%20quisiera%20consultar%20sobre%20sus%20licencias%20digitales" class="float-whatsapp" target="_blank" title="Contactar por WhatsApp">💬</a>
 
-    <!-- Modal Yape/Plin -->
+    <!-- Modal Yape / Plin -->
     <div class="modal-overlay" id="paymentModal">
         <div class="modal-card">
             <button class="close-modal" onclick="closeModal()">&times;</button>
@@ -585,7 +608,7 @@
             
             <div class="payment-info">
                 <strong>Número:</strong> 933 907 930<br>
-                <strong>Titular:</strong> Luis Val.<br>
+                <strong>Titular:</strong> Lubeltec Licencias<br>
                 <strong>Monto a pagar:</strong> <span id="modalProductPrice" style="color: #38bdf8; font-weight: bold;">S/. 0.00</span>
             </div>
 
@@ -597,21 +620,14 @@
 
     <header>
         <div class="header-top">
-            <!-- Hamburguesa a la Izquierda -->
-            <div class="hamburger-container">
-                <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMenu()" title="Menú de Categorías">☰</button>
-            </div>
-
-            <!-- Marca y Título central interactivo -->
+            <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMenu()" title="Menú de Categorías">☰</button>
+            
             <div class="header-brand" onclick="resetToPrincipal()" title="Ir al menú principal">
                 <img src="lubeltec.png" alt="Logo Lubeltec" class="header-logo">
                 <h1>Lubeltec</h1>
             </div>
 
-            <!-- Logo Grande a la Derecha -->
-            <div class="large-logo-container">
-                <img src="lubeltec.png" alt="Logo Lubeltec Grande" class="large-logo" onclick="resetToPrincipal()" title="Ir al menú principal">
-            </div>
+            <div></div>
         </div>
 
         <div class="slogan-text">✨ Software Original y Licencias Digitales a tu Alcance ✨</div>
@@ -620,7 +636,7 @@
             Pagos inmediatos con <span>Yape</span> y <span>Plin</span>
         </div>
 
-        <!-- Menú Desplegable Principal -->
+        <!-- Menú Desplegable -->
         <div class="menu-dropdown" id="menuDropdown">
             <button class="cat-chip active" id="chip-principal" onclick="filterCategory('principal', event)">🏠 Principal</button>
             <button class="cat-chip" id="chip-software" onclick="toggleSubmenu('softwareSubmenu', event)">📂 Software ▾</button>
@@ -660,393 +676,413 @@
 
     <main class="container" id="productContainer">
 
-        <!-- Windows 10/11 Pro -->
-        <article class="card" data-category="win" data-price="50.00" data-name="Windows 10/11 Pro (Siempre)" data-stock="true">
-            <div class="card-img-container">
-                <img src="windows11.png" alt="Windows 10/11 Pro">
-            </div>
-            <div class="card-content">
-                <div>
-                    <span class="badge-tag">Permanente</span>
-                    <h2 class="card-title">Windows 10/11 Pro (Siempre)</h2>
-                    <p class="card-description">Licencia digital permanente (OEM). Reactivación para tu sistema operativo de por vida.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 50.00</div>
-                    <div class="card-actions">
-                        <button class="btn-yape" onclick="openPaymentModal('Windows 10/11 Pro (Siempre)', 'S/. 50.00')">💜 Pagar con Yape / Plin</button>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Windows%2010/11%20Pro%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
-                    </div>
-                </div>
-            </div>
-        </article>
+        <!-- SECCIÓN: CARRUSEL AUTOMÁTICO DE DESTACADOS -->
+        <div id="seccionDestacados">
+            <h2 class="section-title">🔥 Programas Destacados</h2>
+            <div class="carousel-container">
+                <div class="carousel-track" id="carouselTrack">
 
-        <!-- Windows 10/11 Home -->
-        <article class="card" data-category="win" data-price="50.00" data-name="Windows 10/11 Home (Siempre)" data-stock="true">
-            <div class="card-img-container">
-                <img src="windows11.png" alt="Windows 10/11 Home">
-            </div>
-            <div class="card-content">
-                <div>
-                    <h2 class="card-title">Windows 10/11 Home (Siempre)</h2>
-                    <p class="card-description">Activación permanente y original para uso doméstico o personal según tu requerimiento.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 50.00</div>
-                    <div class="card-actions">
-                        <button class="btn-yape" onclick="openPaymentModal('Windows 10/11 Home (Siempre)', 'S/. 50.00')">💜 Pagar con Yape / Plin</button>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Windows%2010/11%20Home%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
-                    </div>
-                </div>
-            </div>
-        </article>
+                    <!-- Windows 10/11 Pro -->
+                    <article class="card destacada" data-category="win" data-price="50.00" data-name="Windows 10/11 Pro (Siempre)" data-stock="true">
+                        <div class="card-img-container">
+                            <img src="windows11.png" alt="Windows 10/11 Pro">
+                        </div>
+                        <div class="card-content">
+                            <div>
+                                <span class="badge-tag">⭐ Destacado</span>
+                                <h2 class="card-title">Windows 10/11 Pro (Siempre)</h2>
+                                <p class="card-description">Licencia digital permanente (OEM). Reactivación para tu sistema operativo de por vida.</p>
+                            </div>
+                            <div>
+                                <div class="card-price">S/. 50.00</div>
+                                <div class="card-actions">
+                                    <button class="btn-yape" onclick="openPaymentModal('Windows 10/11 Pro (Siempre)', 'S/. 50.00')">💜 Pagar con Yape / Plin</button>
+                                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Windows%2010/11%20Pro%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
 
-        <!-- Office 365 -->
-        <article class="card" data-category="ia" data-price="45.00" data-name="Office 365 (1 año)" data-stock="true">
-            <div class="card-img-container">
-                <img src="office365.png" alt="Office 365 (1 año)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <span class="badge-tag">Garantizado</span>
-                    <h2 class="card-title">Office 365 (1 año)</h2>
-                    <p class="card-description">Instálalo en hasta 5 dispositivos. Incluye Word, Excel, PowerPoint, Outlook, Teams y 1TB en OneDrive.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 45.00</div>
-                    <div class="card-actions">
-                        <button class="btn-yape" onclick="openPaymentModal('Office 365 (1 año)', 'S/. 45.00')">💜 Pagar con Yape / Plin</button>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Office%20365%20(1%20año)%20-%20S/.45.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
-                    </div>
-                </div>
-            </div>
-        </article>
+                    <!-- Office 365 -->
+                    <article class="card destacada" data-category="ia" data-price="45.00" data-name="Office 365 (1 año)" data-stock="true">
+                        <div class="card-img-container">
+                            <img src="office365.png" alt="Office 365 (1 año)">
+                        </div>
+                        <div class="card-content">
+                            <div>
+                                <span class="badge-tag">⭐ Destacado</span>
+                                <h2 class="card-title">Office 365 (1 año)</h2>
+                                <p class="card-description">Instálalo en hasta 5 dispositivos. Incluye Word, Excel, PowerPoint, Outlook, Teams y 1TB en OneDrive.</p>
+                            </div>
+                            <div>
+                                <div class="card-price">S/. 45.00</div>
+                                <div class="card-actions">
+                                    <button class="btn-yape" onclick="openPaymentModal('Office 365 (1 año)', 'S/. 45.00')">💜 Pagar con Yape / Plin</button>
+                                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Office%20365%20(1%20año)%20-%20S/.45.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
 
-        <!-- Canva (1 año) -->
-        <article class="card" data-category="diseno" data-price="35.00" data-name="Canva Pro (1 año)" data-stock="true">
-            <div class="card-img-container">
-                <img src="canva.png" alt="Canva Pro (1 año)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <span class="badge-tag">Popular</span>
-                    <h2 class="card-title">Canva Pro (1 año)</h2>
-                    <p class="card-description">Herramienta de diseño gráfico con acceso a imágenes premium, vídeos, quita fondos e IA.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 35.00</div>
-                    <div class="card-actions">
-                        <button class="btn-yape" onclick="openPaymentModal('Canva Pro (1 año)', 'S/. 35.00')">💜 Pagar con Yape / Plin</button>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(1%20año)%20-%20S/.35.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
-                    </div>
-                </div>
-            </div>
-        </article>
+                    <!-- Gemini Pro (18 meses) -->
+                    <article class="card destacada" data-category="ia" data-price="70.00" data-name="Gemini Pro 3.6 (18 meses)" data-stock="true">
+                        <div class="card-img-container">
+                            <img src="gemini18.png" alt="Gemini Pro (18 meses)">
+                        </div>
+                        <div class="card-content">
+                            <div>
+                                <span class="badge-tag">⭐ Destacado</span>
+                                <h2 class="card-title">Gemini Pro 3.6 (18 meses)</h2>
+                                <p class="card-description">Incluye IA avanzada Gemini Pro, generación de video en Veo 3, NotebookLM y 5TB en Google Drive.</p>
+                            </div>
+                            <div>
+                                <div class="card-price">S/. 70.00</div>
+                                <div class="card-actions">
+                                    <button class="btn-yape" onclick="openPaymentModal('Gemini Pro 3.6 (18 meses)', 'S/. 70.00')">💜 Pagar con Yape / Plin</button>
+                                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(18%20meses)%20-%20S/.70.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
 
-        <!-- Canva (2 años) -->
-        <article class="card" data-category="diseno" data-price="45.00" data-name="Canva Pro (2 años)" data-stock="true">
-            <div class="card-img-container">
-                <img src="canva.png" alt="Canva Pro (2 años)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <h2 class="card-title">Canva Pro (2 años)</h2>
-                    <p class="card-description">Acceso Pro extendido para diseñar plantillas exclusivas, kit de marca y elementos ilimitados.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 45.00</div>
-                    <div class="card-actions">
-                        <button class="btn-yape" onclick="openPaymentModal('Canva Pro (2 años)', 'S/. 45.00')">💜 Pagar con Yape / Plin</button>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(2%20años)%20-%20S/.45.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
-                    </div>
-                </div>
-            </div>
-        </article>
+                    <!-- Canva Pro (3 años) - Reemplazado -->
+                    <article class="card destacada" data-category="diseno" data-price="55.00" data-name="Canva Pro (3 años)" data-stock="true">
+                        <div class="card-img-container">
+                            <img src="canva.png" alt="Canva Pro (3 años)">
+                        </div>
+                        <div class="card-content">
+                            <div>
+                                <span class="badge-tag">⭐ Destacado</span>
+                                <h2 class="card-title">Canva Pro (3 años)</h2>
+                                <p class="card-description">Suscripción por 3 años con todas las herramientas de diseño avanzadas e inteligencia artificial.</p>
+                            </div>
+                            <div>
+                                <div class="card-price">S/. 55.00</div>
+                                <div class="card-actions">
+                                    <button class="btn-yape" onclick="openPaymentModal('Canva Pro (3 años)', 'S/. 55.00')">💜 Pagar con Yape / Plin</button>
+                                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(3%20años)%20-%20S/.55.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
 
-        <!-- Canva (3 años) -->
-        <article class="card" data-category="diseno" data-price="55.00" data-name="Canva Pro (3 años)" data-stock="true">
-            <div class="card-img-container">
-                <img src="canva.png" alt="Canva Pro (3 años)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <h2 class="card-title">Canva Pro (3 años)</h2>
-                    <p class="card-description">Suscripción por 3 años con todas las herramientas de diseño avanzadas e inteligencia artificial.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 55.00</div>
-                    <div class="card-actions">
-                        <button class="btn-yape" onclick="openPaymentModal('Canva Pro (3 años)', 'S/. 55.00')">💜 Pagar con Yape / Plin</button>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(3%20años)%20-%20S/.55.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
-                    </div>
-                </div>
-            </div>
-        </article>
+                    <!-- Autodesk (1 año) -->
+                    <article class="card destacada" data-category="diseno" data-price="75.00" data-name="Autodesk All Apps (1 año)" data-stock="true">
+                        <div class="card-img-container">
+                            <img src="autodesk.png" alt="Autodesk All Apps (1 año)">
+                        </div>
+                        <div class="card-content">
+                            <div>
+                                <span class="badge-tag">⭐ Destacado / Suite Pro</span>
+                                <h2 class="card-title">Autodesk All Apps (1 año)</h2>
+                                <p class="card-description">Acceso a suite completa: AutoCAD, Revit, Inventor, Civil 3D, Maya, 3ds Max y Fusion 360.</p>
+                            </div>
+                            <div>
+                                <div class="card-price">S/. 75.00</div>
+                                <div class="card-actions">
+                                    <button class="btn-yape" onclick="openPaymentModal('Autodesk All Apps (1 año)', 'S/. 75.00')">💜 Pagar con Yape / Plin</button>
+                                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(1%20año)%20-%20S/.75.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
 
-        <!-- Canva (para siempre) -->
-        <article class="card" data-category="diseno" data-price="99.00" data-name="Canva Pro (para siempre)" data-stock="false">
-            <div class="card-img-container">
-                <img src="canva.png" alt="Canva Pro (para siempre)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <span class="badge-out-of-stock">Sin Stock</span>
-                    <h2 class="card-title">Canva Pro (para siempre)</h2>
-                    <p class="card-description">Licencia vitalicia con acceso completo a funciones de diseño premium.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 99.00</div>
-                    <div class="card-actions">
-                        <button class="btn-yape btn-disabled">Agotado</button>
-                        <a href="#" class="btn-whatsapp btn-disabled">Agotado</a>
-                    </div>
-                </div>
-            </div>
-        </article>
+                    <!-- Crunchyroll 1 Perfil (1 año) - Agregado -->
+                    <article class="card destacada" data-category="iptv" data-price="99.00" data-name="Crunchyroll 1 Perfil (1 año)" data-stock="true">
+                        <div class="card-img-container">
+                            <img src="crunchyroll.png" alt="Crunchyroll Mega Fan (1 año)">
+                        </div>
+                        <div class="card-content">
+                            <div>
+                                <span class="badge-tag">⭐ Destacado / Anime</span>
+                                <h2 class="card-title">Crunchyroll 1 Perfil (1 año)</h2>
+                                <p class="card-description">Cuenta Mega Fan para 1 perfil individual. Animes de estreno, sin anuncios y descargas sin conexión.</p>
+                            </div>
+                            <div>
+                                <div class="card-price">S/. 99.00</div>
+                                <div class="card-actions">
+                                    <button class="btn-yape" onclick="openPaymentModal('Crunchyroll 1 Perfil (1 año)', 'S/. 99.00')">💜 Pagar con Yape / Plin</button>
+                                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%201%20Perfil%20(1%20año)%20-%20S/.99.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
 
-        <!-- Gemini Pro (18 meses) -->
-        <article class="card" data-category="ia" data-price="70.00" data-name="Gemini Pro 3.6 (18 meses)" data-stock="true">
-            <div class="card-img-container">
-                <img src="gemini18.png" alt="Gemini Pro (18 meses)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <span class="badge-tag">Top IA</span>
-                    <h2 class="card-title">Gemini Pro 3.6 (18 meses)</h2>
-                    <p class="card-description">Incluye IA avanzada Gemini Pro, generación de video en Veo 3, NotebookLM y 5TB en Google Drive.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 70.00</div>
-                    <div class="card-actions">
-                        <button class="btn-yape" onclick="openPaymentModal('Gemini Pro 3.6 (18 meses)', 'S/. 70.00')">💜 Pagar con Yape / Plin</button>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(18%20meses)%20-%20S/.70.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
-                    </div>
                 </div>
             </div>
-        </article>
+        </div>
 
-        <!-- Gemini Pro (12 meses) -->
-        <article class="card" data-category="ia" data-price="50.00" data-name="Gemini Pro 3.6 (12 meses)" data-stock="true">
-            <div class="card-img-container">
-                <img src="gemini12.png" alt="Gemini Pro (12 meses)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <h2 class="card-title">Gemini Pro 3.6 (12 meses)</h2>
-                    <p class="card-description">Potencia tu trabajo con la IA de Google One por 1 año y almacenamiento masivo de 5TB.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 50.00</div>
-                    <div class="card-actions">
-                        <button class="btn-yape" onclick="openPaymentModal('Gemini Pro 3.6 (12 meses)', 'S/. 50.00')">💜 Pagar con Yape / Plin</button>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(12%20meses)%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
-                    </div>
-                </div>
-            </div>
-        </article>
+        <!-- SECCIÓN: CATÁLOGO GENERAL -->
+        <div id="seccionCatalogo">
+            <h2 class="section-title">📦 Catálogo General de Licencias</h2>
+            <div class="grid-layout" id="catalogoGrid">
 
-        <!-- Duolingo (12 meses) -->
-        <article class="card" data-category="edu" data-price="144.00" data-name="Duolingo Super (12 meses)" data-stock="true">
-            <div class="card-img-container">
-                <img src="duolingo.png" alt="Duolingo (12 meses)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <h2 class="card-title">Duolingo Super (12 meses)</h2>
-                    <p class="card-description">Aprende idiomas de forma interactiva con vidas ilimitadas y 100% libre de anuncios por 1 año.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 144.00</div>
-                    <div class="card-actions">
-                        <button class="btn-yape" onclick="openPaymentModal('Duolingo Super (12 meses)', 'S/. 144.00')">💜 Pagar con Yape / Plin</button>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Duolingo%20(12%20meses)%20-%20S/.144.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                <!-- Windows 10/11 Home -->
+                <article class="card general-card" data-category="win" data-price="50.00" data-name="Windows 10/11 Home (Siempre)" data-stock="true">
+                    <div class="card-img-container">
+                        <img src="windows11.png" alt="Windows 10/11 Home">
                     </div>
-                </div>
-            </div>
-        </article>
-
-        <!-- Capcut Pro -->
-        <article class="card" data-category="diseno" data-price="23.00" data-name="Capcut Pro (1 mes)" data-stock="true">
-            <div class="card-img-container">
-                <img src="capcut.png" alt="Capcut pro (1 mes)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <h2 class="card-title">Capcut Pro (1 mes)</h2>
-                    <p class="card-description">Desbloquea herramientas premium, efectos, plantillas exclusivas, subtítulos e integración sin marca de agua.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 23.00</div>
-                    <div class="card-actions">
-                        <button class="btn-yape" onclick="openPaymentModal('Capcut Pro (1 mes)', 'S/. 23.00')">💜 Pagar con Yape / Plin</button>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Capcut%20Pro%20(1%20mes)%20-%20S/.23.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Windows 10/11 Home (Siempre)</h2>
+                            <p class="card-description">Activación permanente y original para uso doméstico o personal según tu requerimiento.</p>
+                        </div>
+                        <div>
+                            <div class="card-price">S/. 50.00</div>
+                            <div class="card-actions">
+                                <button class="btn-yape" onclick="openPaymentModal('Windows 10/11 Home (Siempre)', 'S/. 50.00')">💜 Pagar con Yape / Plin</button>
+                                <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Windows%2010/11%20Home%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </article>
+                </article>
 
-        <!-- Autodesk (1 año) -->
-        <article class="card" data-category="diseno" data-price="75.00" data-name="Autodesk All Apps (1 año)" data-stock="true">
-            <div class="card-img-container">
-                <img src="autodesk.png" alt="Autodesk All Apps (1 año)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <span class="badge-tag">Suite Pro</span>
-                    <h2 class="card-title">Autodesk All Apps (1 año)</h2>
-                    <p class="card-description">Acceso a suite completa: AutoCAD, Revit, Inventor, Civil 3D, Maya, 3ds Max y Fusion 360.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 75.00</div>
-                    <div class="card-actions">
-                        <button class="btn-yape" onclick="openPaymentModal('Autodesk All Apps (1 año)', 'S/. 75.00')">💜 Pagar con Yape / Plin</button>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(1%20año)%20-%20S/.75.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                <!-- Canva (1 año) -->
+                <article class="card general-card" data-category="diseno" data-price="35.00" data-name="Canva Pro (1 año)" data-stock="true">
+                    <div class="card-img-container">
+                        <img src="canva.png" alt="Canva Pro (1 año)">
                     </div>
-                </div>
-            </div>
-        </article>
-
-        <!-- Autodesk (6 meses) -->
-        <article class="card" data-category="diseno" data-price="49.00" data-name="Autodesk All Apps (6 meses)" data-stock="true">
-            <div class="card-img-container">
-                <img src="autodesk.png" alt="Autodesk All Apps (6 meses)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <h2 class="card-title">Autodesk All Apps (6 meses)</h2>
-                    <p class="card-description">Todas las aplicaciones profesionales de diseño, arquitectura e ingeniería por medio año.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 49.00</div>
-                    <div class="card-actions">
-                        <button class="btn-yape" onclick="openPaymentModal('Autodesk All Apps (6 meses)', 'S/. 49.00')">💜 Pagar con Yape / Plin</button>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(6%20meses)%20-%20S/.49.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                    <div class="card-content">
+                        <div>
+                            <span class="badge-tag">Popular</span>
+                            <h2 class="card-title">Canva Pro (1 año)</h2>
+                            <p class="card-description">Herramienta de diseño gráfico con acceso a imágenes premium, vídeos, quita fondos e IA.</p>
+                        </div>
+                        <div>
+                            <div class="card-price">S/. 35.00</div>
+                            <div class="card-actions">
+                                <button class="btn-yape" onclick="openPaymentModal('Canva Pro (1 año)', 'S/. 35.00')">💜 Pagar con Yape / Plin</button>
+                                <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(1%20año)%20-%20S/.35.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </article>
+                </article>
 
-        <!-- Autodesk (3 meses) -->
-        <article class="card" data-category="diseno" data-price="29.00" data-name="Autodesk All Apps (3 meses)" data-stock="true">
-            <div class="card-img-container">
-                <img src="autodesk.png" alt="Autodesk All Apps (3 meses)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <h2 class="card-title">Autodesk All Apps (3 meses)</h2>
-                    <p class="card-description">Acceso trimestral a AutoCAD, Civil 3D, Revit y todo el catálogo de programas de Autodesk.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 29.00</div>
-                    <div class="card-actions">
-                        <button class="btn-yape" onclick="openPaymentModal('Autodesk All Apps (3 meses)', 'S/. 29.00')">💜 Pagar con Yape / Plin</button>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(3%20meses)%20-%20S/.29.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                <!-- Canva (2 años) -->
+                <article class="card general-card" data-category="diseno" data-price="45.00" data-name="Canva Pro (2 años)" data-stock="true">
+                    <div class="card-img-container">
+                        <img src="canva.png" alt="Canva Pro (2 años)">
                     </div>
-                </div>
-            </div>
-        </article>
-
-        <!-- Spotify (1 mes) -->
-        <article class="card" data-category="musica" data-price="15.00" data-name="Spotify Premium (1 mes)" data-stock="true">
-            <div class="card-img-container">
-                <img src="spotify.png" alt="Spotify Premium (1 mes)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <h2 class="card-title">Spotify Premium (1 mes)</h2>
-                    <p class="card-description">Música en alta calidad, reproducción sin conexión a internet y cero interrupciones de publicidad.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 15.00</div>
-                    <div class="card-actions">
-                        <button class="btn-yape" onclick="openPaymentModal('Spotify Premium (1 mes)', 'S/. 15.00')">💜 Pagar con Yape / Plin</button>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Spotify%20Premium%20(1%20mes)%20-%20S/.15.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Canva Pro (2 años)</h2>
+                            <p class="card-description">Acceso Pro extendido para diseñar plantillas exclusivas, kit de marca y elementos ilimitados.</p>
+                        </div>
+                        <div>
+                            <div class="card-price">S/. 45.00</div>
+                            <div class="card-actions">
+                                <button class="btn-yape" onclick="openPaymentModal('Canva Pro (2 años)', 'S/. 45.00')">💜 Pagar con Yape / Plin</button>
+                                <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(2%20años)%20-%20S/.45.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </article>
+                </article>
 
-        <!-- Flujo TV -->
-        <article class="card" data-category="iptv" data-price="20.00" data-name="Flujo TV (1 mes)" data-stock="true">
-            <div class="card-img-container">
-                <img src="flujotv.png" alt="Flujo TV">
-            </div>
-            <div class="card-content">
-                <div>
-                    <h2 class="card-title">Flujo TV (1 mes)</h2>
-                    <p class="card-description">Para 3 TVs o celulares. Full VOD, más de 69 canales deportivos y +1000 canales en vivo.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 20.00</div>
-                    <div class="card-actions">
-                        <button class="btn-yape" onclick="openPaymentModal('Flujo TV (1 mes)', 'S/. 20.00')">💜 Pagar con Yape / Plin</button>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Flujo%20TV%20-%20S/.20.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                <!-- Canva (para siempre) -->
+                <article class="card general-card" data-category="diseno" data-price="99.00" data-name="Canva Pro (para siempre)" data-stock="false">
+                    <div class="card-img-container">
+                        <img src="canva.png" alt="Canva Pro (para siempre)">
                     </div>
-                </div>
-            </div>
-        </article>
-
-        <!-- Crunchyroll (1 año) -->
-        <article class="card" data-category="iptv" data-price="99.00" data-name="Crunchyroll 1 Perfil (1 año)" data-stock="true">
-            <div class="card-img-container">
-                <img src="crunchyroll.png" alt="Crunchyroll Mega Fan (1 año)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <h2 class="card-title">Crunchyroll 1 Perfil (1 año)</h2>
-                    <p class="card-description">Cuenta Mega Fan para 1 perfil individual. Animes de estreno, sin anuncios y descargas sin conexión.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 99.00</div>
-                    <div class="card-actions">
-                        <button class="btn-yape" onclick="openPaymentModal('Crunchyroll 1 Perfil (1 año)', 'S/. 99.00')">💜 Pagar con Yape / Plin</button>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%201%20Perfil%20(1%20año)%20-%20S/.99.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                    <div class="card-content">
+                        <div>
+                            <span class="badge-out-of-stock">Sin Stock</span>
+                            <h2 class="card-title">Canva Pro (para siempre)</h2>
+                            <p class="card-description">Licencia vitalicia con acceso completo a funciones de diseño premium.</p>
+                        </div>
+                        <div>
+                            <div class="card-price">S/. 99.00</div>
+                            <div class="card-actions">
+                                <button class="btn-yape btn-disabled">Agotado</button>
+                                <a href="#" class="btn-whatsapp btn-disabled">Agotado</a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </article>
+                </article>
 
-        <!-- Crunchyroll (3 meses) -->
-        <article class="card" data-category="iptv" data-price="35.00" data-name="Crunchyroll 1 Perfil (3 meses)" data-stock="true">
-            <div class="card-img-container">
-                <img src="crunchyroll.png" alt="Crunchyroll Mega Fan (3 meses)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <h2 class="card-title">Crunchyroll 1 Perfil (3 meses)</h2>
-                    <p class="card-description">Suscripción Mega Fan de 3 meses para disfrutar del catálogo completo de anime sin publicidad.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 35.00</div>
-                    <div class="card-actions">
-                        <button class="btn-yape" onclick="openPaymentModal('Crunchyroll 1 Perfil (3 meses)', 'S/. 35.00')">💜 Pagar con Yape / Plin</button>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%201%20Perfil%20(3%20meses)%20-%20S/.35.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                <!-- Gemini Pro (12 meses) -->
+                <article class="card general-card" data-category="ia" data-price="50.00" data-name="Gemini Pro 3.6 (12 meses)" data-stock="true">
+                    <div class="card-img-container">
+                        <img src="gemini12.png" alt="Gemini Pro (12 meses)">
                     </div>
-                </div>
-            </div>
-        </article>
-
-        <!-- Crunchyroll (6 meses) -->
-        <article class="card" data-category="iptv" data-price="89.00" data-name="Crunchyroll Cuenta Completa (6 meses)" data-stock="true">
-            <div class="card-img-container">
-                <img src="crunchyroll.png" alt="Crunchyroll Completo (6 meses)">
-            </div>
-            <div class="card-content">
-                <div>
-                    <h2 class="card-title">Crunchyroll Cuenta Completa (6 meses)</h2>
-                    <p class="card-description">Cuenta completa por 6 meses para disfrutar en múltiples dispositivos en simultáneo.</p>
-                </div>
-                <div>
-                    <div class="card-price">S/. 89.00</div>
-                    <div class="card-actions">
-                        <button class="btn-yape" onclick="openPaymentModal('Crunchyroll Cuenta Completa (6 meses)', 'S/. 89.00')">💜 Pagar con Yape / Plin</button>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%20Completo%20(6%20meses)%20-%20S/.89.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Gemini Pro 3.6 (12 meses)</h2>
+                            <p class="card-description">Potencia tu trabajo con la IA de Google One por 1 año y almacenamiento masivo de 5TB.</p>
+                        </div>
+                        <div>
+                            <div class="card-price">S/. 50.00</div>
+                            <div class="card-actions">
+                                <button class="btn-yape" onclick="openPaymentModal('Gemini Pro 3.6 (12 meses)', 'S/. 50.00')">💜 Pagar con Yape / Plin</button>
+                                <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(12%20meses)%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </article>
+                </article>
 
-        <!-- Banners Próximamente -->
+                <!-- Duolingo (12 meses) -->
+                <article class="card general-card" data-category="edu" data-price="144.00" data-name="Duolingo Super (12 meses)" data-stock="true">
+                    <div class="card-img-container">
+                        <img src="duolingo.png" alt="Duolingo (12 meses)">
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Duolingo Super (12 meses)</h2>
+                            <p class="card-description">Aprende idiomas de forma interactiva con vidas ilimitadas y 100% libre de anuncios por 1 año.</p>
+                        </div>
+                        <div>
+                            <div class="card-price">S/. 144.00</div>
+                            <div class="card-actions">
+                                <button class="btn-yape" onclick="openPaymentModal('Duolingo Super (12 meses)', 'S/. 144.00')">💜 Pagar con Yape / Plin</button>
+                                <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Duolingo%20(12%20meses)%20-%20S/.144.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Capcut Pro -->
+                <article class="card general-card" data-category="diseno" data-price="23.00" data-name="Capcut Pro (1 mes)" data-stock="true">
+                    <div class="card-img-container">
+                        <img src="capcut.png" alt="Capcut pro (1 mes)">
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Capcut Pro (1 mes)</h2>
+                            <p class="card-description">Desbloquea herramientas premium, efectos, plantillas exclusivas, subtítulos e integración sin marca de agua.</p>
+                        </div>
+                        <div>
+                            <div class="card-price">S/. 23.00</div>
+                            <div class="card-actions">
+                                <button class="btn-yape" onclick="openPaymentModal('Capcut Pro (1 mes)', 'S/. 23.00')">💜 Pagar con Yape / Plin</button>
+                                <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Capcut%20Pro%20(1%20mes)%20-%20S/.23.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Autodesk (6 meses) -->
+                <article class="card general-card" data-category="diseno" data-price="49.00" data-name="Autodesk All Apps (6 meses)" data-stock="true">
+                    <div class="card-img-container">
+                        <img src="autodesk.png" alt="Autodesk All Apps (6 meses)">
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Autodesk All Apps (6 meses)</h2>
+                            <p class="card-description">Todas las aplicaciones profesionales de diseño, arquitectura e ingeniería por medio año.</p>
+                        </div>
+                        <div>
+                            <div class="card-price">S/. 49.00</div>
+                            <div class="card-actions">
+                                <button class="btn-yape" onclick="openPaymentModal('Autodesk All Apps (6 meses)', 'S/. 49.00')">💜 Pagar con Yape / Plin</button>
+                                <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(6%20meses)%20-%20S/.49.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Autodesk (3 meses) -->
+                <article class="card general-card" data-category="diseno" data-price="29.00" data-name="Autodesk All Apps (3 meses)" data-stock="true">
+                    <div class="card-img-container">
+                        <img src="autodesk.png" alt="Autodesk All Apps (3 meses)">
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Autodesk All Apps (3 meses)</h2>
+                            <p class="card-description">Acceso trimestral a AutoCAD, Civil 3D, Revit y todo el catálogo de programas de Autodesk.</p>
+                        </div>
+                        <div>
+                            <div class="card-price">S/. 29.00</div>
+                            <div class="card-actions">
+                                <button class="btn-yape" onclick="openPaymentModal('Autodesk All Apps (3 meses)', 'S/. 29.00')">💜 Pagar con Yape / Plin</button>
+                                <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(3%20meses)%20-%20S/.29.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Spotify (1 mes) -->
+                <article class="card general-card" data-category="musica" data-price="15.00" data-name="Spotify Premium (1 mes)" data-stock="true">
+                    <div class="card-img-container">
+                        <img src="spotify.png" alt="Spotify Premium (1 mes)">
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Spotify Premium (1 mes)</h2>
+                            <p class="card-description">Música en alta calidad, reproducción sin conexión a internet y cero interrupciones de publicidad.</p>
+                        </div>
+                        <div>
+                            <div class="card-price">S/. 15.00</div>
+                            <div class="card-actions">
+                                <button class="btn-yape" onclick="openPaymentModal('Spotify Premium (1 mes)', 'S/. 15.00')">💜 Pagar con Yape / Plin</button>
+                                <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Spotify%20Premium%20(1%20mes)%20-%20S/.15.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Flujo TV -->
+                <article class="card general-card" data-category="iptv" data-price="20.00" data-name="Flujo TV (1 mes)" data-stock="true">
+                    <div class="card-img-container">
+                        <img src="flujotv.png" alt="Flujo TV">
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Flujo TV (1 mes)</h2>
+                            <p class="card-description">Para 3 TVs o celulares. Full VOD, más de 69 canales deportivos y +1000 canales en vivo.</p>
+                        </div>
+                        <div>
+                            <div class="card-price">S/. 20.00</div>
+                            <div class="card-actions">
+                                <button class="btn-yape" onclick="openPaymentModal('Flujo TV (1 mes)', 'S/. 20.00')">💜 Pagar con Yape / Plin</button>
+                                <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Flujo%20TV%20-%20S/.20.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Crunchyroll (3 meses) -->
+                <article class="card general-card" data-category="iptv" data-price="35.00" data-name="Crunchyroll 1 Perfil (3 meses)" data-stock="true">
+                    <div class="card-img-container">
+                        <img src="crunchyroll.png" alt="Crunchyroll Mega Fan (3 meses)">
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Crunchyroll 1 Perfil (3 meses)</h2>
+                            <p class="card-description">Suscripción Mega Fan de 3 meses para disfrutar del catálogo completo de anime sin publicidad.</p>
+                        </div>
+                        <div>
+                            <div class="card-price">S/. 35.00</div>
+                            <div class="card-actions">
+                                <button class="btn-yape" onclick="openPaymentModal('Crunchyroll 1 Perfil (3 meses)', 'S/. 35.00')">💜 Pagar con Yape / Plin</button>
+                                <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%201%20Perfil%20(3%20meses)%20-%20S/.35.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Crunchyroll (6 meses) -->
+                <article class="card general-card" data-category="iptv" data-price="89.00" data-name="Crunchyroll Cuenta Completa (6 meses)" data-stock="true">
+                    <div class="card-img-container">
+                        <img src="crunchyroll.png" alt="Crunchyroll Completo (6 meses)">
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Crunchyroll Cuenta Completa (6 meses)</h2>
+                            <p class="card-description">Cuenta completa por 6 meses para disfrutar en múltiples dispositivos en simultáneo.</p>
+                        </div>
+                        <div>
+                            <div class="card-price">S/. 89.00</div>
+                            <div class="card-actions">
+                                <button class="btn-yape" onclick="openPaymentModal('Crunchyroll Cuenta Completa (6 meses)', 'S/. 89.00')">💜 Pagar con Yape / Plin</button>
+                                <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%20Completo%20(6%20meses)%20-%20S/.89.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+
+        <!-- Banners y Paneles Informativos -->
         <div class="banner-upcoming" id="bannerAntivirus" style="display: none;">
             <h2>🛡️ Próximamente Licencias de Antivirus</h2>
             <p>Estamos incorporando las mejores licencias originales para la protección de tus dispositivos (ESET, Kaspersky, McAfee y más) al mejor precio. ¡Muy pronto disponibles!</p>
@@ -1057,7 +1093,6 @@
             <p>Estamos preparando un catálogo especial de licencias y juegos para PC y consolas a precios súper accesibles. ¡Atento a nuestras actualizaciones!</p>
         </div>
 
-        <!-- Sección Visión y Misión -->
         <div class="info-panel" id="panelNosotros" style="display: none;">
             <h2>Nuestra Misión y Visión</h2>
             
@@ -1088,7 +1123,6 @@
             btn.classList.toggle('active');
         }
 
-        // Controla la apertura del submenú Software
         function toggleSubmenu(submenuId, event) {
             event.stopPropagation();
             const submenu = document.getElementById(submenuId);
@@ -1098,7 +1132,6 @@
         function filterCategory(category, event) {
             currentFilter = category;
             
-            // Marcar clase activa en botones principales o subbotones
             const chips = document.querySelectorAll('.cat-chip, .sub-chip');
             chips.forEach(chip => chip.classList.remove('active'));
             if(event) event.target.classList.add('active');
@@ -1106,14 +1139,12 @@
             updateProducts();
         }
 
-        // Restablece la vista al estado 'Principal' al tocar el título o logo
         function resetToPrincipal() {
             currentFilter = 'principal';
             const chips = document.querySelectorAll('.cat-chip, .sub-chip');
             chips.forEach(chip => chip.classList.remove('active'));
             document.getElementById('chip-principal').classList.add('active');
             
-            // Ocultar submenú de software si estuviera abierto
             document.getElementById('softwareSubmenu').classList.remove('open');
 
             document.getElementById('searchInput').value = '';
@@ -1124,7 +1155,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Modal Yape/Plin
         function openPaymentModal(productName, price) {
             document.getElementById('modalProductName').innerText = productName;
             document.getElementById('modalProductPrice').innerText = price;
@@ -1139,9 +1169,40 @@
             document.getElementById('paymentModal').style.display = 'none';
         }
 
+        // Lógica del Carrusel Automático
+        let carouselIndex = 0;
+        const track = document.getElementById('carouselTrack');
+        const cardsDestacadas = track.getElementsByClassName('destacada');
+
+        function autoSlideCarousel() {
+            if (currentFilter !== 'principal' && currentFilter !== 'all-software') return;
+            
+            const cardElement = cardsDestacadas[0];
+            if (!cardElement) return;
+
+            const cardWidth = cardElement.offsetWidth + 15; // Ancho + gap
+            const visibleContainerWidth = track.parentElement.offsetWidth;
+            const cardsPerView = Math.floor(visibleContainerWidth / cardWidth) || 1;
+            const maxIndex = cardsDestacadas.length - cardsPerView;
+
+            carouselIndex++;
+            if (carouselIndex > maxIndex || carouselIndex < 0) {
+                carouselIndex = 0;
+            }
+
+            track.style.transform = `translateX(-${carouselIndex * cardWidth}px)`;
+        }
+
+        // Intervalo de avance automático cada 3.5 segundos
+        setInterval(autoSlideCarousel, 3500);
+
         function updateProducts() {
-            const container = document.getElementById('productContainer');
-            const cardsArray = Array.from(container.getElementsByClassName('card'));
+            const seccionDestacados = document.getElementById('seccionDestacados');
+            const seccionCatalogo = document.getElementById('seccionCatalogo');
+            const catalogoGrid = document.getElementById('catalogoGrid');
+            const generalCards = Array.from(catalogoGrid.getElementsByClassName('general-card'));
+            const destacadasCards = Array.from(cardsDestacadas);
+            
             const bannerAntivirus = document.getElementById('bannerAntivirus');
             const bannerJuegos = document.getElementById('bannerJuegos');
             const panelNosotros = document.getElementById('panelNosotros');
@@ -1150,9 +1211,9 @@
             const sortValue = document.getElementById('sortSelect').value;
             const stockValue = document.getElementById('stockSelect').value;
 
-            // Manejo de paneles especiales
             if (currentFilter === 'nosotros') {
-                cardsArray.forEach(card => card.style.display = "none");
+                seccionDestacados.style.display = "none";
+                seccionCatalogo.style.display = "none";
                 bannerAntivirus.style.display = "none";
                 bannerJuegos.style.display = "none";
                 panelNosotros.style.display = "block";
@@ -1162,7 +1223,8 @@
             }
 
             if (currentFilter === 'antivirus') {
-                cardsArray.forEach(card => card.style.display = "none");
+                seccionDestacados.style.display = "none";
+                seccionCatalogo.style.display = "none";
                 bannerJuegos.style.display = "none";
                 bannerAntivirus.style.display = "block";
                 return;
@@ -1171,27 +1233,46 @@
             }
 
             if (currentFilter === 'juegos') {
-                cardsArray.forEach(card => card.style.display = "none");
+                seccionDestacados.style.display = "none";
+                seccionCatalogo.style.display = "none";
                 bannerJuegos.style.display = "block";
                 return;
             } else {
                 bannerJuegos.style.display = "none";
             }
 
-            // Filtrado del catálogo
-            cardsArray.forEach(card => {
+            seccionCatalogo.style.display = "block";
+
+            if (currentFilter === 'principal' || currentFilter === 'all-software') {
+                seccionDestacados.style.display = "block";
+            } else {
+                seccionDestacados.style.display = "none";
+            }
+
+            destacadasCards.forEach(card => {
                 const category = card.getAttribute('data-category');
                 const title = card.getAttribute('data-name').toLowerCase();
                 const desc = card.querySelector('.card-description').innerText.toLowerCase();
                 const isStock = card.getAttribute('data-stock') === 'true';
 
-                let matchesCategory = false;
-                if (currentFilter === 'principal' || currentFilter === 'all-software') {
-                    matchesCategory = true;
-                } else {
-                    matchesCategory = (category === currentFilter);
-                }
+                const matchesSearch = title.includes(searchText) || desc.includes(searchText);
+                const matchesStock = stockValue === 'all' || (stockValue === 'instock' && isStock);
+                const matchesCategory = (currentFilter === 'principal' || currentFilter === 'all-software') || (category === currentFilter);
 
+                if (matchesCategory && matchesSearch && matchesStock) {
+                    card.style.display = "flex";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+
+            generalCards.forEach(card => {
+                const category = card.getAttribute('data-category');
+                const title = card.getAttribute('data-name').toLowerCase();
+                const desc = card.querySelector('.card-description').innerText.toLowerCase();
+                const isStock = card.getAttribute('data-stock') === 'true';
+
+                const matchesCategory = (currentFilter === 'principal' || currentFilter === 'all-software') || (category === currentFilter);
                 const matchesSearch = title.includes(searchText) || desc.includes(searchText);
                 const matchesStock = stockValue === 'all' || (stockValue === 'instock' && isStock);
 
@@ -1203,7 +1284,7 @@
             });
 
             if (sortValue !== 'default') {
-                cardsArray.sort((a, b) => {
+                generalCards.sort((a, b) => {
                     const priceA = parseFloat(a.getAttribute('data-price'));
                     const priceB = parseFloat(b.getAttribute('data-price'));
                     const nameA = a.getAttribute('data-name').toLowerCase();
@@ -1215,7 +1296,7 @@
                     return 0;
                 });
 
-                cardsArray.forEach(card => container.appendChild(card));
+                generalCards.forEach(card => catalogoGrid.appendChild(card));
             }
         }
     </script>
