@@ -27,6 +27,51 @@
             100% { background-position: 0% 50%; }
         }
 
+        /* Notificación Flotante con Check Animado */
+        .toast-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(16, 23, 38, 0.95);
+            border: 2px solid #22c55e;
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), 0 0 15px rgba(34, 197, 94, 0.4);
+            z-index: 3000;
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+        }
+
+        .toast-notification.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast-check {
+            width: 24px;
+            height: 24px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #080c14;
+            font-weight: bold;
+            font-size: 0.9rem;
+            animation: popCheck 0.4s ease;
+        }
+
+        @keyframes popCheck {
+            0% { transform: scale(0); }
+            70% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
         /* Encabezado fijo */
         header {
             background: rgba(9, 19, 29, 0.95);
@@ -49,7 +94,6 @@
             gap: 8px;
         }
 
-        /* Hamburguesa a la Izquierda */
         .hamburger-btn {
             background: rgba(0, 180, 216, 0.15);
             color: #38bdf8;
@@ -71,7 +115,6 @@
             box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
         }
 
-        /* Marca y Título central interactivo */
         .header-brand {
             display: flex;
             align-items: center;
@@ -103,7 +146,6 @@
             margin: 0;
         }
 
-        /* Botón de Cesta Flotante en Cabecera */
         .cart-btn {
             background: rgba(0, 180, 216, 0.2);
             border: 1px solid #00b4d8;
@@ -723,6 +765,12 @@
 
     <a href="https://wa.me/51933907930?text=Hola,%20quisiera%20consultar%20sobre%20sus%20licencias%20digitales" class="float-whatsapp" target="_blank" title="Contactar por WhatsApp">💬</a>
 
+    <!-- Notificación Flotante de Check Animado -->
+    <div class="toast-notification" id="toastNotification">
+        <div class="toast-check">✓</div>
+        <span>¡Agregado a la cesta con éxito!</span>
+    </div>
+
     <!-- Modal de Cesta / Carrito -->
     <div class="modal-overlay" id="cartModal">
         <div class="modal-card">
@@ -1017,7 +1065,7 @@
             </div>
         </div>
 
-        <!-- SECCIÓN: CATÁLOGO GENERAL -->
+        <!-- SECCIÓN: CATÁLOGO GENERAL (CON TODOS LOS PRODUCTOS) -->
         <div id="seccionCatalogo">
             <h2 class="section-title">📦 Catálogo General de Licencias</h2>
             <div class="grid-layout" id="catalogoGrid">
@@ -1081,6 +1129,94 @@
                     </div>
                 </article>
 
+                <!-- Canva 2 años -->
+                <article class="card general-card" data-category="diseno" data-base-price="45.00" data-name="Canva Pro (2 años)" data-stock="true">
+                    <div class="card-img-container"><img src="canva.png" alt="Canva Pro 2 años"></div>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Canva Pro (2 años)</h2>
+                            <p class="card-description">Acceso Pro extendido para plantillas exclusivas y kit de marca.</p>
+                        </div>
+                        <div>
+                            <div class="card-price-box">
+                                <div class="card-price" id="price-canva-2">S/. 45.00</div>
+                                <div class="discount-notice" id="disc-canva-2" style="display:none;"></div>
+                            </div>
+                            <div class="calculator-box">
+                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-controls">
+                                    <button class="calc-btn" onclick="changeQty('canva-2', -1)">-</button>
+                                    <input type="text" class="calc-input" id="qty-canva-2" value="1" readonly>
+                                    <button class="calc-btn" onclick="changeQty('canva-2', 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-cart" onclick="addToCart('Canva Pro (2 años)', 45.00, 'qty-canva-2')">🛒 Agregar a Cesta</button>
+                                <button class="btn-yape" onclick="openDirectPayment('Canva Pro (2 años)', 45.00, 'qty-canva-2')">💜 Pagar con Yape o Plin</button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Canva para siempre -->
+                <article class="card general-card" data-category="diseno" data-base-price="99.00" data-name="Canva Pro (para siempre)" data-stock="false">
+                    <div class="card-img-container"><img src="canva.png" alt="Canva Vitalicio"></div>
+                    <div class="card-content">
+                        <div>
+                            <span class="badge-out-of-stock">Sin Stock</span>
+                            <h2 class="card-title">Canva Pro (para siempre)</h2>
+                            <p class="card-description">Licencia vitalicia con acceso completo a funciones de diseño.</p>
+                        </div>
+                        <div>
+                            <div class="card-price-box">
+                                <div class="card-price" id="price-canva-inf">S/. 99.00</div>
+                                <div class="discount-notice" id="disc-canva-inf" style="display:none;"></div>
+                            </div>
+                            <div class="calculator-box">
+                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-controls">
+                                    <button class="calc-btn btn-disabled">-</button>
+                                    <input type="text" class="calc-input" id="qty-canva-inf" value="1" readonly>
+                                    <button class="calc-btn btn-disabled">+</button>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-cart btn-disabled">Agotado</button>
+                                <button class="btn-yape btn-disabled">Agotado</button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Gemini Pro 12 meses -->
+                <article class="card general-card" data-category="ia" data-base-price="50.00" data-name="Gemini Pro 3.6 (12 meses)" data-stock="true">
+                    <div class="card-img-container"><img src="gemini12.png" alt="Gemini 12m"></div>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Gemini Pro 3.6 (12 meses)</h2>
+                            <p class="card-description">IA de Google One por 1 año y almacenamiento de 5TB.</p>
+                        </div>
+                        <div>
+                            <div class="card-price-box">
+                                <div class="card-price" id="price-gem-12">S/. 50.00</div>
+                                <div class="discount-notice" id="disc-gem-12" style="display:none;"></div>
+                            </div>
+                            <div class="calculator-box">
+                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-controls">
+                                    <button class="calc-btn" onclick="changeQty('gem-12', -1)">-</button>
+                                    <input type="text" class="calc-input" id="qty-gem-12" value="1" readonly>
+                                    <button class="calc-btn" onclick="changeQty('gem-12', 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-cart" onclick="addToCart('Gemini Pro 3.6 (12 meses)', 50.00, 'qty-gem-12')">🛒 Agregar a Cesta</button>
+                                <button class="btn-yape" onclick="openDirectPayment('Gemini Pro 3.6 (12 meses)', 50.00, 'qty-gem-12')">💜 Pagar con Yape o Plin</button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
                 <!-- Duolingo -->
                 <article class="card general-card" data-category="edu" data-base-price="144.00" data-name="Duolingo Super (12 meses)" data-stock="true">
                     <div class="card-img-container"><img src="duolingo.png" alt="Duolingo"></div>
@@ -1110,6 +1246,209 @@
                     </div>
                 </article>
 
+                <!-- Capcut Pro -->
+                <article class="card general-card" data-category="diseno" data-base-price="23.00" data-name="Capcut Pro (1 mes)" data-stock="true">
+                    <div class="card-img-container"><img src="capcut.png" alt="Capcut"></div>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Capcut Pro (1 mes)</h2>
+                            <p class="card-description">Efectos, plantillas exclusivas y subtítulos sin marca de agua.</p>
+                        </div>
+                        <div>
+                            <div class="card-price-box">
+                                <div class="card-price" id="price-capcut-1">S/. 23.00</div>
+                                <div class="discount-notice" id="disc-capcut-1" style="display:none;"></div>
+                            </div>
+                            <div class="calculator-box">
+                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-controls">
+                                    <button class="calc-btn" onclick="changeQty('capcut-1', -1)">-</button>
+                                    <input type="text" class="calc-input" id="qty-capcut-1" value="1" readonly>
+                                    <button class="calc-btn" onclick="changeQty('capcut-1', 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-cart" onclick="addToCart('Capcut Pro (1 mes)', 23.00, 'qty-capcut-1')">🛒 Agregar a Cesta</button>
+                                <button class="btn-yape" onclick="openDirectPayment('Capcut Pro (1 mes)', 23.00, 'qty-capcut-1')">💜 Pagar con Yape o Plin</button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Autodesk 6 meses -->
+                <article class="card general-card" data-category="diseno" data-base-price="49.00" data-name="Autodesk All Apps (6 meses)" data-stock="true">
+                    <div class="card-img-container"><img src="autodesk.png" alt="Autodesk 6m"></div>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Autodesk All Apps (6 meses)</h2>
+                            <p class="card-description">Todas las aplicaciones profesionales por medio año.</p>
+                        </div>
+                        <div>
+                            <div class="card-price-box">
+                                <div class="card-price" id="price-auto-6">S/. 49.00</div>
+                                <div class="discount-notice" id="disc-auto-6" style="display:none;"></div>
+                            </div>
+                            <div class="calculator-box">
+                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-controls">
+                                    <button class="calc-btn" onclick="changeQty('auto-6', -1)">-</button>
+                                    <input type="text" class="calc-input" id="qty-auto-6" value="1" readonly>
+                                    <button class="calc-btn" onclick="changeQty('auto-6', 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-cart" onclick="addToCart('Autodesk All Apps (6 meses)', 49.00, 'qty-auto-6')">🛒 Agregar a Cesta</button>
+                                <button class="btn-yape" onclick="openDirectPayment('Autodesk All Apps (6 meses)', 49.00, 'qty-auto-6')">💜 Pagar con Yape o Plin</button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Autodesk 3 meses -->
+                <article class="card general-card" data-category="diseno" data-base-price="29.00" data-name="Autodesk All Apps (3 meses)" data-stock="true">
+                    <div class="card-img-container"><img src="autodesk.png" alt="Autodesk 3m"></div>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Autodesk All Apps (3 meses)</h2>
+                            <p class="card-description">Acceso trimestral a AutoCAD, Revit y más.</p>
+                        </div>
+                        <div>
+                            <div class="card-price-box">
+                                <div class="card-price" id="price-auto-3">S/. 29.00</div>
+                                <div class="discount-notice" id="disc-auto-3" style="display:none;"></div>
+                            </div>
+                            <div class="calculator-box">
+                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-controls">
+                                    <button class="calc-btn" onclick="changeQty('auto-3', -1)">-</button>
+                                    <input type="text" class="calc-input" id="qty-auto-3" value="1" readonly>
+                                    <button class="calc-btn" onclick="changeQty('auto-3', 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-cart" onclick="addToCart('Autodesk All Apps (3 meses)', 29.00, 'qty-auto-3')">🛒 Agregar a Cesta</button>
+                                <button class="btn-yape" onclick="openDirectPayment('Autodesk All Apps (3 meses)', 29.00, 'qty-auto-3')">💜 Pagar con Yape o Plin</button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Spotify -->
+                <article class="card general-card" data-category="musica" data-base-price="15.00" data-name="Spotify Premium (1 mes)" data-stock="true">
+                    <div class="card-img-container"><img src="spotify.png" alt="Spotify"></div>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Spotify Premium (1 mes)</h2>
+                            <p class="card-description">Música en alta calidad sin interrupciones de publicidad.</p>
+                        </div>
+                        <div>
+                            <div class="card-price-box">
+                                <div class="card-price" id="price-spot-1">S/. 15.00</div>
+                                <div class="discount-notice" id="disc-spot-1" style="display:none;"></div>
+                            </div>
+                            <div class="calculator-box">
+                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-controls">
+                                    <button class="calc-btn" onclick="changeQty('spot-1', -1)">-</button>
+                                    <input type="text" class="calc-input" id="qty-spot-1" value="1" readonly>
+                                    <button class="calc-btn" onclick="changeQty('spot-1', 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-cart" onclick="addToCart('Spotify Premium (1 mes)', 15.00, 'qty-spot-1')">🛒 Agregar a Cesta</button>
+                                <button class="btn-yape" onclick="openDirectPayment('Spotify Premium (1 mes)', 15.00, 'qty-spot-1')">💜 Pagar con Yape o Plin</button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Flujo TV -->
+                <article class="card general-card" data-category="iptv" data-base-price="20.00" data-name="Flujo TV (1 mes)" data-stock="true">
+                    <div class="card-img-container"><img src="flujotv.png" alt="Flujo TV"></div>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Flujo TV (1 mes)</h2>
+                            <p class="card-description">Para 3 dispositivos. Más de 1000 canales en vivo.</p>
+                        </div>
+                        <div>
+                            <div class="card-price-box">
+                                <div class="card-price" id="price-flujo-1">S/. 20.00</div>
+                                <div class="discount-notice" id="disc-flujo-1" style="display:none;"></div>
+                            </div>
+                            <div class="calculator-box">
+                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-controls">
+                                    <button class="calc-btn" onclick="changeQty('flujo-1', -1)">-</button>
+                                    <input type="text" class="calc-input" id="qty-flujo-1" value="1" readonly>
+                                    <button class="calc-btn" onclick="changeQty('flujo-1', 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-cart" onclick="addToCart('Flujo TV (1 mes)', 20.00, 'qty-flujo-1')">🛒 Agregar a Cesta</button>
+                                <button class="btn-yape" onclick="openDirectPayment('Flujo TV (1 mes)', 20.00, 'qty-flujo-1')">💜 Pagar con Yape o Plin</button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Crunchyroll 3 meses -->
+                <article class="card general-card" data-category="iptv" data-base-price="35.00" data-name="Crunchyroll 1 Perfil (3 meses)" data-stock="true">
+                    <div class="card-img-container"><img src="crunchyroll.png" alt="Crunchyroll 3m"></div>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Crunchyroll 1 Perfil (3 meses)</h2>
+                            <p class="card-description">Suscripción Mega Fan de 3 meses sin publicidad.</p>
+                        </div>
+                        <div>
+                            <div class="card-price-box">
+                                <div class="card-price" id="price-crunch-3">S/. 35.00</div>
+                                <div class="discount-notice" id="disc-crunch-3" style="display:none;"></div>
+                            </div>
+                            <div class="calculator-box">
+                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-controls">
+                                    <button class="calc-btn" onclick="changeQty('crunch-3', -1)">-</button>
+                                    <input type="text" class="calc-input" id="qty-crunch-3" value="1" readonly>
+                                    <button class="calc-btn" onclick="changeQty('crunch-3', 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-cart" onclick="addToCart('Crunchyroll 1 Perfil (3 meses)', 35.00, 'qty-crunch-3')">🛒 Agregar a Cesta</button>
+                                <button class="btn-yape" onclick="openDirectPayment('Crunchyroll 1 Perfil (3 meses)', 35.00, 'qty-crunch-3')">💜 Pagar con Yape o Plin</button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Crunchyroll 6 meses -->
+                <article class="card general-card" data-category="iptv" data-base-price="89.00" data-name="Crunchyroll Cuenta Completa (6 meses)" data-stock="true">
+                    <div class="card-img-container"><img src="crunchyroll.png" alt="Crunchyroll 6m"></div>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Crunchyroll Cuenta Completa (6 meses)</h2>
+                            <p class="card-description">Cuenta completa para múltiples dispositivos en simultáneo.</p>
+                        </div>
+                        <div>
+                            <div class="card-price-box">
+                                <div class="card-price" id="price-crunch-6">S/. 89.00</div>
+                                <div class="discount-notice" id="disc-crunch-6" style="display:none;"></div>
+                            </div>
+                            <div class="calculator-box">
+                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-controls">
+                                    <button class="calc-btn" onclick="changeQty('crunch-6', -1)">-</button>
+                                    <input type="text" class="calc-input" id="qty-crunch-6" value="1" readonly>
+                                    <button class="calc-btn" onclick="changeQty('crunch-6', 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-cart" onclick="addToCart('Crunchyroll Cuenta Completa (6 meses)', 89.00, 'qty-crunch-6')">🛒 Agregar a Cesta</button>
+                                <button class="btn-yape" onclick="openDirectPayment('Crunchyroll Cuenta Completa (6 meses)', 89.00, 'qty-crunch-6')">💜 Pagar con Yape o Plin</button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
             </div>
         </div>
 
@@ -1124,15 +1463,16 @@
             <p>Estamos preparando un catálogo especial de licencias y juegos para PC y consolas.</p>
         </div>
 
+        <!-- Sección Misión y Visión Corregida -->
         <div class="info-panel" id="panelNosotros" style="display: none;">
             <h2>Nuestra Misión y Visión</h2>
             <div class="info-box">
                 <h3>🚀 Misión</h3>
-                <p>En <strong>Lubeltec</strong>, facilitamos el acceso a software original y servicios digitales garantizados para estudiantes y profesionales en Perú.</p>
+                <p>En Lubeltec, facilitamos el acceso a software original y servicios digitales garantizados para estudiantes, profesionales y empresas en Perú. Nos comprometemos a brindar soluciones tecnológicas transparentes, accesibles y con soporte postventa inmediato, garantizando que cada cliente potencie sus herramientas de trabajo sin complicaciones.</p>
             </div>
             <div class="info-box">
                 <h3>👁️ Visión</h3>
-                <p>Ser reconocidos como el catálogo digital líder y más confiable en el mercado peruano para la adquisición de licencias de software y entretenimiento.</p>
+                <p>Ser reconocidos como el catálogo digital líder y más confiable en el mercado peruano para la adquisición de licencias de software, soluciones de inteligencia artificial y entretenimiento digital, destacando por nuestra honestidad, rapidez de entrega y atención personalizada constante.</p>
             </div>
         </div>
 
@@ -1180,7 +1520,16 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Calculadora de cantidades y descuentos por volumen (>=3 unids: 10%, >=5 unids: 15%)
+        function showToast() {
+            const toast = document.getElementById('toastNotification');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // Calculadora de cantidades y descuentos por volumen
+        // 3 a 4 unidades = 10% dcto | 5 o más unidades = 15% dcto
         function changeQty(id, delta) {
             const input = document.getElementById('qty-' + id);
             let val = parseInt(input.value) + delta;
@@ -1235,7 +1584,7 @@
             }
 
             updateCartUI();
-            alert(`¡"${productName}" (${qty} u.) agregado a la cesta!`);
+            showToast();
         }
 
         function updateCartItemQty(index, delta) {
@@ -1305,7 +1654,6 @@
             document.getElementById('cartModal').style.display = 'none';
         }
 
-        // Pagar Carrito Completo con Yape o Plin (Titular: Luis Valdivieso)
         function proceedToCheckout() {
             if (cart.length === 0) return;
             const grandTotal = cart.reduce((sum, item) => sum + item.totalPrice, 0);
@@ -1341,7 +1689,7 @@
             document.getElementById('paymentModal').style.display = 'none';
         }
 
-        // Lógica de Carrusel Automático y Arrastrable (Drag & Swipe / Touch)
+        // Carrusel Automático y Arrastrable
         let carouselIndex = 0;
         const track = document.getElementById('carouselTrack');
         const container = document.getElementById('carouselContainer');
@@ -1363,17 +1711,13 @@
             const x = e.pageX;
             const walk = x - startX;
             if (Math.abs(walk) > 60) {
-                if (walk > 0) {
-                    carouselIndex--;
-                } else {
-                    carouselIndex++;
-                }
+                if (walk > 0) carouselIndex--;
+                else carouselIndex++;
                 moveCarousel();
                 isDown = false;
             }
         });
 
-        // Soporte Táctil (Swipe Mobile)
         container.addEventListener('touchstart', (e) => {
             startX = e.touches[0].clientX;
         });
@@ -1458,12 +1802,14 @@
 
             seccionCatalogo.style.display = "block";
 
+            // Mostrar carrusel en Principal o Todos los Software si no se está usando el buscador
             if ((currentFilter === 'principal' || currentFilter === 'all-software') && !isSearching) {
                 seccionDestacados.style.display = "block";
             } else {
                 seccionDestacados.style.display = "none";
             }
 
+            // Corrección en el filtrado para incluir todo correctamente tanto en destacados como en general
             destacadasCards.forEach(card => {
                 const category = card.getAttribute('data-category');
                 const title = card.getAttribute('data-name').toLowerCase();
@@ -1487,6 +1833,7 @@
                 const desc = card.querySelector('.card-description').innerText.toLowerCase();
                 const isStock = card.getAttribute('data-stock') === 'true';
 
+                // Si estamos en "Principal" o "Todos los Software", mostramos todos los ítems generales
                 const matchesCategory = (currentFilter === 'principal' || currentFilter === 'all-software') || (category === currentFilter);
                 const matchesSearch = title.includes(searchText) || desc.includes(searchText);
                 const matchesStock = stockValue === 'all' || (stockValue === 'instock' && isStock);
