@@ -28,13 +28,13 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Encabezado pegajoso con buscador */
+        /* Encabezado */
         header {
-            background: rgba(9, 19, 29, 0.85);
+            background: rgba(9, 19, 29, 0.9);
             backdrop-filter: blur(12px);
             color: #ffffff;
             text-align: center;
-            padding: 30px 20px 20px 20px;
+            padding: 25px 20px 20px 20px;
             border-bottom: 2px solid #00b4d8;
             box-shadow: 0 4px 30px rgba(0, 180, 216, 0.2);
             position: sticky;
@@ -47,7 +47,7 @@
             align-items: center;
             justify-content: center;
             gap: 15px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         @keyframes pulseGlow {
@@ -57,8 +57,8 @@
         }
 
         .header-logo {
-            height: 65px;
-            width: 65px;
+            height: 60px;
+            width: 60px;
             object-fit: cover;
             border-radius: 50%;
             animation: pulseGlow 3s infinite ease-in-out;
@@ -70,7 +70,7 @@
         }
 
         header h1 {
-            font-size: 2.2rem;
+            font-size: 2rem;
             color: #00b4d8;
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -79,32 +79,42 @@
         }
 
         header p {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: #94a3b8;
             margin-bottom: 15px;
         }
 
-        /* Campo de Búsqueda */
-        .search-container {
-            max-width: 500px;
+        /* Panel de Filtros y Ordenamiento */
+        .controls-container {
+            max-width: 800px;
             margin: 0 auto;
-            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
         }
 
-        .search-input {
-            width: 100%;
-            padding: 12px 20px;
-            border-radius: 25px;
+        .search-input, .select-control {
+            padding: 10px 16px;
+            border-radius: 20px;
             border: 1px solid #00b4d8;
-            background: rgba(13, 22, 35, 0.9);
+            background: rgba(13, 22, 35, 0.95);
             color: #ffffff;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             outline: none;
             box-shadow: 0 0 10px rgba(0, 180, 216, 0.2);
             transition: all 0.3s ease;
         }
 
-        .search-input:focus {
+        .search-input {
+            flex: 1 1 250px;
+        }
+
+        .select-control {
+            cursor: pointer;
+        }
+
+        .search-input:focus, .select-control:focus {
             box-shadow: 0 0 18px rgba(0, 180, 216, 0.6);
             border-color: #38bdf8;
         }
@@ -139,7 +149,7 @@
             box-shadow: 0 18px 35px rgba(0, 180, 216, 0.35);
         }
 
-        /* Zoom amplio (+25%) en la imagen */
+        /* Zoom en la imagen */
         .card-img-container {
             width: 100%;
             height: 220px;
@@ -226,7 +236,7 @@
             transform: translateX(5px);
         }
 
-        /* Botón animado con destello */
+        /* Botón animado */
         @keyframes shimmer {
             0% { left: -100%; }
             100% { left: 200%; }
@@ -324,7 +334,7 @@
         💬
     </a>
 
-    <!-- Encabezado con Buscador Integrado -->
+    <!-- Encabezado con Filtros Avanzados -->
     <header>
         <div class="header-brand">
             <img src="lubeltec.png" alt="Logo Lubeltec" class="header-logo">
@@ -332,15 +342,28 @@
         </div>
         <p>Licencias Digitales Originales a tu Alcance</p>
         
-        <div class="search-container">
-            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar licencia o programa..." onkeyup="filterProducts()">
+        <div class="controls-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar por nombre..." oninput="updateProducts()">
+            
+            <select id="sortSelect" class="select-control" onchange="updateProducts()">
+                <option value="default">Ordenar por...</option>
+                <option value="price-asc">Precio: Menor a Mayor</option>
+                <option value="price-desc">Precio: Mayor a Menor</option>
+                <option value="alpha-asc">Nombre: A - Z</option>
+                <option value="alpha-desc">Nombre: Z - A</option>
+            </select>
+
+            <select id="stockSelect" class="select-control" onchange="updateProducts()">
+                <option value="all">Todos los productos</option>
+                <option value="instock">Solo Disponibles</option>
+            </select>
         </div>
     </header>
 
     <main class="container" id="productContainer">
 
         <!-- Office 365 -->
-        <article class="card">
+        <article class="card" data-price="45.00" data-name="Office 365 (1 año)" data-stock="true">
             <div class="card-img-container">
                 <img src="office365.png" alt="Office 365 (1 año)">
             </div>
@@ -360,7 +383,7 @@
         </article>
 
         <!-- Canva (1 año) -->
-        <article class="card">
+        <article class="card" data-price="35.00" data-name="Canva Pro (1 año)" data-stock="true">
             <div class="card-img-container">
                 <img src="canva.png" alt="Canva Pro (1 año)">
             </div>
@@ -380,7 +403,7 @@
         </article>
 
         <!-- Canva (2 años) -->
-        <article class="card">
+        <article class="card" data-price="45.00" data-name="Canva Pro (2 años)" data-stock="true">
             <div class="card-img-container">
                 <img src="canva.png" alt="Canva Pro (2 años)">
             </div>
@@ -399,7 +422,7 @@
         </article>
 
         <!-- Canva (3 años) -->
-        <article class="card">
+        <article class="card" data-price="55.00" data-name="Canva Pro (3 años)" data-stock="true">
             <div class="card-img-container">
                 <img src="canva.png" alt="Canva Pro (3 años)">
             </div>
@@ -418,7 +441,7 @@
         </article>
 
         <!-- Canva (para siempre) - Agotado -->
-        <article class="card">
+        <article class="card" data-price="99.00" data-name="Canva Pro (para siempre)" data-stock="false">
             <div class="card-img-container">
                 <img src="canva.png" alt="Canva Pro (para siempre)">
             </div>
@@ -436,7 +459,7 @@
         </article>
 
         <!-- Gemini Pro (18 meses) -->
-        <article class="card">
+        <article class="card" data-price="70.00" data-name="Gemini Pro 3.6 (18 meses)" data-stock="true">
             <div class="card-img-container">
                 <img src="gemini18.png" alt="Gemini Pro (18 meses)">
             </div>
@@ -456,7 +479,7 @@
         </article>
 
         <!-- Gemini Pro (12 meses) -->
-        <article class="card">
+        <article class="card" data-price="50.00" data-name="Gemini Pro 3.6 (12 meses)" data-stock="true">
             <div class="card-img-container">
                 <img src="gemini12.png" alt="Gemini Pro (12 meses)">
             </div>
@@ -475,7 +498,7 @@
         </article>
 
         <!-- Windows 10/11 Pro -->
-        <article class="card">
+        <article class="card" data-price="50.00" data-name="Windows 10/11 Pro (Siempre)" data-stock="true">
             <div class="card-img-container">
                 <img src="windows11.png" alt="Windows 10/11 Pro">
             </div>
@@ -495,7 +518,7 @@
         </article>
 
         <!-- Windows 10/11 Home -->
-        <article class="card">
+        <article class="card" data-price="50.00" data-name="Windows 10/11 Home (Siempre)" data-stock="true">
             <div class="card-img-container">
                 <img src="windows11.png" alt="Windows 10/11 Home">
             </div>
@@ -514,7 +537,7 @@
         </article>
 
         <!-- Duolingo (12 meses) -->
-        <article class="card">
+        <article class="card" data-price="144.00" data-name="Duolingo Super (12 meses)" data-stock="true">
             <div class="card-img-container">
                 <img src="duolingo.png" alt="Duolingo (12 meses)">
             </div>
@@ -533,7 +556,7 @@
         </article>
 
         <!-- Flujo TV -->
-        <article class="card">
+        <article class="card" data-price="20.00" data-name="Flujo TV (1 mes)" data-stock="true">
             <div class="card-img-container">
                 <img src="flujotv.png" alt="Flujo TV">
             </div>
@@ -552,7 +575,7 @@
         </article>
 
         <!-- Capcut Pro -->
-        <article class="card">
+        <article class="card" data-price="23.00" data-name="Capcut Pro (1 mes)" data-stock="true">
             <div class="card-img-container">
                 <img src="capcut.png" alt="Capcut pro (1 mes)">
             </div>
@@ -571,7 +594,7 @@
         </article>
 
         <!-- Autodesk (1 año) -->
-        <article class="card">
+        <article class="card" data-price="75.00" data-name="Autodesk All Apps (1 año)" data-stock="true">
             <div class="card-img-container">
                 <img src="autodesk.png" alt="Autodesk All Apps (1 año)">
             </div>
@@ -591,7 +614,7 @@
         </article>
 
         <!-- Autodesk (6 meses) -->
-        <article class="card">
+        <article class="card" data-price="49.00" data-name="Autodesk All Apps (6 meses)" data-stock="true">
             <div class="card-img-container">
                 <img src="autodesk.png" alt="Autodesk All Apps (6 meses)">
             </div>
@@ -610,7 +633,7 @@
         </article>
 
         <!-- Autodesk (3 meses) -->
-        <article class="card">
+        <article class="card" data-price="29.00" data-name="Autodesk All Apps (3 meses)" data-stock="true">
             <div class="card-img-container">
                 <img src="autodesk.png" alt="Autodesk All Apps (3 meses)">
             </div>
@@ -629,7 +652,7 @@
         </article>
 
         <!-- Crunchyroll - 1 perfil (1 año) -->
-        <article class="card">
+        <article class="card" data-price="99.00" data-name="Crunchyroll 1 Perfil (1 año)" data-stock="true">
             <div class="card-img-container">
                 <img src="crunchyroll.png" alt="Crunchyroll Mega Fan (1 año)">
             </div>
@@ -648,7 +671,7 @@
         </article>
 
         <!-- Crunchyroll - 1 perfil (3 meses) -->
-        <article class="card">
+        <article class="card" data-price="35.00" data-name="Crunchyroll 1 Perfil (3 meses)" data-stock="true">
             <div class="card-img-container">
                 <img src="crunchyroll.png" alt="Crunchyroll Mega Fan (3 meses)">
             </div>
@@ -667,7 +690,7 @@
         </article>
 
         <!-- Crunchyroll - Completo (6 meses) -->
-        <article class="card">
+        <article class="card" data-price="89.00" data-name="Crunchyroll Cuenta Completa (6 meses)" data-stock="true">
             <div class="card-img-container">
                 <img src="crunchyroll.png" alt="Crunchyroll Completo (6 meses)">
             </div>
@@ -686,7 +709,7 @@
         </article>
 
         <!-- Spotify (1 mes) -->
-        <article class="card">
+        <article class="card" data-price="15.00" data-name="Spotify Premium (1 mes)" data-stock="true">
             <div class="card-img-container">
                 <img src="spotify.png" alt="Spotify Premium (1 mes)">
             </div>
@@ -710,21 +733,49 @@
         <p>&copy; Catálogo Digital Lubeltec. Todos los derechos reservados.</p>
     </footer>
 
-    <!-- Lógica en JS para filtrar productos -->
+    <!-- Lógica en JS para búsqueda, ordenamiento y filtros -->
     <script>
-        function filterProducts() {
-            const input = document.getElementById('searchInput').value.toLowerCase();
-            const cards = document.getElementsByClassName('card');
+        function updateProducts() {
+            const container = document.getElementById('productContainer');
+            const cardsArray = Array.from(container.getElementsByClassName('card'));
+            
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const sortValue = document.getElementById('sortSelect').value;
+            const stockValue = document.getElementById('stockSelect').value;
 
-            for (let i = 0; i < cards.length; i++) {
-                const title = cards[i].querySelector('.card-title').innerText.toLowerCase();
-                const desc = cards[i].querySelector('.card-description').innerText.toLowerCase();
+            // 1. Filtrar productos por búsqueda y stock
+            cardsArray.forEach(card => {
+                const title = card.getAttribute('data-name').toLowerCase();
+                const desc = card.querySelector('.card-description').innerText.toLowerCase();
+                const isStock = card.getAttribute('data-stock') === 'true';
 
-                if (title.includes(input) || desc.includes(input)) {
-                    cards[i].style.display = "flex";
+                const matchesSearch = title.includes(searchText) || desc.includes(searchText);
+                const matchesStock = stockValue === 'all' || (stockValue === 'instock' && isStock);
+
+                if (matchesSearch && matchesStock) {
+                    card.style.display = "flex";
                 } else {
-                    cards[i].style.display = "none";
+                    card.style.display = "none";
                 }
+            });
+
+            // 2. Ordenar productos en el DOM
+            if (sortValue !== 'default') {
+                cardsArray.sort((a, b) => {
+                    const priceA = parseFloat(a.getAttribute('data-price'));
+                    const priceB = parseFloat(b.getAttribute('data-price'));
+                    const nameA = a.getAttribute('data-name').toLowerCase();
+                    const nameB = b.getAttribute('data-name').toLowerCase();
+
+                    if (sortValue === 'price-asc') return priceA - priceB;
+                    if (sortValue === 'price-desc') return priceB - priceA;
+                    if (sortValue === 'alpha-asc') return nameA.localeCompare(nameB);
+                    if (sortValue === 'alpha-desc') return nameB.localeCompare(nameA);
+                    return 0;
+                });
+
+                // Reordenar elementos dentro del contenedor
+                cardsArray.forEach(card => container.appendChild(card));
             }
         }
     </script>
