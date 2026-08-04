@@ -179,10 +179,23 @@
             font-weight: 500;
         }
 
+        /* Alerta Parpadeante de Descuentos */
+        @keyframes blinkAlert {
+            0% { opacity: 1; transform: scale(1); box-shadow: 0 0 8px rgba(34, 197, 94, 0.4); }
+            50% { opacity: 0.55; transform: scale(0.985); box-shadow: 0 0 2px rgba(34, 197, 94, 0.1); }
+            100% { opacity: 1; transform: scale(1); box-shadow: 0 0 8px rgba(34, 197, 94, 0.4); }
+        }
+
         .payment-methods-badge {
-            font-size: 0.7rem;
-            color: #94a3b8;
+            font-size: 0.75rem;
+            color: #ffffff;
             margin-bottom: 6px;
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px dashed #22c55e;
+            padding: 4px 10px;
+            border-radius: 8px;
+            display: inline-block;
+            animation: blinkAlert 1.5s infinite ease-in-out;
         }
 
         .payment-methods-badge span {
@@ -484,9 +497,35 @@
             border: 1px solid rgba(0, 180, 216, 0.2);
         }
 
+        .calc-label-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
         .calc-label {
             font-size: 0.75rem;
             color: #94a3b8;
+        }
+
+        .calc-reset-btn {
+            background: rgba(230, 57, 70, 0.15);
+            border: 1px solid rgba(230, 57, 70, 0.4);
+            color: #ff6b6b;
+            font-size: 0.65rem;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .calc-reset-btn:hover {
+            background: #e63946;
+            color: #ffffff;
         }
 
         .calc-controls {
@@ -772,17 +811,17 @@
     <!-- Notificación Flotante de Check Animado -->
     <div class="toast-notification" id="toastNotification">
         <div class="toast-check">✓</div>
-        <span>¡Agregado a la cesta con éxito!</span>
+        <span>¡Agregado al carrito con éxito!</span>
     </div>
 
     <!-- Modal de Cesta / Carrito -->
     <div class="modal-overlay" id="cartModal">
         <div class="modal-card">
             <button class="close-modal" onclick="closeCartModal()">&times;</button>
-            <h3 class="modal-title">🛒 Cesta de Compras</h3>
+            <h3 class="modal-title">🛒 Carrito de Compras</h3>
             
             <div class="cart-items-list" id="cartItemsContainer">
-                <p style="color: #94a3b8; font-size: 0.8rem; padding: 10px;">Tu cesta está vacía</p>
+                <p style="color: #94a3b8; font-size: 0.8rem; padding: 10px;">Tu carrito está vacío</p>
             </div>
 
             <div class="cart-actions-bar">
@@ -829,12 +868,13 @@
             </div>
 
             <button class="cart-btn" onclick="openCartModal()">
-                🛒 Cesta (<span id="cartCount">0</span>)
+                🛒 Carrito (<span id="cartCount">0</span>)
             </button>
         </div>
 
         <div class="slogan-text">✨ Software Original y Licencias Digitales a tu Alcance ✨</div>
 
+        <!-- Alerta Parpadeante de Descuentos -->
         <div class="payment-methods-badge">
             ¡Descuentos automáticos: <span>10% (3+ unids)</span> | <span>15% (5+ unids)</span>!
         </div>
@@ -859,20 +899,21 @@
             </div>
         </div>
 
-        <!-- Filtros -->
+        <!-- Filtros actualizados -->
         <div class="controls-container">
             <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar licencia..." oninput="updateProducts()">
             
             <select id="sortSelect" class="select-control" onchange="updateProducts()">
-                <option value="default">Ordenar</option>
-                <option value="price-asc">S/. Menor</option>
-                <option value="price-desc">S/. Mayor</option>
+                <option value="default">Restablecer</option>
+                <option value="price-desc">Mayor a menor</option>
+                <option value="price-asc">Menor a mayor</option>
                 <option value="alpha-asc">A - Z</option>
             </select>
 
             <select id="stockSelect" class="select-control" onchange="updateProducts()">
-                <option value="all">Stock</option>
+                <option value="all">Todo el stock</option>
                 <option value="instock">Disponible</option>
+                <option value="outofstock">Sin stock</option>
             </select>
         </div>
     </header>
@@ -900,7 +941,10 @@
                                     <div class="discount-notice" id="disc-win-pro" style="display:none;"></div>
                                 </div>
                                 <div class="calculator-box">
-                                    <span class="calc-label">Cantidad:</span>
+                                    <div class="calc-label-container">
+                                        <span class="calc-label">Cantidad:</span>
+                                        <button class="calc-reset-btn" onclick="resetQty('win-pro')" title="Restablecer cantidad">↺</button>
+                                    </div>
                                     <div class="calc-controls">
                                         <button class="calc-btn" onclick="changeQty('win-pro', -1)">-</button>
                                         <input type="text" class="calc-input" id="qty-win-pro" value="1" readonly>
@@ -908,7 +952,7 @@
                                     </div>
                                 </div>
                                 <div class="card-actions">
-                                    <button class="btn-cart" onclick="addToCart('Windows 10/11 Pro (Siempre)', 50.00, 'qty-win-pro')">🛒 Agregar a Cesta</button>
+                                    <button class="btn-cart" onclick="addToCart('Windows 10/11 Pro (Siempre)', 50.00, 'qty-win-pro')">🛒 Agregar al Carrito</button>
                                     <button class="btn-yape" onclick="openDirectPayment('Windows 10/11 Pro (Siempre)', 50.00, 'qty-win-pro')">💜 Pagar con Yape o Plin</button>
                                 </div>
                             </div>
@@ -930,7 +974,10 @@
                                     <div class="discount-notice" id="disc-off-365" style="display:none;"></div>
                                 </div>
                                 <div class="calculator-box">
-                                    <span class="calc-label">Cantidad:</span>
+                                    <div class="calc-label-container">
+                                        <span class="calc-label">Cantidad:</span>
+                                        <button class="calc-reset-btn" onclick="resetQty('off-365')" title="Restablecer cantidad">↺</button>
+                                    </div>
                                     <div class="calc-controls">
                                         <button class="calc-btn" onclick="changeQty('off-365', -1)">-</button>
                                         <input type="text" class="calc-input" id="qty-off-365" value="1" readonly>
@@ -938,7 +985,7 @@
                                     </div>
                                 </div>
                                 <div class="card-actions">
-                                    <button class="btn-cart" onclick="addToCart('Office 365 (1 año)', 45.00, 'qty-off-365')">🛒 Agregar a Cesta</button>
+                                    <button class="btn-cart" onclick="addToCart('Office 365 (1 año)', 45.00, 'qty-off-365')">🛒 Agregar al Carrito</button>
                                     <button class="btn-yape" onclick="openDirectPayment('Office 365 (1 año)', 45.00, 'qty-off-365')">💜 Pagar con Yape o Plin</button>
                                 </div>
                             </div>
@@ -960,7 +1007,10 @@
                                     <div class="discount-notice" id="disc-gem-18" style="display:none;"></div>
                                 </div>
                                 <div class="calculator-box">
-                                    <span class="calc-label">Cantidad:</span>
+                                    <div class="calc-label-container">
+                                        <span class="calc-label">Cantidad:</span>
+                                        <button class="calc-reset-btn" onclick="resetQty('gem-18')" title="Restablecer cantidad">↺</button>
+                                    </div>
                                     <div class="calc-controls">
                                         <button class="calc-btn" onclick="changeQty('gem-18', -1)">-</button>
                                         <input type="text" class="calc-input" id="qty-gem-18" value="1" readonly>
@@ -968,7 +1018,7 @@
                                     </div>
                                 </div>
                                 <div class="card-actions">
-                                    <button class="btn-cart" onclick="addToCart('Gemini Pro 3.6 (18 meses)', 70.00, 'qty-gem-18')">🛒 Agregar a Cesta</button>
+                                    <button class="btn-cart" onclick="addToCart('Gemini Pro 3.6 (18 meses)', 70.00, 'qty-gem-18')">🛒 Agregar al Carrito</button>
                                     <button class="btn-yape" onclick="openDirectPayment('Gemini Pro 3.6 (18 meses)', 70.00, 'qty-gem-18')">💜 Pagar con Yape o Plin</button>
                                 </div>
                             </div>
@@ -990,7 +1040,10 @@
                                     <div class="discount-notice" id="disc-canva-3" style="display:none;"></div>
                                 </div>
                                 <div class="calculator-box">
-                                    <span class="calc-label">Cantidad:</span>
+                                    <div class="calc-label-container">
+                                        <span class="calc-label">Cantidad:</span>
+                                        <button class="calc-reset-btn" onclick="resetQty('canva-3')" title="Restablecer cantidad">↺</button>
+                                    </div>
                                     <div class="calc-controls">
                                         <button class="calc-btn" onclick="changeQty('canva-3', -1)">-</button>
                                         <input type="text" class="calc-input" id="qty-canva-3" value="1" readonly>
@@ -998,7 +1051,7 @@
                                     </div>
                                 </div>
                                 <div class="card-actions">
-                                    <button class="btn-cart" onclick="addToCart('Canva Pro (3 años)', 55.00, 'qty-canva-3')">🛒 Agregar a Cesta</button>
+                                    <button class="btn-cart" onclick="addToCart('Canva Pro (3 años)', 55.00, 'qty-canva-3')">🛒 Agregar al Carrito</button>
                                     <button class="btn-yape" onclick="openDirectPayment('Canva Pro (3 años)', 55.00, 'qty-canva-3')">💜 Pagar con Yape o Plin</button>
                                 </div>
                             </div>
@@ -1020,7 +1073,10 @@
                                     <div class="discount-notice" id="disc-auto-1" style="display:none;"></div>
                                 </div>
                                 <div class="calculator-box">
-                                    <span class="calc-label">Cantidad:</span>
+                                    <div class="calc-label-container">
+                                        <span class="calc-label">Cantidad:</span>
+                                        <button class="calc-reset-btn" onclick="resetQty('auto-1')" title="Restablecer cantidad">↺</button>
+                                    </div>
                                     <div class="calc-controls">
                                         <button class="calc-btn" onclick="changeQty('auto-1', -1)">-</button>
                                         <input type="text" class="calc-input" id="qty-auto-1" value="1" readonly>
@@ -1028,7 +1084,7 @@
                                     </div>
                                 </div>
                                 <div class="card-actions">
-                                    <button class="btn-cart" onclick="addToCart('Autodesk All Apps (1 año)', 75.00, 'qty-auto-1')">🛒 Agregar a Cesta</button>
+                                    <button class="btn-cart" onclick="addToCart('Autodesk All Apps (1 año)', 75.00, 'qty-auto-1')">🛒 Agregar al Carrito</button>
                                     <button class="btn-yape" onclick="openDirectPayment('Autodesk All Apps (1 año)', 75.00, 'qty-auto-1')">💜 Pagar con Yape o Plin</button>
                                 </div>
                             </div>
@@ -1050,7 +1106,10 @@
                                     <div class="discount-notice" id="disc-crunch-1" style="display:none;"></div>
                                 </div>
                                 <div class="calculator-box">
-                                    <span class="calc-label">Cantidad:</span>
+                                    <div class="calc-label-container">
+                                        <span class="calc-label">Cantidad:</span>
+                                        <button class="calc-reset-btn" onclick="resetQty('crunch-1')" title="Restablecer cantidad">↺</button>
+                                    </div>
                                     <div class="calc-controls">
                                         <button class="calc-btn" onclick="changeQty('crunch-1', -1)">-</button>
                                         <input type="text" class="calc-input" id="qty-crunch-1" value="1" readonly>
@@ -1058,7 +1117,7 @@
                                     </div>
                                 </div>
                                 <div class="card-actions">
-                                    <button class="btn-cart" onclick="addToCart('Crunchyroll 1 Perfil (1 año)', 99.00, 'qty-crunch-1')">🛒 Agregar a Cesta</button>
+                                    <button class="btn-cart" onclick="addToCart('Crunchyroll 1 Perfil (1 año)', 99.00, 'qty-crunch-1')">🛒 Agregar al Carrito</button>
                                     <button class="btn-yape" onclick="openDirectPayment('Crunchyroll 1 Perfil (1 año)', 99.00, 'qty-crunch-1')">💜 Pagar con Yape o Plin</button>
                                 </div>
                             </div>
@@ -1069,7 +1128,7 @@
             </div>
         </div>
 
-        <!-- SECCIÓN: CATÁLOGO GENERAL (CON TODOS LOS PRODUCTOS SIN FALTA) -->
+        <!-- SECCIÓN: CATÁLOGO GENERAL -->
         <div id="seccionCatalogo">
             <h2 class="section-title">📦 Catálogo General de Licencias</h2>
             <div class="grid-layout" id="catalogoGrid">
@@ -1089,7 +1148,10 @@
                                 <div class="discount-notice" id="disc-g-win-pro" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
-                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-label-container">
+                                    <span class="calc-label">Cantidad:</span>
+                                    <button class="calc-reset-btn" onclick="resetQty('g-win-pro')" title="Restablecer cantidad">↺</button>
+                                </div>
                                 <div class="calc-controls">
                                     <button class="calc-btn" onclick="changeQty('g-win-pro', -1)">-</button>
                                     <input type="text" class="calc-input" id="qty-g-win-pro" value="1" readonly>
@@ -1097,7 +1159,7 @@
                                 </div>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-cart" onclick="addToCart('Windows 10/11 Pro (Siempre)', 50.00, 'qty-g-win-pro')">🛒 Agregar a Cesta</button>
+                                <button class="btn-cart" onclick="addToCart('Windows 10/11 Pro (Siempre)', 50.00, 'qty-g-win-pro')">🛒 Agregar al Carrito</button>
                                 <button class="btn-yape" onclick="openDirectPayment('Windows 10/11 Pro (Siempre)', 50.00, 'qty-g-win-pro')">💜 Pagar con Yape o Plin</button>
                             </div>
                         </div>
@@ -1118,7 +1180,10 @@
                                 <div class="discount-notice" id="disc-win-home" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
-                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-label-container">
+                                    <span class="calc-label">Cantidad:</span>
+                                    <button class="calc-reset-btn" onclick="resetQty('win-home')" title="Restablecer cantidad">↺</button>
+                                </div>
                                 <div class="calc-controls">
                                     <button class="calc-btn" onclick="changeQty('win-home', -1)">-</button>
                                     <input type="text" class="calc-input" id="qty-win-home" value="1" readonly>
@@ -1126,7 +1191,7 @@
                                 </div>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-cart" onclick="addToCart('Windows 10/11 Home (Siempre)', 50.00, 'qty-win-home')">🛒 Agregar a Cesta</button>
+                                <button class="btn-cart" onclick="addToCart('Windows 10/11 Home (Siempre)', 50.00, 'qty-win-home')">🛒 Agregar al Carrito</button>
                                 <button class="btn-yape" onclick="openDirectPayment('Windows 10/11 Home (Siempre)', 50.00, 'qty-win-home')">💜 Pagar con Yape o Plin</button>
                             </div>
                         </div>
@@ -1148,7 +1213,10 @@
                                 <div class="discount-notice" id="disc-g-off-365" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
-                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-label-container">
+                                    <span class="calc-label">Cantidad:</span>
+                                    <button class="calc-reset-btn" onclick="resetQty('g-off-365')" title="Restablecer cantidad">↺</button>
+                                </div>
                                 <div class="calc-controls">
                                     <button class="calc-btn" onclick="changeQty('g-off-365', -1)">-</button>
                                     <input type="text" class="calc-input" id="qty-g-off-365" value="1" readonly>
@@ -1156,7 +1224,7 @@
                                 </div>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-cart" onclick="addToCart('Office 365 (1 año)', 45.00, 'qty-g-off-365')">🛒 Agregar a Cesta</button>
+                                <button class="btn-cart" onclick="addToCart('Office 365 (1 año)', 45.00, 'qty-g-off-365')">🛒 Agregar al Carrito</button>
                                 <button class="btn-yape" onclick="openDirectPayment('Office 365 (1 año)', 45.00, 'qty-g-off-365')">💜 Pagar con Yape o Plin</button>
                             </div>
                         </div>
@@ -1178,7 +1246,10 @@
                                 <div class="discount-notice" id="disc-canva-1" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
-                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-label-container">
+                                    <span class="calc-label">Cantidad:</span>
+                                    <button class="calc-reset-btn" onclick="resetQty('canva-1')" title="Restablecer cantidad">↺</button>
+                                </div>
                                 <div class="calc-controls">
                                     <button class="calc-btn" onclick="changeQty('canva-1', -1)">-</button>
                                     <input type="text" class="calc-input" id="qty-canva-1" value="1" readonly>
@@ -1186,7 +1257,7 @@
                                 </div>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-cart" onclick="addToCart('Canva Pro (1 año)', 35.00, 'qty-canva-1')">🛒 Agregar a Cesta</button>
+                                <button class="btn-cart" onclick="addToCart('Canva Pro (1 año)', 35.00, 'qty-canva-1')">🛒 Agregar al Carrito</button>
                                 <button class="btn-yape" onclick="openDirectPayment('Canva Pro (1 año)', 35.00, 'qty-canva-1')">💜 Pagar con Yape o Plin</button>
                             </div>
                         </div>
@@ -1207,7 +1278,10 @@
                                 <div class="discount-notice" id="disc-canva-2" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
-                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-label-container">
+                                    <span class="calc-label">Cantidad:</span>
+                                    <button class="calc-reset-btn" onclick="resetQty('canva-2')" title="Restablecer cantidad">↺</button>
+                                </div>
                                 <div class="calc-controls">
                                     <button class="calc-btn" onclick="changeQty('canva-2', -1)">-</button>
                                     <input type="text" class="calc-input" id="qty-canva-2" value="1" readonly>
@@ -1215,7 +1289,7 @@
                                 </div>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-cart" onclick="addToCart('Canva Pro (2 años)', 45.00, 'qty-canva-2')">🛒 Agregar a Cesta</button>
+                                <button class="btn-cart" onclick="addToCart('Canva Pro (2 años)', 45.00, 'qty-canva-2')">🛒 Agregar al Carrito</button>
                                 <button class="btn-yape" onclick="openDirectPayment('Canva Pro (2 años)', 45.00, 'qty-canva-2')">💜 Pagar con Yape o Plin</button>
                             </div>
                         </div>
@@ -1236,7 +1310,10 @@
                                 <div class="discount-notice" id="disc-g-canva-3" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
-                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-label-container">
+                                    <span class="calc-label">Cantidad:</span>
+                                    <button class="calc-reset-btn" onclick="resetQty('g-canva-3')" title="Restablecer cantidad">↺</button>
+                                </div>
                                 <div class="calc-controls">
                                     <button class="calc-btn" onclick="changeQty('g-canva-3', -1)">-</button>
                                     <input type="text" class="calc-input" id="qty-g-canva-3" value="1" readonly>
@@ -1244,7 +1321,7 @@
                                 </div>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-cart" onclick="addToCart('Canva Pro (3 años)', 55.00, 'qty-g-canva-3')">🛒 Agregar a Cesta</button>
+                                <button class="btn-cart" onclick="addToCart('Canva Pro (3 años)', 55.00, 'qty-g-canva-3')">🛒 Agregar al Carrito</button>
                                 <button class="btn-yape" onclick="openDirectPayment('Canva Pro (3 años)', 55.00, 'qty-g-canva-3')">💜 Pagar con Yape o Plin</button>
                             </div>
                         </div>
@@ -1266,7 +1343,10 @@
                                 <div class="discount-notice" id="disc-canva-inf" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
-                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-label-container">
+                                    <span class="calc-label">Cantidad:</span>
+                                    <button class="calc-reset-btn btn-disabled">-</button>
+                                </div>
                                 <div class="calc-controls">
                                     <button class="calc-btn btn-disabled">-</button>
                                     <input type="text" class="calc-input" id="qty-canva-inf" value="1" readonly>
@@ -1296,7 +1376,10 @@
                                 <div class="discount-notice" id="disc-g-gem-18" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
-                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-label-container">
+                                    <span class="calc-label">Cantidad:</span>
+                                    <button class="calc-reset-btn" onclick="resetQty('g-gem-18')" title="Restablecer cantidad">↺</button>
+                                </div>
                                 <div class="calc-controls">
                                     <button class="calc-btn" onclick="changeQty('g-gem-18', -1)">-</button>
                                     <input type="text" class="calc-input" id="qty-g-gem-18" value="1" readonly>
@@ -1304,7 +1387,7 @@
                                 </div>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-cart" onclick="addToCart('Gemini Pro 3.6 (18 meses)', 70.00, 'qty-g-gem-18')">🛒 Agregar a Cesta</button>
+                                <button class="btn-cart" onclick="addToCart('Gemini Pro 3.6 (18 meses)', 70.00, 'qty-g-gem-18')">🛒 Agregar al Carrito</button>
                                 <button class="btn-yape" onclick="openDirectPayment('Gemini Pro 3.6 (18 meses)', 70.00, 'qty-g-gem-18')">💜 Pagar con Yape o Plin</button>
                             </div>
                         </div>
@@ -1325,7 +1408,10 @@
                                 <div class="discount-notice" id="disc-gem-12" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
-                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-label-container">
+                                    <span class="calc-label">Cantidad:</span>
+                                    <button class="calc-reset-btn" onclick="resetQty('gem-12')" title="Restablecer cantidad">↺</button>
+                                </div>
                                 <div class="calc-controls">
                                     <button class="calc-btn" onclick="changeQty('gem-12', -1)">-</button>
                                     <input type="text" class="calc-input" id="qty-gem-12" value="1" readonly>
@@ -1333,7 +1419,7 @@
                                 </div>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-cart" onclick="addToCart('Gemini Pro 3.6 (12 meses)', 50.00, 'qty-gem-12')">🛒 Agregar a Cesta</button>
+                                <button class="btn-cart" onclick="addToCart('Gemini Pro 3.6 (12 meses)', 50.00, 'qty-gem-12')">🛒 Agregar al Carrito</button>
                                 <button class="btn-yape" onclick="openDirectPayment('Gemini Pro 3.6 (12 meses)', 50.00, 'qty-gem-12')">💜 Pagar con Yape o Plin</button>
                             </div>
                         </div>
@@ -1354,7 +1440,10 @@
                                 <div class="discount-notice" id="disc-duo-12" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
-                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-label-container">
+                                    <span class="calc-label">Cantidad:</span>
+                                    <button class="calc-reset-btn" onclick="resetQty('duo-12')" title="Restablecer cantidad">↺</button>
+                                </div>
                                 <div class="calc-controls">
                                     <button class="calc-btn" onclick="changeQty('duo-12', -1)">-</button>
                                     <input type="text" class="calc-input" id="qty-duo-12" value="1" readonly>
@@ -1362,7 +1451,7 @@
                                 </div>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-cart" onclick="addToCart('Duolingo Super (12 meses)', 144.00, 'qty-duo-12')">🛒 Agregar a Cesta</button>
+                                <button class="btn-cart" onclick="addToCart('Duolingo Super (12 meses)', 144.00, 'qty-duo-12')">🛒 Agregar al Carrito</button>
                                 <button class="btn-yape" onclick="openDirectPayment('Duolingo Super (12 meses)', 144.00, 'qty-duo-12')">💜 Pagar con Yape o Plin</button>
                             </div>
                         </div>
@@ -1383,7 +1472,10 @@
                                 <div class="discount-notice" id="disc-capcut-1" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
-                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-label-container">
+                                    <span class="calc-label">Cantidad:</span>
+                                    <button class="calc-reset-btn" onclick="resetQty('capcut-1')" title="Restablecer cantidad">↺</button>
+                                </div>
                                 <div class="calc-controls">
                                     <button class="calc-btn" onclick="changeQty('capcut-1', -1)">-</button>
                                     <input type="text" class="calc-input" id="qty-capcut-1" value="1" readonly>
@@ -1391,7 +1483,7 @@
                                 </div>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-cart" onclick="addToCart('Capcut Pro (1 mes)', 23.00, 'qty-capcut-1')">🛒 Agregar a Cesta</button>
+                                <button class="btn-cart" onclick="addToCart('Capcut Pro (1 mes)', 23.00, 'qty-capcut-1')">🛒 Agregar al Carrito</button>
                                 <button class="btn-yape" onclick="openDirectPayment('Capcut Pro (1 mes)', 23.00, 'qty-capcut-1')">💜 Pagar con Yape o Plin</button>
                             </div>
                         </div>
@@ -1413,7 +1505,10 @@
                                 <div class="discount-notice" id="disc-g-auto-1" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
-                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-label-container">
+                                    <span class="calc-label">Cantidad:</span>
+                                    <button class="calc-reset-btn" onclick="resetQty('g-auto-1')" title="Restablecer cantidad">↺</button>
+                                </div>
                                 <div class="calc-controls">
                                     <button class="calc-btn" onclick="changeQty('g-auto-1', -1)">-</button>
                                     <input type="text" class="calc-input" id="qty-g-auto-1" value="1" readonly>
@@ -1421,7 +1516,7 @@
                                 </div>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-cart" onclick="addToCart('Autodesk All Apps (1 año)', 75.00, 'qty-g-auto-1')">🛒 Agregar a Cesta</button>
+                                <button class="btn-cart" onclick="addToCart('Autodesk All Apps (1 año)', 75.00, 'qty-g-auto-1')">🛒 Agregar al Carrito</button>
                                 <button class="btn-yape" onclick="openDirectPayment('Autodesk All Apps (1 año)', 75.00, 'qty-g-auto-1')">💜 Pagar con Yape o Plin</button>
                             </div>
                         </div>
@@ -1442,7 +1537,10 @@
                                 <div class="discount-notice" id="disc-auto-6" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
-                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-label-container">
+                                    <span class="calc-label">Cantidad:</span>
+                                    <button class="calc-reset-btn" onclick="resetQty('auto-6')" title="Restablecer cantidad">↺</button>
+                                </div>
                                 <div class="calc-controls">
                                     <button class="calc-btn" onclick="changeQty('auto-6', -1)">-</button>
                                     <input type="text" class="calc-input" id="qty-auto-6" value="1" readonly>
@@ -1450,7 +1548,7 @@
                                 </div>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-cart" onclick="addToCart('Autodesk All Apps (6 meses)', 49.00, 'qty-auto-6')">🛒 Agregar a Cesta</button>
+                                <button class="btn-cart" onclick="addToCart('Autodesk All Apps (6 meses)', 49.00, 'qty-auto-6')">🛒 Agregar al Carrito</button>
                                 <button class="btn-yape" onclick="openDirectPayment('Autodesk All Apps (6 meses)', 49.00, 'qty-auto-6')">💜 Pagar con Yape o Plin</button>
                             </div>
                         </div>
@@ -1471,7 +1569,10 @@
                                 <div class="discount-notice" id="disc-auto-3" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
-                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-label-container">
+                                    <span class="calc-label">Cantidad:</span>
+                                    <button class="calc-reset-btn" onclick="resetQty('auto-3')" title="Restablecer cantidad">↺</button>
+                                </div>
                                 <div class="calc-controls">
                                     <button class="calc-btn" onclick="changeQty('auto-3', -1)">-</button>
                                     <input type="text" class="calc-input" id="qty-auto-3" value="1" readonly>
@@ -1479,7 +1580,7 @@
                                 </div>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-cart" onclick="addToCart('Autodesk All Apps (3 meses)', 29.00, 'qty-auto-3')">🛒 Agregar a Cesta</button>
+                                <button class="btn-cart" onclick="addToCart('Autodesk All Apps (3 meses)', 29.00, 'qty-auto-3')">🛒 Agregar al Carrito</button>
                                 <button class="btn-yape" onclick="openDirectPayment('Autodesk All Apps (3 meses)', 29.00, 'qty-auto-3')">💜 Pagar con Yape o Plin</button>
                             </div>
                         </div>
@@ -1500,7 +1601,10 @@
                                 <div class="discount-notice" id="disc-spot-1" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
-                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-label-container">
+                                    <span class="calc-label">Cantidad:</span>
+                                    <button class="calc-reset-btn" onclick="resetQty('spot-1')" title="Restablecer cantidad">↺</button>
+                                </div>
                                 <div class="calc-controls">
                                     <button class="calc-btn" onclick="changeQty('spot-1', -1)">-</button>
                                     <input type="text" class="calc-input" id="qty-spot-1" value="1" readonly>
@@ -1508,7 +1612,7 @@
                                 </div>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-cart" onclick="addToCart('Spotify Premium (1 mes)', 15.00, 'qty-spot-1')">🛒 Agregar a Cesta</button>
+                                <button class="btn-cart" onclick="addToCart('Spotify Premium (1 mes)', 15.00, 'qty-spot-1')">🛒 Agregar al Carrito</button>
                                 <button class="btn-yape" onclick="openDirectPayment('Spotify Premium (1 mes)', 15.00, 'qty-spot-1')">💜 Pagar con Yape o Plin</button>
                             </div>
                         </div>
@@ -1529,7 +1633,10 @@
                                 <div class="discount-notice" id="disc-flujo-1" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
-                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-label-container">
+                                    <span class="calc-label">Cantidad:</span>
+                                    <button class="calc-reset-btn" onclick="resetQty('flujo-1')" title="Restablecer cantidad">↺</button>
+                                </div>
                                 <div class="calc-controls">
                                     <button class="calc-btn" onclick="changeQty('flujo-1', -1)">-</button>
                                     <input type="text" class="calc-input" id="qty-flujo-1" value="1" readonly>
@@ -1537,7 +1644,7 @@
                                 </div>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-cart" onclick="addToCart('Flujo TV (1 mes)', 20.00, 'qty-flujo-1')">🛒 Agregar a Cesta</button>
+                                <button class="btn-cart" onclick="addToCart('Flujo TV (1 mes)', 20.00, 'qty-flujo-1')">🛒 Agregar al Carrito</button>
                                 <button class="btn-yape" onclick="openDirectPayment('Flujo TV (1 mes)', 20.00, 'qty-flujo-1')">💜 Pagar con Yape o Plin</button>
                             </div>
                         </div>
@@ -1558,7 +1665,10 @@
                                 <div class="discount-notice" id="disc-g-crunch-1" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
-                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-label-container">
+                                    <span class="calc-label">Cantidad:</span>
+                                    <button class="calc-reset-btn" onclick="resetQty('g-crunch-1')" title="Restablecer cantidad">↺</button>
+                                </div>
                                 <div class="calc-controls">
                                     <button class="calc-btn" onclick="changeQty('g-crunch-1', -1)">-</button>
                                     <input type="text" class="calc-input" id="qty-g-crunch-1" value="1" readonly>
@@ -1566,7 +1676,7 @@
                                 </div>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-cart" onclick="addToCart('Crunchyroll 1 Perfil (1 año)', 99.00, 'qty-g-crunch-1')">🛒 Agregar a Cesta</button>
+                                <button class="btn-cart" onclick="addToCart('Crunchyroll 1 Perfil (1 año)', 99.00, 'qty-g-crunch-1')">🛒 Agregar al Carrito</button>
                                 <button class="btn-yape" onclick="openDirectPayment('Crunchyroll 1 Perfil (1 año)', 99.00, 'qty-g-crunch-1')">💜 Pagar con Yape o Plin</button>
                             </div>
                         </div>
@@ -1587,7 +1697,10 @@
                                 <div class="discount-notice" id="disc-crunch-3" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
-                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-label-container">
+                                    <span class="calc-label">Cantidad:</span>
+                                    <button class="calc-reset-btn" onclick="resetQty('crunch-3')" title="Restablecer cantidad">↺</button>
+                                </div>
                                 <div class="calc-controls">
                                     <button class="calc-btn" onclick="changeQty('crunch-3', -1)">-</button>
                                     <input type="text" class="calc-input" id="qty-crunch-3" value="1" readonly>
@@ -1595,7 +1708,7 @@
                                 </div>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-cart" onclick="addToCart('Crunchyroll 1 Perfil (3 meses)', 35.00, 'qty-crunch-3')">🛒 Agregar a Cesta</button>
+                                <button class="btn-cart" onclick="addToCart('Crunchyroll 1 Perfil (3 meses)', 35.00, 'qty-crunch-3')">🛒 Agregar al Carrito</button>
                                 <button class="btn-yape" onclick="openDirectPayment('Crunchyroll 1 Perfil (3 meses)', 35.00, 'qty-crunch-3')">💜 Pagar con Yape o Plin</button>
                             </div>
                         </div>
@@ -1616,7 +1729,10 @@
                                 <div class="discount-notice" id="disc-crunch-6" style="display:none;"></div>
                             </div>
                             <div class="calculator-box">
-                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-label-container">
+                                    <span class="calc-label">Cantidad:</span>
+                                    <button class="calc-reset-btn" onclick="resetQty('crunch-6')" title="Restablecer cantidad">↺</button>
+                                </div>
                                 <div class="calc-controls">
                                     <button class="calc-btn" onclick="changeQty('crunch-6', -1)">-</button>
                                     <input type="text" class="calc-input" id="qty-crunch-6" value="1" readonly>
@@ -1624,7 +1740,7 @@
                                 </div>
                             </div>
                             <div class="card-actions">
-                                <button class="btn-cart" onclick="addToCart('Crunchyroll Cuenta Completa (6 meses)', 89.00, 'qty-crunch-6')">🛒 Agregar a Cesta</button>
+                                <button class="btn-cart" onclick="addToCart('Crunchyroll Cuenta Completa (6 meses)', 89.00, 'qty-crunch-6')">🛒 Agregar al Carrito</button>
                                 <button class="btn-yape" onclick="openDirectPayment('Crunchyroll Cuenta Completa (6 meses)', 89.00, 'qty-crunch-6')">💜 Pagar con Yape o Plin</button>
                             </div>
                         </div>
@@ -1718,6 +1834,12 @@
             recalculateCardPrice(id, val);
         }
 
+        function resetQty(id) {
+            const input = document.getElementById('qty-' + id);
+            input.value = 1;
+            recalculateCardPrice(id, 1);
+        }
+
         function recalculateCardPrice(id, qty) {
             const input = document.getElementById('qty-' + id);
             const card = input.closest('.card');
@@ -1796,7 +1918,7 @@
             
             const container = document.getElementById('cartItemsContainer');
             if (cart.length === 0) {
-                container.innerHTML = `<p style="color: #94a3b8; font-size: 0.8rem; padding: 10px;">Tu cesta está vacía</p>`;
+                container.innerHTML = `<p style="color: #94a3b8; font-size: 0.8rem; padding: 10px;">Tu carrito está vacío</p>`;
                 document.getElementById('cartTotalPrice').innerText = 'S/. 0.00';
                 return;
             }
@@ -1841,7 +1963,7 @@
             document.getElementById('modalProductName').innerText = `Carrito: ${summaryText}`;
             document.getElementById('modalProductPrice').innerText = `S/. ${grandTotal.toFixed(2)}`;
             
-            const whatsappMsg = `Hola,%20deseo%20pagar%20mi%20pedido%20de%20la%20cesta:%20${encodeURIComponent(summaryText)}%20(Total:%20S/.%20${grandTotal.toFixed(2)}).%20Adjunto%20comprobante.`;
+            const whatsappMsg = `Hola,%20deseo%20pagar%20mi%20pedido%20del%20carrito:%20${encodeURIComponent(summaryText)}%20(Total:%20S/.%20${grandTotal.toFixed(2)}).%20Adjunto%20comprobante.`;
             document.getElementById('modalConfirmBtn').href = `https://wa.me/51933907930?text=${whatsappMsg}`;
 
             closeCartModal();
@@ -1994,7 +2116,11 @@
                 const isStock = card.getAttribute('data-stock') === 'true';
 
                 const matchesSearch = title.includes(searchText) || desc.includes(searchText);
-                const matchesStock = stockValue === 'all' || (stockValue === 'instock' && isStock);
+                
+                let matchesStock = true;
+                if (stockValue === 'instock') matchesStock = isStock;
+                else if (stockValue === 'outofstock') matchesStock = !isStock;
+
                 const matchesCategory = (currentFilter === 'principal' || currentFilter === 'all-software') || (category === currentFilter);
 
                 if (matchesCategory && matchesSearch && matchesStock) {
@@ -2012,7 +2138,10 @@
 
                 const matchesCategory = (currentFilter === 'principal' || currentFilter === 'all-software') || (category === currentFilter);
                 const matchesSearch = title.includes(searchText) || desc.includes(searchText);
-                const matchesStock = stockValue === 'all' || (stockValue === 'instock' && isStock);
+                
+                let matchesStock = true;
+                if (stockValue === 'instock') matchesStock = isStock;
+                else if (stockValue === 'outofstock') matchesStock = !isStock;
 
                 if (matchesCategory && matchesSearch && matchesStock) {
                     card.style.display = "flex";
@@ -2021,6 +2150,7 @@
                 }
             });
 
+            // Lógica de ordenamiento actualizada
             if (sortValue !== 'default') {
                 generalCards.sort((a, b) => {
                     const priceA = parseFloat(a.getAttribute('data-base-price'));
@@ -2028,9 +2158,9 @@
                     const nameA = a.getAttribute('data-name').toLowerCase();
                     const nameB = b.getAttribute('data-name').toLowerCase();
 
-                    if (sortValue === 'price-asc') return priceA - priceB;
-                    if (sortValue === 'price-desc') return priceB - priceA;
-                    if (sortValue === 'alpha-asc') return nameA.localeCompare(nameB);
+                    if (sortValue === 'price-desc') return priceB - priceA; // Mayor a menor
+                    if (sortValue === 'price-asc') return priceA - priceB;   // Menor a mayor
+                    if (sortValue === 'alpha-asc') return nameA.localeCompare(nameB); // A - Z
                     return 0;
                 });
 
