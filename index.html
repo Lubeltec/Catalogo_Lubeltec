@@ -259,12 +259,18 @@
             gap: 8px;
         }
 
-        /* Estilo del Carrusel Automático para Destacados */
+        /* Carrusel con topes */
         .carousel-container {
             position: relative;
             overflow: hidden;
             width: 100%;
             padding: 5px 0 15px 0;
+            cursor: grab;
+            user-select: none;
+        }
+
+        .carousel-container:active {
+            cursor: grabbing;
         }
 
         .carousel-track {
@@ -276,18 +282,19 @@
 
         .carousel-track .card.destacada {
             min-width: 250px;
-            flex: 0 0 calc(25% - 12px); /* 4 tarjetas en escritorio */
+            flex: 0 0 calc(25% - 12px);
+            pointer-events: auto;
         }
 
         @media (max-width: 1024px) {
             .carousel-track .card.destacada {
-                flex: 0 0 calc(33.333% - 10px); /* 3 tarjetas en tablets */
+                flex: 0 0 calc(33.333% - 10px);
             }
         }
 
         @media (max-width: 768px) {
             .carousel-track .card.destacada {
-                flex: 0 0 calc(85% - 10px); /* 1 tarjeta amplia visible en celulares */
+                flex: 0 0 calc(85% - 10px);
             }
         }
 
@@ -335,6 +342,7 @@
             height: 100%;
             object-fit: cover;
             transition: transform 0.5s ease;
+            pointer-events: none;
         }
 
         .card:hover .card img {
@@ -656,30 +664,33 @@
             </div>
         </div>
 
-        <!-- Filtros -->
+        <!-- Filtros actualizados -->
         <div class="controls-container">
             <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar licencia..." oninput="updateProducts()">
             
+            <!-- Sin la opción "Ordenar" por defecto -->
             <select id="sortSelect" class="select-control" onchange="updateProducts()">
-                <option value="default">Ordenar</option>
+                <option value="default">Por defecto</option>
                 <option value="price-asc">S/. Menor</option>
                 <option value="price-desc">S/. Mayor</option>
                 <option value="alpha-asc">A - Z</option>
             </select>
 
+            <!-- Opciones específicas de Disponible y Sin stock -->
             <select id="stockSelect" class="select-control" onchange="updateProducts()">
-                <option value="all">Stock</option>
+                <option value="all">Todo el Stock</option>
                 <option value="instock">Disponible</option>
+                <option value="outofstock">Sin stock</option>
             </select>
         </div>
     </header>
 
     <main class="container" id="productContainer">
 
-        <!-- SECCIÓN: CARRUSEL AUTOMÁTICO DE DESTACADOS -->
+        <!-- SECCIÓN: CARRUSEL AUTOMÁTICO DE DESTACADOS (Visible SOLO en Menú Principal) -->
         <div id="seccionDestacados">
             <h2 class="section-title">🔥 Programas Destacados</h2>
-            <div class="carousel-container">
+            <div class="carousel-container" id="carouselContainer">
                 <div class="carousel-track" id="carouselTrack">
 
                     <!-- Windows 10/11 Pro -->
@@ -745,7 +756,7 @@
                         </div>
                     </article>
 
-                    <!-- Canva Pro (3 años) - Reemplazado -->
+                    <!-- Canva Pro (3 años) -->
                     <article class="card destacada" data-category="diseno" data-price="55.00" data-name="Canva Pro (3 años)" data-stock="true">
                         <div class="card-img-container">
                             <img src="canva.png" alt="Canva Pro (3 años)">
@@ -787,7 +798,7 @@
                         </div>
                     </article>
 
-                    <!-- Crunchyroll 1 Perfil (1 año) - Agregado -->
+                    <!-- Crunchyroll 1 Perfil (1 año) -->
                     <article class="card destacada" data-category="iptv" data-price="99.00" data-name="Crunchyroll 1 Perfil (1 año)" data-stock="true">
                         <div class="card-img-container">
                             <img src="crunchyroll.png" alt="Crunchyroll Mega Fan (1 año)">
@@ -816,6 +827,130 @@
         <div id="seccionCatalogo">
             <h2 class="section-title">📦 Catálogo General de Licencias</h2>
             <div class="grid-layout" id="catalogoGrid">
+
+                <!-- Windows 10/11 Pro -->
+                <article class="card general-card" data-category="win" data-price="50.00" data-name="Windows 10/11 Pro (Siempre)" data-stock="true">
+                    <div class="card-img-container">
+                        <img src="windows11.png" alt="Windows 10/11 Pro">
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <span class="badge-tag">Permanente</span>
+                            <h2 class="card-title">Windows 10/11 Pro (Siempre)</h2>
+                            <p class="card-description">Licencia digital permanente (OEM). Reactivación para tu sistema operativo de por vida.</p>
+                        </div>
+                        <div>
+                            <div class="card-price">S/. 50.00</div>
+                            <div class="card-actions">
+                                <button class="btn-yape" onclick="openPaymentModal('Windows 10/11 Pro (Siempre)', 'S/. 50.00')">💜 Pagar con Yape / Plin</button>
+                                <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Windows%2010/11%20Pro%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Office 365 -->
+                <article class="card general-card" data-category="ia" data-price="45.00" data-name="Office 365 (1 año)" data-stock="true">
+                    <div class="card-img-container">
+                        <img src="office365.png" alt="Office 365 (1 año)">
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <span class="badge-tag">Garantizado</span>
+                            <h2 class="card-title">Office 365 (1 año)</h2>
+                            <p class="card-description">Instálalo en hasta 5 dispositivos. Incluye Word, Excel, PowerPoint, Outlook, Teams y 1TB en OneDrive.</p>
+                        </div>
+                        <div>
+                            <div class="card-price">S/. 45.00</div>
+                            <div class="card-actions">
+                                <button class="btn-yape" onclick="openPaymentModal('Office 365 (1 año)', 'S/. 45.00')">💜 Pagar con Yape / Plin</button>
+                                <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Office%20365%20(1%20año)%20-%20S/.45.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Gemini Pro 18 meses -->
+                <article class="card general-card" data-category="ia" data-price="70.00" data-name="Gemini Pro 3.6 (18 meses)" data-stock="true">
+                    <div class="card-img-container">
+                        <img src="gemini18.png" alt="Gemini Pro (18 meses)">
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <span class="badge-tag">Top IA</span>
+                            <h2 class="card-title">Gemini Pro 3.6 (18 meses)</h2>
+                            <p class="card-description">Incluye IA avanzada Gemini Pro, generación de video en Veo 3, NotebookLM y 5TB en Google Drive.</p>
+                        </div>
+                        <div>
+                            <div class="card-price">S/. 70.00</div>
+                            <div class="card-actions">
+                                <button class="btn-yape" onclick="openPaymentModal('Gemini Pro 3.6 (18 meses)', 'S/. 70.00')">💜 Pagar con Yape / Plin</button>
+                                <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(18%20meses)%20-%20S/.70.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Canva Pro 3 años -->
+                <article class="card general-card" data-category="diseno" data-price="55.00" data-name="Canva Pro (3 años)" data-stock="true">
+                    <div class="card-img-container">
+                        <img src="canva.png" alt="Canva Pro (3 años)">
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Canva Pro (3 años)</h2>
+                            <p class="card-description">Suscripción por 3 años con todas las herramientas de diseño avanzadas e inteligencia artificial.</p>
+                        </div>
+                        <div>
+                            <div class="card-price">S/. 55.00</div>
+                            <div class="card-actions">
+                                <button class="btn-yape" onclick="openPaymentModal('Canva Pro (3 años)', 'S/. 55.00')">💜 Pagar con Yape / Plin</button>
+                                <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(3%20años)%20-%20S/.55.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Autodesk All Apps 1 año -->
+                <article class="card general-card" data-category="diseno" data-price="75.00" data-name="Autodesk All Apps (1 año)" data-stock="true">
+                    <div class="card-img-container">
+                        <img src="autodesk.png" alt="Autodesk All Apps (1 año)">
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <span class="badge-tag">Suite Pro</span>
+                            <h2 class="card-title">Autodesk All Apps (1 año)</h2>
+                            <p class="card-description">Acceso a suite completa: AutoCAD, Revit, Inventor, Civil 3D, Maya, 3ds Max y Fusion 360.</p>
+                        </div>
+                        <div>
+                            <div class="card-price">S/. 75.00</div>
+                            <div class="card-actions">
+                                <button class="btn-yape" onclick="openPaymentModal('Autodesk All Apps (1 año)', 'S/. 75.00')">💜 Pagar con Yape / Plin</button>
+                                <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(1%20año)%20-%20S/.75.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Crunchyroll 1 Perfil 1 año -->
+                <article class="card general-card" data-category="iptv" data-price="99.00" data-name="Crunchyroll 1 Perfil (1 año)" data-stock="true">
+                    <div class="card-img-container">
+                        <img src="crunchyroll.png" alt="Crunchyroll Mega Fan (1 año)">
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Crunchyroll 1 Perfil (1 año)</h2>
+                            <p class="card-description">Cuenta Mega Fan para 1 perfil individual. Animes de estreno, sin anuncios y descargas sin conexión.</p>
+                        </div>
+                        <div>
+                            <div class="card-price">S/. 99.00</div>
+                            <div class="card-actions">
+                                <button class="btn-yape" onclick="openPaymentModal('Crunchyroll 1 Perfil (1 año)', 'S/. 99.00')">💜 Pagar con Yape / Plin</button>
+                                <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%201%20Perfil%20(1%20año)%20-%20S/.99.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
 
                 <!-- Windows 10/11 Home -->
                 <article class="card general-card" data-category="win" data-price="50.00" data-name="Windows 10/11 Home (Siempre)" data-stock="true">
@@ -878,7 +1013,7 @@
                     </div>
                 </article>
 
-                <!-- Canva (para siempre) -->
+                <!-- Canva (para siempre - Sin stock de ejemplo) -->
                 <article class="card general-card" data-category="diseno" data-price="99.00" data-name="Canva Pro (para siempre)" data-stock="false">
                     <div class="card-img-container">
                         <img src="canva.png" alt="Canva Pro (para siempre)">
@@ -1169,47 +1304,159 @@
             document.getElementById('paymentModal').style.display = 'none';
         }
 
-        // Lógica del Carrusel Automático
-        let carouselIndex = 0;
+        // Lógica del Carrusel Automático, Manual y Táctil con Topes Estrictos
         const track = document.getElementById('carouselTrack');
+        const container = document.getElementById('carouselContainer');
         const cardsDestacadas = track.getElementsByClassName('destacada');
+        let carouselIndex = 0;
+        let autoSlideInterval;
+        let isDragging = false;
+        let startX, currentTranslate = 0, prevTranslate = 0;
 
-        function autoSlideCarousel() {
-            if (currentFilter !== 'principal' && currentFilter !== 'all-software') return;
-            
+        function getMaxIndex() {
             const cardElement = cardsDestacadas[0];
-            if (!cardElement) return;
-
-            const cardWidth = cardElement.offsetWidth + 15; // Ancho + gap
-            const visibleContainerWidth = track.parentElement.offsetWidth;
-            const cardsPerView = Math.floor(visibleContainerWidth / cardWidth) || 1;
-            const maxIndex = cardsDestacadas.length - cardsPerView;
-
-            carouselIndex++;
-            if (carouselIndex > maxIndex || carouselIndex < 0) {
-                carouselIndex = 0;
-            }
-
-            track.style.transform = `translateX(-${carouselIndex * cardWidth}px)`;
+            if (!cardElement) return 0;
+            const cardWidth = cardElement.offsetWidth + 15;
+            const visibleWidth = container.offsetWidth;
+            const cardsPerView = Math.floor(visibleWidth / cardWidth) || 1;
+            return Math.max(0, cardsDestacadas.length - cardsPerView);
         }
 
-        // Intervalo de avance automático cada 3.5 segundos
-        setInterval(autoSlideCarousel, 3500);
+        function updateCarouselPosition() {
+            const cardElement = cardsDestacadas[0];
+            if (!cardElement) return;
+            const cardWidth = cardElement.offsetWidth + 15;
+            const maxIdx = getMaxIndex();
+            
+            if (carouselIndex > maxIdx) carouselIndex = maxIdx;
+            if (carouselIndex < 0) carouselIndex = 0;
+
+            currentTranslate = -carouselIndex * cardWidth;
+            prevTranslate = currentTranslate;
+            track.style.transform = `translateX(${currentTranslate}px)`;
+        }
+
+        function startAutoSlide() {
+            autoSlideInterval = setInterval(() => {
+                if (currentFilter !== 'principal') return;
+                const searchText = document.getElementById('searchInput').value.trim();
+                const sortVal = document.getElementById('sortSelect').value;
+                const stockVal = document.getElementById('stockSelect').value;
+                
+                if (searchText.length > 0 || sortVal !== 'default' || stockVal !== 'all') return;
+
+                const maxIdx = getMaxIndex();
+                carouselIndex++;
+                if (carouselIndex > maxIdx) {
+                    carouselIndex = 0;
+                }
+                updateCarouselPosition();
+            }, 3500);
+        }
+
+        function stopAutoSlide() {
+            clearInterval(autoSlideInterval);
+        }
+
+        // Arrastrar con Mouse
+        container.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.pageX;
+            stopAutoSlide();
+            track.style.transition = 'none';
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            track.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
+            
+            const cardElement = cardsDestacadas[0];
+            if (cardElement) {
+                const cardWidth = cardElement.offsetWidth + 15;
+                carouselIndex = Math.round(-currentTranslate / cardWidth);
+                updateCarouselPosition();
+            }
+            startAutoSlide();
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const currentX = e.pageX;
+            const diffX = currentX - startX;
+            currentTranslate = prevTranslate + diffX;
+
+            const cardElement = cardsDestacadas[0];
+            if (cardElement) {
+                const cardWidth = cardElement.offsetWidth + 15;
+                const maxTranslate = 0;
+                const minTranslate = -getMaxIndex() * cardWidth;
+                
+                if (currentTranslate > maxTranslate) currentTranslate = maxTranslate;
+                if (currentTranslate < minTranslate) currentTranslate = minTranslate;
+            }
+
+            track.style.transform = `translateX(${currentTranslate}px)`;
+        });
+
+        // Soporte Táctil para Celulares
+        container.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            startX = e.touches[0].clientX;
+            stopAutoSlide();
+            track.style.transition = 'none';
+        });
+
+        window.addEventListener('touchend', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            track.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
+            
+            const cardElement = cardsDestacadas[0];
+            if (cardElement) {
+                const cardWidth = cardElement.offsetWidth + 15;
+                carouselIndex = Math.round(-currentTranslate / cardWidth);
+                updateCarouselPosition();
+            }
+            startAutoSlide();
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            const currentX = e.touches[0].clientX;
+            const diffX = currentX - startX;
+            currentTranslate = prevTranslate + diffX;
+
+            const cardElement = cardsDestacadas[0];
+            if (cardElement) {
+                const cardWidth = cardElement.offsetWidth + 15;
+                const maxTranslate = 0;
+                const minTranslate = -getMaxIndex() * cardWidth;
+                
+                if (currentTranslate > maxTranslate) currentTranslate = maxTranslate;
+                if (currentTranslate < minTranslate) currentTranslate = minTranslate;
+            }
+
+            track.style.transform = `translateX(${currentTranslate}px)`;
+        });
+
+        startAutoSlide();
 
         function updateProducts() {
             const seccionDestacados = document.getElementById('seccionDestacados');
             const seccionCatalogo = document.getElementById('seccionCatalogo');
             const catalogoGrid = document.getElementById('catalogoGrid');
             const generalCards = Array.from(catalogoGrid.getElementsByClassName('general-card'));
-            const destacadasCards = Array.from(cardsDestacadas);
             
             const bannerAntivirus = document.getElementById('bannerAntivirus');
             const bannerJuegos = document.getElementById('bannerJuegos');
             const panelNosotros = document.getElementById('panelNosotros');
             
-            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const searchText = document.getElementById('searchInput').value.toLowerCase().trim();
             const sortValue = document.getElementById('sortSelect').value;
             const stockValue = document.getElementById('stockSelect').value;
+
+            const isSearching = searchText.length > 0;
 
             if (currentFilter === 'nosotros') {
                 seccionDestacados.style.display = "none";
@@ -1243,29 +1490,16 @@
 
             seccionCatalogo.style.display = "block";
 
-            if (currentFilter === 'principal' || currentFilter === 'all-software') {
+            // DESTACADOS APARECEN ÚNICAMENTE EN EL MENÚ PRINCIPAL Y SIN NINGÚN FILTRO O BÚSQUEDA ACTIVA
+            const isPurePrincipalView = (currentFilter === 'principal') && !isSearching && (sortValue === 'default') && (stockValue === 'all');
+
+            if (isPurePrincipalView) {
                 seccionDestacados.style.display = "block";
             } else {
                 seccionDestacados.style.display = "none";
             }
 
-            destacadasCards.forEach(card => {
-                const category = card.getAttribute('data-category');
-                const title = card.getAttribute('data-name').toLowerCase();
-                const desc = card.querySelector('.card-description').innerText.toLowerCase();
-                const isStock = card.getAttribute('data-stock') === 'true';
-
-                const matchesSearch = title.includes(searchText) || desc.includes(searchText);
-                const matchesStock = stockValue === 'all' || (stockValue === 'instock' && isStock);
-                const matchesCategory = (currentFilter === 'principal' || currentFilter === 'all-software') || (category === currentFilter);
-
-                if (matchesCategory && matchesSearch && matchesStock) {
-                    card.style.display = "flex";
-                } else {
-                    card.style.display = "none";
-                }
-            });
-
+            // Filtrado del catálogo general
             generalCards.forEach(card => {
                 const category = card.getAttribute('data-category');
                 const title = card.getAttribute('data-name').toLowerCase();
@@ -1274,7 +1508,13 @@
 
                 const matchesCategory = (currentFilter === 'principal' || currentFilter === 'all-software') || (category === currentFilter);
                 const matchesSearch = title.includes(searchText) || desc.includes(searchText);
-                const matchesStock = stockValue === 'all' || (stockValue === 'instock' && isStock);
+                
+                let matchesStock = true;
+                if (stockValue === 'instock') {
+                    matchesStock = isStock;
+                } else if (stockValue === 'outofstock') {
+                    matchesStock = !isStock;
+                }
 
                 if (matchesCategory && matchesSearch && matchesStock) {
                     card.style.display = "flex";
