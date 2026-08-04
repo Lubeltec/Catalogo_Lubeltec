@@ -101,7 +101,6 @@
             margin: 0;
         }
 
-        /* Banner de Métodos de Pago */
         .payment-methods-badge {
             font-size: 0.72rem;
             color: #94a3b8;
@@ -109,8 +108,11 @@
         }
 
         .payment-methods-badge span {
-            color: #00b4d8;
+            color: #742284; /* Color Yape */
             font-weight: bold;
+            background: #ffffff;
+            padding: 1px 6px;
+            border-radius: 4px;
         }
 
         /* Menú Desplegable */
@@ -200,7 +202,7 @@
             margin: 15px auto;
             padding: 0 10px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
             gap: 15px;
         }
 
@@ -296,42 +298,34 @@
             margin-bottom: 8px;
         }
 
-        /* Grupo de Botones de Acción */
         .card-actions {
             display: flex;
             flex-direction: column;
             gap: 6px;
         }
 
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 200%; }
-        }
-
-        /* Botón de Pago con Tarjeta / Pasarela */
-        .btn-pay-online {
+        /* Botón Yape/Plin Estilizado */
+        .btn-yape {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
-            background: linear-gradient(135deg, #00b4d8, #0077b6);
+            background: linear-gradient(135deg, #742284, #00b2a9);
             color: #ffffff;
-            text-decoration: none;
+            border: none;
             padding: 8px;
             border-radius: 8px;
             font-weight: bold;
             font-size: 0.8rem;
-            position: relative;
-            overflow: hidden;
+            cursor: pointer;
             transition: all 0.3s ease;
         }
 
-        .btn-pay-online:hover {
-            background: linear-gradient(135deg, #00c4ec, #0088c7);
-            box-shadow: 0 0 10px rgba(0, 180, 216, 0.4);
+        .btn-yape:hover {
+            box-shadow: 0 0 12px rgba(116, 34, 132, 0.6);
+            transform: scale(1.02);
         }
 
-        /* Botón de WhatsApp */
         .btn-whatsapp {
             display: flex;
             align-items: center;
@@ -344,8 +338,6 @@
             border-radius: 8px;
             font-weight: bold;
             font-size: 0.8rem;
-            position: relative;
-            overflow: hidden;
         }
 
         .btn-disabled {
@@ -353,6 +345,76 @@
             color: #64748b;
             cursor: not-allowed;
             pointer-events: none;
+        }
+
+        /* Ventana Emergente (Modal de Yape/Plin) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 15px;
+        }
+
+        .modal-card {
+            background: #101726;
+            border: 2px solid #00b4d8;
+            border-radius: 16px;
+            padding: 20px;
+            max-width: 360px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 0 25px rgba(0, 180, 216, 0.4);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-title {
+            color: #38bdf8;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .modal-product {
+            font-size: 0.9rem;
+            color: #ffffff;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .qr-img {
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2px solid #ffffff;
+            margin: 10px 0;
+        }
+
+        .payment-info {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            margin-bottom: 15px;
+            line-height: 1.4;
         }
 
         /* Banners Próximamente */
@@ -376,7 +438,6 @@
             color: #94a3b8;
         }
 
-        /* Botón Flotante */
         .float-whatsapp {
             position: fixed;
             width: 48px;
@@ -408,6 +469,27 @@
 
     <a href="https://wa.me/51933907930?text=Hola,%20quisiera%20consultar%20sobre%20sus%20licencias%20digitales" class="float-whatsapp" target="_blank" title="Contactar por WhatsApp">💬</a>
 
+    <!-- Modal de Pago Yape / Plin -->
+    <div class="modal-overlay" id="paymentModal">
+        <div class="modal-card">
+            <button class="close-modal" onclick="closeModal()">&times;</button>
+            <h3 class="modal-title">Pagar con Yape o Plin</h3>
+            <div class="modal-product" id="modalProductName">Producto</div>
+            
+            <img src="qr-pago.png" alt="QR Yape / Plin" class="qr-img">
+            
+            <div class="payment-info">
+                <strong>Número:</strong> 933 907 930<br>
+                <strong>Titular:</strong> Lubeltec Licencias<br>
+                <strong>Monto a pagar:</strong> <span id="modalProductPrice" style="color: #38bdf8; font-weight: bold;">S/. 0.00</span>
+            </div>
+
+            <a href="#" id="modalConfirmBtn" target="_blank" class="btn-whatsapp">
+                📲 Enviar captura por WhatsApp
+            </a>
+        </div>
+    </div>
+
     <header>
         <div class="header-top">
             <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMenu()" title="Menú de Categorías">☰</button>
@@ -419,10 +501,10 @@
         </div>
 
         <div class="payment-methods-badge">
-            Aceptamos <span>Tarjetas Débito, Yape, Plin y PagoEfectivo</span>
+            Pagos inmediatos con <span>Yape</span> y <span>Plin</span>
         </div>
 
-        <!-- Categorías dentro de la Hamburguesa -->
+        <!-- Categorías -->
         <div class="menu-dropdown" id="menuDropdown">
             <button class="cat-chip active" onclick="filterCategory('principal', event)">🏠 Principal</button>
             <button class="cat-chip" onclick="filterCategory('win', event)">💻 Windows 10/11</button>
@@ -435,7 +517,7 @@
             <button class="cat-chip" onclick="filterCategory('juegos', event)">🎮 Juegos</button>
         </div>
 
-        <!-- Búsqueda y Filtros Compactos -->
+        <!-- Filtros -->
         <div class="controls-container">
             <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar licencia..." oninput="updateProducts()">
             
@@ -456,7 +538,7 @@
     <main class="container" id="productContainer">
 
         <!-- Windows 10/11 Pro -->
-        <article class="card" data-category="win" data-price="50.00" data-name="Windows 10/11 Pro (Siempre)" data-stock="true" data-link-pago="https://mpago.la/pos/windows1011pro">
+        <article class="card" data-category="win" data-price="50.00" data-name="Windows 10/11 Pro (Siempre)" data-stock="true">
             <div class="card-img-container">
                 <img src="windows11.png" alt="Windows 10/11 Pro">
             </div>
@@ -469,8 +551,8 @@
                 <div>
                     <div class="card-price">S/. 50.00</div>
                     <div class="card-actions">
-                        <a href="https://mpago.la/pos/windows1011pro" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Windows%2010/11%20Pro%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                        <button class="btn-yape" onclick="openPaymentModal('Windows 10/11 Pro (Siempre)', 'S/. 50.00')">💜 Pagar con Yape / Plin</button>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Windows%2010/11%20Pro%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
                     </div>
                 </div>
             </div>
@@ -489,8 +571,8 @@
                 <div>
                     <div class="card-price">S/. 50.00</div>
                     <div class="card-actions">
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Windows%2010/11%20Home%20-%20S/.50.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Windows%2010/11%20Home%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                        <button class="btn-yape" onclick="openPaymentModal('Windows 10/11 Home (Siempre)', 'S/. 50.00')">💜 Pagar con Yape / Plin</button>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Windows%2010/11%20Home%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
                     </div>
                 </div>
             </div>
@@ -510,8 +592,8 @@
                 <div>
                     <div class="card-price">S/. 45.00</div>
                     <div class="card-actions">
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Office%20365%20(1%20año)%20-%20S/.45.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Office%20365%20(1%20año)%20-%20S/.45.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                        <button class="btn-yape" onclick="openPaymentModal('Office 365 (1 año)', 'S/. 45.00')">💜 Pagar con Yape / Plin</button>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Office%20365%20(1%20año)%20-%20S/.45.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
                     </div>
                 </div>
             </div>
@@ -531,8 +613,8 @@
                 <div>
                     <div class="card-price">S/. 35.00</div>
                     <div class="card-actions">
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(1%20año)%20-%20S/.35.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(1%20año)%20-%20S/.35.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                        <button class="btn-yape" onclick="openPaymentModal('Canva Pro (1 año)', 'S/. 35.00')">💜 Pagar con Yape / Plin</button>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(1%20año)%20-%20S/.35.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
                     </div>
                 </div>
             </div>
@@ -551,8 +633,8 @@
                 <div>
                     <div class="card-price">S/. 45.00</div>
                     <div class="card-actions">
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(2%20años)%20-%20S/.45.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(2%20años)%20-%20S/.45.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                        <button class="btn-yape" onclick="openPaymentModal('Canva Pro (2 años)', 'S/. 45.00')">💜 Pagar con Yape / Plin</button>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(2%20años)%20-%20S/.45.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
                     </div>
                 </div>
             </div>
@@ -571,8 +653,8 @@
                 <div>
                     <div class="card-price">S/. 55.00</div>
                     <div class="card-actions">
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(3%20años)%20-%20S/.55.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(3%20años)%20-%20S/.55.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                        <button class="btn-yape" onclick="openPaymentModal('Canva Pro (3 años)', 'S/. 55.00')">💜 Pagar con Yape / Plin</button>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(3%20años)%20-%20S/.55.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
                     </div>
                 </div>
             </div>
@@ -592,7 +674,7 @@
                 <div>
                     <div class="card-price">S/. 99.00</div>
                     <div class="card-actions">
-                        <a href="#" class="btn-pay-online btn-disabled">Agotado</a>
+                        <button class="btn-yape btn-disabled">Agotado</button>
                         <a href="#" class="btn-whatsapp btn-disabled">Agotado</a>
                     </div>
                 </div>
@@ -613,8 +695,8 @@
                 <div>
                     <div class="card-price">S/. 70.00</div>
                     <div class="card-actions">
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(18%20meses)%20-%20S/.70.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(18%20meses)%20-%20S/.70.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                        <button class="btn-yape" onclick="openPaymentModal('Gemini Pro 3.6 (18 meses)', 'S/. 70.00')">💜 Pagar con Yape / Plin</button>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(18%20meses)%20-%20S/.70.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
                     </div>
                 </div>
             </div>
@@ -633,8 +715,8 @@
                 <div>
                     <div class="card-price">S/. 50.00</div>
                     <div class="card-actions">
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(12%20meses)%20-%20S/.50.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(12%20meses)%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                        <button class="btn-yape" onclick="openPaymentModal('Gemini Pro 3.6 (12 meses)', 'S/. 50.00')">💜 Pagar con Yape / Plin</button>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(12%20meses)%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
                     </div>
                 </div>
             </div>
@@ -653,8 +735,8 @@
                 <div>
                     <div class="card-price">S/. 144.00</div>
                     <div class="card-actions">
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Duolingo%20(12%20meses)%20-%20S/.144.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Duolingo%20(12%20meses)%20-%20S/.144.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                        <button class="btn-yape" onclick="openPaymentModal('Duolingo Super (12 meses)', 'S/. 144.00')">💜 Pagar con Yape / Plin</button>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Duolingo%20(12%20meses)%20-%20S/.144.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
                     </div>
                 </div>
             </div>
@@ -673,8 +755,8 @@
                 <div>
                     <div class="card-price">S/. 23.00</div>
                     <div class="card-actions">
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Capcut%20Pro%20(1%20mes)%20-%20S/.23.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Capcut%20Pro%20(1%20mes)%20-%20S/.23.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                        <button class="btn-yape" onclick="openPaymentModal('Capcut Pro (1 mes)', 'S/. 23.00')">💜 Pagar con Yape / Plin</button>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Capcut%20Pro%20(1%20mes)%20-%20S/.23.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
                     </div>
                 </div>
             </div>
@@ -694,8 +776,8 @@
                 <div>
                     <div class="card-price">S/. 75.00</div>
                     <div class="card-actions">
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(1%20año)%20-%20S/.75.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(1%20año)%20-%20S/.75.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                        <button class="btn-yape" onclick="openPaymentModal('Autodesk All Apps (1 año)', 'S/. 75.00')">💜 Pagar con Yape / Plin</button>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(1%20año)%20-%20S/.75.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
                     </div>
                 </div>
             </div>
@@ -714,8 +796,8 @@
                 <div>
                     <div class="card-price">S/. 49.00</div>
                     <div class="card-actions">
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(6%20meses)%20-%20S/.49.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(6%20meses)%20-%20S/.49.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                        <button class="btn-yape" onclick="openPaymentModal('Autodesk All Apps (6 meses)', 'S/. 49.00')">💜 Pagar con Yape / Plin</button>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(6%20meses)%20-%20S/.49.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
                     </div>
                 </div>
             </div>
@@ -734,8 +816,8 @@
                 <div>
                     <div class="card-price">S/. 29.00</div>
                     <div class="card-actions">
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(3%20meses)%20-%20S/.29.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(3%20meses)%20-%20S/.29.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                        <button class="btn-yape" onclick="openPaymentModal('Autodesk All Apps (3 meses)', 'S/. 29.00')">💜 Pagar con Yape / Plin</button>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(3%20meses)%20-%20S/.29.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
                     </div>
                 </div>
             </div>
@@ -754,8 +836,8 @@
                 <div>
                     <div class="card-price">S/. 15.00</div>
                     <div class="card-actions">
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Spotify%20Premium%20(1%20mes)%20-%20S/.15.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Spotify%20Premium%20(1%20mes)%20-%20S/.15.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                        <button class="btn-yape" onclick="openPaymentModal('Spotify Premium (1 mes)', 'S/. 15.00')">💜 Pagar con Yape / Plin</button>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Spotify%20Premium%20(1%20mes)%20-%20S/.15.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
                     </div>
                 </div>
             </div>
@@ -774,8 +856,8 @@
                 <div>
                     <div class="card-price">S/. 20.00</div>
                     <div class="card-actions">
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Flujo%20TV%20-%20S/.20.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Flujo%20TV%20-%20S/.20.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                        <button class="btn-yape" onclick="openPaymentModal('Flujo TV (1 mes)', 'S/. 20.00')">💜 Pagar con Yape / Plin</button>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Flujo%20TV%20-%20S/.20.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
                     </div>
                 </div>
             </div>
@@ -794,8 +876,8 @@
                 <div>
                     <div class="card-price">S/. 99.00</div>
                     <div class="card-actions">
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%201%20Perfil%20(1%20año)%20-%20S/.99.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%201%20Perfil%20(1%20año)%20-%20S/.99.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                        <button class="btn-yape" onclick="openPaymentModal('Crunchyroll 1 Perfil (1 año)', 'S/. 99.00')">💜 Pagar con Yape / Plin</button>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%201%20Perfil%20(1%20año)%20-%20S/.99.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
                     </div>
                 </div>
             </div>
@@ -814,8 +896,8 @@
                 <div>
                     <div class="card-price">S/. 35.00</div>
                     <div class="card-actions">
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%201%20Perfil%20(3%20meses)%20-%20S/.35.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%201%20Perfil%20(3%20meses)%20-%20S/.35.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                        <button class="btn-yape" onclick="openPaymentModal('Crunchyroll 1 Perfil (3 meses)', 'S/. 35.00')">💜 Pagar con Yape / Plin</button>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%201%20Perfil%20(3%20meses)%20-%20S/.35.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
                     </div>
                 </div>
             </div>
@@ -834,8 +916,8 @@
                 <div>
                     <div class="card-price">S/. 89.00</div>
                     <div class="card-actions">
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%20Completo%20(6%20meses)%20-%20S/.89.00" target="_blank" class="btn-pay-online">💳 Pagar Online</a>
-                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%20Completo%20(6%20meses)%20-%20S/.89.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
+                        <button class="btn-yape" onclick="openPaymentModal('Crunchyroll Cuenta Completa (6 meses)', 'S/. 89.00')">💜 Pagar con Yape / Plin</button>
+                        <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%20Completo%20(6%20meses)%20-%20S/.89.00" target="_blank" class="btn-whatsapp">Consultar por WhatsApp</a>
                     </div>
                 </div>
             </div>
@@ -856,7 +938,6 @@
 
     <footer>
         <p>&copy; Catálogo Digital Lubeltec. Todos los derechos reservados.</p>
-        <p style="margin-top: 5px; color: #475569;">Aceptamos pagos directos mediante Mercado Pago, Visa, Mastercard, Yape y Plin.</p>
     </footer>
 
     <script>
@@ -871,12 +952,25 @@
 
         function filterCategory(category, event) {
             currentFilter = category;
-            
             const chips = document.querySelectorAll('.cat-chip');
             chips.forEach(chip => chip.classList.remove('active'));
             event.target.classList.add('active');
-
             updateProducts();
+        }
+
+        // Lógica del Modal de Pago Yape/Plin
+        function openPaymentModal(productName, price) {
+            document.getElementById('modalProductName').innerText = productName;
+            document.getElementById('modalProductPrice').innerText = price;
+            
+            const whatsappMsg = `Hola,%20ya%20realicé%20el%20pago%20vía%20Yape/Plin%20para%20el%20producto:%20${encodeURIComponent(productName)}%20(${price}).%20Adjunto%20comprobante.`;
+            document.getElementById('modalConfirmBtn').href = `https://wa.me/51933907930?text=${whatsappMsg}`;
+
+            document.getElementById('paymentModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('paymentModal').style.display = 'none';
         }
 
         function updateProducts() {
