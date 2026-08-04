@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lubeltec - Catálogo Digital de Licencias</title>
     <style>
-        /* Estilos base */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -13,19 +12,34 @@
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
+        /* Fondo dinámico animado */
         body {
-            background-color: #0d1117;
+            background: linear-gradient(-45deg, #070a12, #0d1527, #0b1120, #03060d);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
             color: #e6edf3;
-            padding-bottom: 50px;
+            padding-bottom: 80px;
+            overflow-x: hidden;
         }
 
-        /* Encabezado y Logo */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Encabezado pegajoso con buscador */
         header {
-            background: linear-gradient(135deg, #0d1b2a, #1b263b);
+            background: rgba(9, 19, 29, 0.85);
+            backdrop-filter: blur(12px);
             color: #ffffff;
             text-align: center;
-            padding: 30px 20px;
+            padding: 30px 20px 20px 20px;
             border-bottom: 2px solid #00b4d8;
+            box-shadow: 0 4px 30px rgba(0, 180, 216, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .header-brand {
@@ -33,76 +47,123 @@
             align-items: center;
             justify-content: center;
             gap: 15px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 10px rgba(0, 180, 216, 0.4); }
+            50% { box-shadow: 0 0 25px rgba(0, 180, 216, 0.9); }
+            100% { box-shadow: 0 0 10px rgba(0, 180, 216, 0.4); }
         }
 
         .header-logo {
             height: 65px;
             width: 65px;
             object-fit: cover;
-            border-radius: 50%; /* Hace que el fondo del logo se vea circular */
-            box-shadow: 0 4px 8px rgba(0, 180, 216, 0.3); /* Resplandor azul */
+            border-radius: 50%;
+            animation: pulseGlow 3s infinite ease-in-out;
+            transition: transform 0.4s ease;
+        }
+
+        .header-logo:hover {
+            transform: scale(1.15) rotate(10deg);
         }
 
         header h1 {
             font-size: 2.2rem;
             color: #00b4d8;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
             margin: 0;
+            text-shadow: 0 0 15px rgba(0, 180, 216, 0.4);
         }
 
         header p {
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: #94a3b8;
+            margin-bottom: 15px;
         }
 
-        /* Contenedor de productos */
+        /* Campo de Búsqueda */
+        .search-container {
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 25px;
+            border: 1px solid #00b4d8;
+            background: rgba(13, 22, 35, 0.9);
+            color: #ffffff;
+            font-size: 0.95rem;
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 180, 216, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            box-shadow: 0 0 18px rgba(0, 180, 216, 0.6);
+            border-color: #38bdf8;
+        }
+
+        /* Contenedor de la tienda */
         .container {
             max-width: 1200px;
-            margin: 30px auto;
+            margin: 35px auto;
             padding: 0 15px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
+            gap: 30px;
         }
 
-        /* Tarjeta de producto */
+        /* Tarjeta con efecto 3D */
         .card {
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 12px;
+            background: rgba(20, 26, 35, 0.9);
+            border: 1px solid #2d3542;
+            border-radius: 16px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
-            transition: transform 0.2s ease, border-color 0.2s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
         }
 
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-12px) scale(1.03);
             border-color: #00b4d8;
+            box-shadow: 0 18px 35px rgba(0, 180, 216, 0.35);
         }
 
+        /* Zoom amplio (+25%) en la imagen */
         .card-img-container {
             width: 100%;
             height: 220px;
-            background-color: #090d16;
+            background-color: #080c14;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            position: relative;
         }
 
         .card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .card:hover .card img {
+            transform: scale(1.25) rotate(2deg);
         }
 
         .card-content {
-            padding: 18px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             flex-grow: 1;
@@ -110,18 +171,35 @@
         }
 
         .card-title {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: 600;
             color: #ffffff;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             line-height: 1.3;
+            transition: color 0.3s ease;
+        }
+
+        .card:hover .card-title {
+            color: #38bdf8;
         }
 
         .card-description {
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             color: #94a3b8;
-            margin-bottom: 12px;
-            line-height: 1.4;
+            margin-bottom: 15px;
+            line-height: 1.45;
+        }
+
+        .badge-tag {
+            display: inline-block;
+            background-color: #00b4d8;
+            color: #080c14;
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
         }
 
         .badge-out-of-stock {
@@ -130,66 +208,136 @@
             color: #ffffff;
             font-size: 0.75rem;
             font-weight: bold;
-            padding: 3px 8px;
-            border-radius: 4px;
-            margin-bottom: 8px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
             text-transform: uppercase;
         }
 
         .card-price {
-            font-size: 1.35rem;
+            font-size: 1.45rem;
             font-weight: 700;
             color: #38bdf8;
             margin-bottom: 15px;
+            transition: transform 0.3s ease;
         }
 
-        /* Botón WhatsApp */
+        .card:hover .card-price {
+            transform: translateX(5px);
+        }
+
+        /* Botón animado con destello */
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+
         .btn-whatsapp {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            background-color: #25d366;
+            gap: 10px;
+            background: linear-gradient(135deg, #25d366, #1ebd5a);
             color: #ffffff;
             text-decoration: none;
-            padding: 12px;
-            border-radius: 8px;
+            padding: 13px;
+            border-radius: 10px;
             font-weight: bold;
             font-size: 0.95rem;
-            transition: background-color 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .btn-whatsapp::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transform: skewX(-25deg);
+        }
+
+        .btn-whatsapp:hover::before {
+            animation: shimmer 1s ease-in-out infinite;
         }
 
         .btn-whatsapp:hover {
-            background-color: #1ebd5a;
+            background: linear-gradient(135deg, #28e06f, #1aa34e);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.5);
         }
 
         .btn-disabled {
-            background-color: #475569;
-            color: #94a3b8;
+            background: #334155;
+            color: #64748b;
             cursor: not-allowed;
             pointer-events: none;
         }
 
+        /* Botón Flotante de WhatsApp */
+        .float-whatsapp {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 25px;
+            right: 25px;
+            background-color: #25d366;
+            color: #FFF;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 30px;
+            box-shadow: 0px 4px 15px rgba(37, 211, 102, 0.5);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            animation: pulseGlowGreen 2s infinite;
+        }
+
+        @keyframes pulseGlowGreen {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+
+        .float-whatsapp:hover {
+            transform: scale(1.15) rotate(10deg);
+        }
+
         footer {
             text-align: center;
-            margin-top: 40px;
+            margin-top: 50px;
             color: #64748b;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
 
-    <!-- Encabezado con Logo -->
+    <!-- Botón Flotante -->
+    <a href="https://wa.me/51933907930?text=Hola,%20quisiera%20consultar%20sobre%20sus%20licencias%20digitales" class="float-whatsapp" target="_blank" title="Contactar por WhatsApp">
+        💬
+    </a>
+
+    <!-- Encabezado con Buscador Integrado -->
     <header>
         <div class="header-brand">
             <img src="lubeltec.png" alt="Logo Lubeltec" class="header-logo">
             <h1>Lubeltec</h1>
         </div>
         <p>Licencias Digitales Originales a tu Alcance</p>
+        
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar licencia o programa..." onkeyup="filterProducts()">
+        </div>
     </header>
 
-    <main class="container">
+    <main class="container" id="productContainer">
 
         <!-- Office 365 -->
         <article class="card">
@@ -198,8 +346,9 @@
             </div>
             <div class="card-content">
                 <div>
+                    <span class="badge-tag">Garantizado</span>
                     <h2 class="card-title">Office 365 (1 año)</h2>
-                    <p class="card-description">Instálalo en hasta 5 dispositivos. Incluye Word, Excel, PowerPoint, Outlook, Teams, actualizaciones frecuentes durante el tiempo de licencia</p>
+                    <p class="card-description">Instálalo en hasta 5 dispositivos. Incluye Word, Excel, PowerPoint, Outlook, Teams y 1TB en OneDrive.</p>
                 </div>
                 <div>
                     <div class="card-price">S/. 45.00</div>
@@ -217,6 +366,7 @@
             </div>
             <div class="card-content">
                 <div>
+                    <span class="badge-tag">Popular</span>
                     <h2 class="card-title">Canva Pro (1 año)</h2>
                     <p class="card-description">Herramienta de diseño gráfico con acceso a imágenes premium, vídeos, quita fondos e IA.</p>
                 </div>
@@ -292,6 +442,7 @@
             </div>
             <div class="card-content">
                 <div>
+                    <span class="badge-tag">Top IA</span>
                     <h2 class="card-title">Gemini Pro 3.6 (18 meses)</h2>
                     <p class="card-description">Incluye IA avanzada Gemini Pro, generación de video en Veo 3, NotebookLM y 5TB en Google Drive.</p>
                 </div>
@@ -330,6 +481,7 @@
             </div>
             <div class="card-content">
                 <div>
+                    <span class="badge-tag">Permanente</span>
                     <h2 class="card-title">Windows 10/11 Pro (Siempre)</h2>
                     <p class="card-description">Licencia digital permanente (OEM). Reactivación para tu sistema operativo de por vida.</p>
                 </div>
@@ -425,6 +577,7 @@
             </div>
             <div class="card-content">
                 <div>
+                    <span class="badge-tag">Suite Pro</span>
                     <h2 class="card-title">Autodesk All Apps (1 año)</h2>
                     <p class="card-description">Acceso a suite completa: AutoCAD, Revit, Inventor, Civil 3D, Maya, 3ds Max y Fusion 360.</p>
                 </div>
@@ -520,7 +673,7 @@
             </div>
             <div class="card-content">
                 <div>
-                    <h2 class="card-title">Crunchyroll Completo (6 meses)</h2>
+                    <h2 class="card-title">Crunchyroll Cuenta Completa (6 meses)</h2>
                     <p class="card-description">Cuenta completa por 6 meses para disfrutar en múltiples dispositivos en simultáneo.</p>
                 </div>
                 <div>
@@ -557,5 +710,23 @@
         <p>&copy; Catálogo Digital Lubeltec. Todos los derechos reservados.</p>
     </footer>
 
+    <!-- Lógica en JS para filtrar productos -->
+    <script>
+        function filterProducts() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.getElementsByClassName('card');
+
+            for (let i = 0; i < cards.length; i++) {
+                const title = cards[i].querySelector('.card-title').innerText.toLowerCase();
+                const desc = cards[i].querySelector('.card-description').innerText.toLowerCase();
+
+                if (title.includes(input) || desc.includes(input)) {
+                    cards[i].style.display = "flex";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+    </script>
 </body>
 </html>
