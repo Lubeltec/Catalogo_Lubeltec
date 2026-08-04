@@ -42,36 +42,40 @@
 
         .header-top {
             display: grid;
-            grid-template-columns: 55px 1fr 38px;
+            grid-template-columns: 55px 1fr 55px;
             align-items: center;
             max-width: 600px;
             margin: 0 auto 4px auto;
         }
 
-        /* Logo Grande en la izquierda */
-        .large-logo-container {
+        /* Hamburguesa a la Izquierda */
+        .hamburger-container {
             grid-column: 1;
             justify-self: start;
+        }
+
+        .hamburger-btn {
+            background: rgba(0, 180, 216, 0.15);
+            color: #38bdf8;
+            border: 1px solid #00b4d8;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
             display: flex;
             align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
         }
 
-        .large-logo {
-            height: 50px;
-            width: 50px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 2px solid #00b4d8;
-            cursor: pointer;
+        .hamburger-btn:hover, .hamburger-btn.active {
+            background: #00b4d8;
+            color: #080c14;
             box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
-            transition: transform 0.3s ease;
         }
 
-        .large-logo:hover {
-            transform: scale(1.08);
-        }
-
-        /* Marca y Título interactivo */
+        /* Marca y Título central interativo */
         .header-brand {
             grid-column: 2;
             display: flex;
@@ -104,6 +108,29 @@
             margin: 0;
         }
 
+        /* Logo Grande a la Derecha */
+        .large-logo-container {
+            grid-column: 3;
+            justify-self: end;
+            display: flex;
+            align-items: center;
+        }
+
+        .large-logo {
+            height: 45px;
+            width: 45px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #00b4d8;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .large-logo:hover {
+            transform: scale(1.08);
+        }
+
         /* Slogan */
         .slogan-text {
             font-size: 0.76rem;
@@ -112,30 +139,6 @@
             margin-bottom: 6px;
             letter-spacing: 0.5px;
             font-weight: 500;
-        }
-
-        /* Hamburguesa */
-        .hamburger-btn {
-            grid-column: 3;
-            justify-self: end;
-            background: rgba(0, 180, 216, 0.15);
-            color: #38bdf8;
-            border: 1px solid #00b4d8;
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            font-size: 1.2rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .hamburger-btn:hover, .hamburger-btn.active {
-            background: #00b4d8;
-            color: #080c14;
-            box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
         }
 
         .payment-methods-badge {
@@ -152,7 +155,7 @@
             border-radius: 4px;
         }
 
-        /* Menú Desplegable Responsivo */
+        /* Menú Desplegable Principal */
         .menu-dropdown {
             max-height: 0;
             overflow-y: auto;
@@ -169,10 +172,28 @@
         }
 
         .menu-dropdown.open {
-            max-height: 160px;
+            max-height: 180px;
             opacity: 1;
             margin-bottom: 10px;
             padding: 6px 4px;
+        }
+
+        /* Submenú de Software (Agrupado) */
+        .submenu-software {
+            display: none;
+            flex-wrap: wrap;
+            gap: 5px;
+            justify-content: center;
+            width: 100%;
+            background: rgba(10, 16, 26, 0.8);
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px dashed rgba(0, 180, 216, 0.4);
+            margin-top: 4px;
+        }
+
+        .submenu-software.open {
+            display: flex;
         }
 
         .cat-chip {
@@ -187,12 +208,24 @@
             transition: all 0.2s ease;
         }
 
-        .cat-chip:hover {
+        .sub-chip {
+            background: rgba(13, 22, 35, 0.9);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .cat-chip:hover, .sub-chip:hover {
             border-color: #00b4d8;
             color: #ffffff;
         }
 
-        .cat-chip.active {
+        .cat-chip.active, .sub-chip.active {
             background: linear-gradient(135deg, #00b4d8, #0083a0);
             color: #080c14;
             border-color: #38bdf8;
@@ -564,19 +597,21 @@
 
     <header>
         <div class="header-top">
-            <!-- Logo Grande en la izquierda -->
-            <div class="large-logo-container">
-                <img src="lubeltec.png" alt="Logo Lubeltec Grande" class="large-logo" onclick="resetToPrincipal()">
+            <!-- Hamburguesa a la Izquierda -->
+            <div class="hamburger-container">
+                <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMenu()" title="Menú de Categorías">☰</button>
             </div>
 
-            <!-- Marca y Título interactivo -->
+            <!-- Marca y Título central interactivo -->
             <div class="header-brand" onclick="resetToPrincipal()" title="Ir al menú principal">
                 <img src="lubeltec.png" alt="Logo Lubeltec" class="header-logo">
                 <h1>Lubeltec</h1>
             </div>
 
-            <!-- Botón Hamburguesa -->
-            <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMenu()" title="Menú de Categorías">☰</button>
+            <!-- Logo Grande a la Derecha -->
+            <div class="large-logo-container">
+                <img src="lubeltec.png" alt="Logo Lubeltec Grande" class="large-logo" onclick="resetToPrincipal()" title="Ir al menú principal">
+            </div>
         </div>
 
         <div class="slogan-text">✨ Software Original y Licencias Digitales a tu Alcance ✨</div>
@@ -585,18 +620,24 @@
             Pagos inmediatos con <span>Yape</span> y <span>Plin</span>
         </div>
 
-        <!-- Categorías desplegables -->
+        <!-- Menú Desplegable Principal -->
         <div class="menu-dropdown" id="menuDropdown">
             <button class="cat-chip active" id="chip-principal" onclick="filterCategory('principal', event)">🏠 Principal</button>
-            <button class="cat-chip" onclick="filterCategory('win', event)">💻 Windows 10/11</button>
-            <button class="cat-chip" onclick="filterCategory('diseno', event)">🎨 Diseño</button>
-            <button class="cat-chip" onclick="filterCategory('ia', event)">🤖 IA</button>
-            <button class="cat-chip" onclick="filterCategory('iptv', event)">📺 IPTV</button>
-            <button class="cat-chip" onclick="filterCategory('musica', event)">🎵 Música</button>
-            <button class="cat-chip" onclick="filterCategory('edu', event)">📚 Educación</button>
-            <button class="cat-chip" onclick="filterCategory('antivirus', event)">🛡️ Antivirus</button>
+            <button class="cat-chip" id="chip-software" onclick="toggleSubmenu('softwareSubmenu', event)">📂 Software ▾</button>
             <button class="cat-chip" onclick="filterCategory('juegos', event)">🎮 Juegos</button>
             <button class="cat-chip" onclick="filterCategory('nosotros', event)">📌 Visión y Misión</button>
+
+            <!-- Submenú de Software Agrupado -->
+            <div class="submenu-software" id="softwareSubmenu">
+                <button class="sub-chip active" onclick="filterCategory('all-software', event)">Todos los Software</button>
+                <button class="sub-chip" onclick="filterCategory('win', event)">💻 Windows 10/11</button>
+                <button class="sub-chip" onclick="filterCategory('diseno', event)">🎨 Diseño</button>
+                <button class="sub-chip" onclick="filterCategory('ia', event)">🤖 IA</button>
+                <button class="sub-chip" onclick="filterCategory('iptv', event)">📺 IPTV</button>
+                <button class="sub-chip" onclick="filterCategory('musica', event)">🎵 Música</button>
+                <button class="sub-chip" onclick="filterCategory('edu', event)">📚 Educación</button>
+                <button class="sub-chip" onclick="filterCategory('antivirus', event)">🛡️ Antivirus</button>
+            </div>
         </div>
 
         <!-- Filtros -->
@@ -1047,10 +1088,18 @@
             btn.classList.toggle('active');
         }
 
+        // Controla la apertura del submenú Software
+        function toggleSubmenu(submenuId, event) {
+            event.stopPropagation();
+            const submenu = document.getElementById(submenuId);
+            submenu.classList.toggle('open');
+        }
+
         function filterCategory(category, event) {
             currentFilter = category;
             
-            const chips = document.querySelectorAll('.cat-chip');
+            // Marcar clase activa en botones principales o subbotones
+            const chips = document.querySelectorAll('.cat-chip, .sub-chip');
             chips.forEach(chip => chip.classList.remove('active'));
             if(event) event.target.classList.add('active');
 
@@ -1060,10 +1109,13 @@
         // Restablece la vista al estado 'Principal' al tocar el título o logo
         function resetToPrincipal() {
             currentFilter = 'principal';
-            const chips = document.querySelectorAll('.cat-chip');
+            const chips = document.querySelectorAll('.cat-chip, .sub-chip');
             chips.forEach(chip => chip.classList.remove('active'));
             document.getElementById('chip-principal').classList.add('active');
             
+            // Ocultar submenú de software si estuviera abierto
+            document.getElementById('softwareSubmenu').classList.remove('open');
+
             document.getElementById('searchInput').value = '';
             document.getElementById('sortSelect').value = 'default';
             document.getElementById('stockSelect').value = 'all';
@@ -1098,7 +1150,7 @@
             const sortValue = document.getElementById('sortSelect').value;
             const stockValue = document.getElementById('stockSelect').value;
 
-            // Muestra u oculta paneles según la categoría
+            // Manejo de paneles especiales
             if (currentFilter === 'nosotros') {
                 cardsArray.forEach(card => card.style.display = "none");
                 bannerAntivirus.style.display = "none";
@@ -1114,24 +1166,32 @@
                 bannerJuegos.style.display = "none";
                 bannerAntivirus.style.display = "block";
                 return;
-            } else if (currentFilter === 'juegos') {
-                cardsArray.forEach(card => card.style.display = "none");
+            } else {
                 bannerAntivirus.style.display = "none";
+            }
+
+            if (currentFilter === 'juegos') {
+                cardsArray.forEach(card => card.style.display = "none");
                 bannerJuegos.style.display = "block";
                 return;
             } else {
-                bannerAntivirus.style.display = "none";
                 bannerJuegos.style.display = "none";
             }
 
-            // Filtrar catálogo común
+            // Filtrado del catálogo
             cardsArray.forEach(card => {
                 const category = card.getAttribute('data-category');
                 const title = card.getAttribute('data-name').toLowerCase();
                 const desc = card.querySelector('.card-description').innerText.toLowerCase();
                 const isStock = card.getAttribute('data-stock') === 'true';
 
-                const matchesCategory = (currentFilter === 'principal') || (category === currentFilter);
+                let matchesCategory = false;
+                if (currentFilter === 'principal' || currentFilter === 'all-software') {
+                    matchesCategory = true;
+                } else {
+                    matchesCategory = (category === currentFilter);
+                }
+
                 const matchesSearch = title.includes(searchText) || desc.includes(searchText);
                 const matchesStock = stockValue === 'all' || (stockValue === 'instock' && isStock);
 
