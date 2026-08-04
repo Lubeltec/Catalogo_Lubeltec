@@ -42,7 +42,7 @@
 
         .header-top {
             display: grid;
-            grid-template-columns: 38px 1fr 38px;
+            grid-template-columns: 45px 1fr 65px;
             align-items: center;
             max-width: 600px;
             margin: 0 auto 4px auto;
@@ -72,7 +72,7 @@
             box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
         }
 
-        /* Marca y Título central interactivo */
+        /* Marca y Título Central Limpio */
         .header-brand {
             grid-column: 2;
             display: flex;
@@ -84,25 +84,53 @@
         }
 
         @keyframes pulseGlow {
-            0% { box-shadow: 0 0 8px rgba(0, 180, 216, 0.4); }
-            50% { box-shadow: 0 0 18px rgba(0, 180, 216, 0.8); }
-            100% { box-shadow: 0 0 8px rgba(0, 180, 216, 0.4); }
+            0% { box-shadow: 0 0 6px rgba(0, 180, 216, 0.4); }
+            50% { box-shadow: 0 0 14px rgba(0, 180, 216, 0.8); }
+            100% { box-shadow: 0 0 6px rgba(0, 180, 216, 0.4); }
         }
 
-        .header-logo {
-            height: 32px;
-            width: 32px;
+        .header-logo-icon {
+            height: 28px;
+            width: 28px;
             object-fit: cover;
             border-radius: 50%;
             animation: pulseGlow 3s infinite ease-in-out;
         }
 
         header h1 {
-            font-size: 1.3rem;
+            font-size: 1.35rem;
             color: #00b4d8;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             margin: 0;
+            font-weight: 700;
+        }
+
+        /* Logo Vistoso y Más Grande en Esquina Derecha (Emblema Neón) */
+        .featured-logo-container {
+            grid-column: 3;
+            justify-self: end;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .featured-logo {
+            width: 62px;
+            height: 62px;
+            object-fit: cover;
+            border-radius: 14px;
+            border: 2.5px solid #00b4d8;
+            background: rgba(13, 22, 35, 0.95);
+            box-shadow: 0 0 16px rgba(0, 180, 216, 0.7), inset 0 0 10px rgba(0, 180, 216, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .featured-logo:hover {
+            transform: scale(1.12) rotate(2deg);
+            box-shadow: 0 0 24px rgba(56, 189, 248, 0.95);
+            border-color: #38bdf8;
         }
 
         .slogan-text {
@@ -630,12 +658,16 @@
         <div class="header-top">
             <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMenu()" title="Menú de Categorías">☰</button>
             
+            <!-- Marca y Título Central Limpio -->
             <div class="header-brand" onclick="resetToPrincipal()" title="Ir al menú principal">
-                <img src="lubeltec.png" alt="Logo Lubeltec" class="header-logo">
+                <img src="lubeltec.png" alt="Icono Lubeltec" class="header-logo-icon">
                 <h1>Lubeltec</h1>
             </div>
 
-            <div></div>
+            <!-- Logo Más Grande y Vistoso en Esquina Derecha -->
+            <div class="featured-logo-container">
+                <img src="lubeltec.png" alt="Logo Lubeltec Destacado" class="featured-logo" onclick="resetToPrincipal()" title="Ir al menú principal">
+            </div>
         </div>
 
         <div class="slogan-text">✨ Software Original y Licencias Digitales a tu Alcance ✨</div>
@@ -664,11 +696,10 @@
             </div>
         </div>
 
-        <!-- Filtros actualizados -->
+        <!-- Filtros -->
         <div class="controls-container">
             <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar licencia..." oninput="updateProducts()">
             
-            <!-- Sin la opción "Ordenar" por defecto -->
             <select id="sortSelect" class="select-control" onchange="updateProducts()">
                 <option value="default">Por defecto</option>
                 <option value="price-asc">S/. Menor</option>
@@ -676,7 +707,6 @@
                 <option value="alpha-asc">A - Z</option>
             </select>
 
-            <!-- Opciones específicas de Disponible y Sin stock -->
             <select id="stockSelect" class="select-control" onchange="updateProducts()">
                 <option value="all">Todo el Stock</option>
                 <option value="instock">Disponible</option>
@@ -687,7 +717,7 @@
 
     <main class="container" id="productContainer">
 
-        <!-- SECCIÓN: CARRUSEL AUTOMÁTICO DE DESTACADOS (Visible SOLO en Menú Principal) -->
+        <!-- SECCIÓN: CARRUSEL AUTOMÁTICO DE DESTACADOS -->
         <div id="seccionDestacados">
             <h2 class="section-title">🔥 Programas Destacados</h2>
             <div class="carousel-container" id="carouselContainer">
@@ -1013,7 +1043,7 @@
                     </div>
                 </article>
 
-                <!-- Canva (para siempre - Sin stock de ejemplo) -->
+                <!-- Canva (para siempre) -->
                 <article class="card general-card" data-category="diseno" data-price="99.00" data-name="Canva Pro (para siempre)" data-stock="false">
                     <div class="card-img-container">
                         <img src="canva.png" alt="Canva Pro (para siempre)">
