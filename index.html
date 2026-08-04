@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lubeltec - Catálogo Digital de Licencias</title>
+    
+    <!-- Ícono de la URL (Favicon) -->
+    <link rel="icon" href="lubeltec.png" type="image/png">
+
     <style>
         * {
             box-sizing: border-box;
@@ -1065,10 +1069,40 @@
             </div>
         </div>
 
-        <!-- SECCIÓN: CATÁLOGO GENERAL (CON TODOS LOS PRODUCTOS) -->
+        <!-- SECCIÓN: CATÁLOGO GENERAL (CON TODOS LOS PRODUCTOS SIN FALTA) -->
         <div id="seccionCatalogo">
             <h2 class="section-title">📦 Catálogo General de Licencias</h2>
             <div class="grid-layout" id="catalogoGrid">
+
+                <!-- Windows Pro -->
+                <article class="card general-card" data-category="win" data-base-price="50.00" data-name="Windows 10/11 Pro (Siempre)" data-stock="true">
+                    <div class="card-img-container"><img src="windows11.png" alt="Windows Pro"></div>
+                    <div class="card-content">
+                        <div>
+                            <span class="badge-tag">Permanente</span>
+                            <h2 class="card-title">Windows 10/11 Pro (Siempre)</h2>
+                            <p class="card-description">Licencia digital permanente (OEM). Reactivación de por vida.</p>
+                        </div>
+                        <div>
+                            <div class="card-price-box">
+                                <div class="card-price" id="price-g-win-pro">S/. 50.00</div>
+                                <div class="discount-notice" id="disc-g-win-pro" style="display:none;"></div>
+                            </div>
+                            <div class="calculator-box">
+                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-controls">
+                                    <button class="calc-btn" onclick="changeQty('g-win-pro', -1)">-</button>
+                                    <input type="text" class="calc-input" id="qty-g-win-pro" value="1" readonly>
+                                    <button class="calc-btn" onclick="changeQty('g-win-pro', 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-cart" onclick="addToCart('Windows 10/11 Pro (Siempre)', 50.00, 'qty-g-win-pro')">🛒 Agregar a Cesta</button>
+                                <button class="btn-yape" onclick="openDirectPayment('Windows 10/11 Pro (Siempre)', 50.00, 'qty-g-win-pro')">💜 Pagar con Yape o Plin</button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
 
                 <!-- Windows Home -->
                 <article class="card general-card" data-category="win" data-base-price="50.00" data-name="Windows 10/11 Home (Siempre)" data-stock="true">
@@ -1094,6 +1128,36 @@
                             <div class="card-actions">
                                 <button class="btn-cart" onclick="addToCart('Windows 10/11 Home (Siempre)', 50.00, 'qty-win-home')">🛒 Agregar a Cesta</button>
                                 <button class="btn-yape" onclick="openDirectPayment('Windows 10/11 Home (Siempre)', 50.00, 'qty-win-home')">💜 Pagar con Yape o Plin</button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Office 365 -->
+                <article class="card general-card" data-category="ia" data-base-price="45.00" data-name="Office 365 (1 año)" data-stock="true">
+                    <div class="card-img-container"><img src="office365.png" alt="Office 365"></div>
+                    <div class="card-content">
+                        <div>
+                            <span class="badge-tag">Garantizado</span>
+                            <h2 class="card-title">Office 365 (1 año)</h2>
+                            <p class="card-description">Instálalo en hasta 5 dispositivos. Word, Excel, Teams y 1TB OneDrive.</p>
+                        </div>
+                        <div>
+                            <div class="card-price-box">
+                                <div class="card-price" id="price-g-off-365">S/. 45.00</div>
+                                <div class="discount-notice" id="disc-g-off-365" style="display:none;"></div>
+                            </div>
+                            <div class="calculator-box">
+                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-controls">
+                                    <button class="calc-btn" onclick="changeQty('g-off-365', -1)">-</button>
+                                    <input type="text" class="calc-input" id="qty-g-off-365" value="1" readonly>
+                                    <button class="calc-btn" onclick="changeQty('g-off-365', 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-cart" onclick="addToCart('Office 365 (1 año)', 45.00, 'qty-g-off-365')">🛒 Agregar a Cesta</button>
+                                <button class="btn-yape" onclick="openDirectPayment('Office 365 (1 año)', 45.00, 'qty-g-off-365')">💜 Pagar con Yape o Plin</button>
                             </div>
                         </div>
                     </div>
@@ -1158,6 +1222,35 @@
                     </div>
                 </article>
 
+                <!-- Canva 3 años -->
+                <article class="card general-card" data-category="diseno" data-base-price="55.00" data-name="Canva Pro (3 años)" data-stock="true">
+                    <div class="card-img-container"><img src="canva.png" alt="Canva Pro 3 años"></div>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Canva Pro (3 años)</h2>
+                            <p class="card-description">Suscripción por 3 años con herramientas de diseño e IA.</p>
+                        </div>
+                        <div>
+                            <div class="card-price-box">
+                                <div class="card-price" id="price-g-canva-3">S/. 55.00</div>
+                                <div class="discount-notice" id="disc-g-canva-3" style="display:none;"></div>
+                            </div>
+                            <div class="calculator-box">
+                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-controls">
+                                    <button class="calc-btn" onclick="changeQty('g-canva-3', -1)">-</button>
+                                    <input type="text" class="calc-input" id="qty-g-canva-3" value="1" readonly>
+                                    <button class="calc-btn" onclick="changeQty('g-canva-3', 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-cart" onclick="addToCart('Canva Pro (3 años)', 55.00, 'qty-g-canva-3')">🛒 Agregar a Cesta</button>
+                                <button class="btn-yape" onclick="openDirectPayment('Canva Pro (3 años)', 55.00, 'qty-g-canva-3')">💜 Pagar con Yape o Plin</button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
                 <!-- Canva para siempre -->
                 <article class="card general-card" data-category="diseno" data-base-price="99.00" data-name="Canva Pro (para siempre)" data-stock="false">
                     <div class="card-img-container"><img src="canva.png" alt="Canva Vitalicio"></div>
@@ -1183,6 +1276,36 @@
                             <div class="card-actions">
                                 <button class="btn-cart btn-disabled">Agotado</button>
                                 <button class="btn-yape btn-disabled">Agotado</button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Gemini Pro 18 meses -->
+                <article class="card general-card" data-category="ia" data-base-price="70.00" data-name="Gemini Pro 3.6 (18 meses)" data-stock="true">
+                    <div class="card-img-container"><img src="gemini18.png" alt="Gemini 18m"></div>
+                    <div class="card-content">
+                        <div>
+                            <span class="badge-tag">Top IA</span>
+                            <h2 class="card-title">Gemini Pro 3.6 (18 meses)</h2>
+                            <p class="card-description">Gemini Pro, video Veo 3, NotebookLM y 5TB en Google Drive.</p>
+                        </div>
+                        <div>
+                            <div class="card-price-box">
+                                <div class="card-price" id="price-g-gem-18">S/. 70.00</div>
+                                <div class="discount-notice" id="disc-g-gem-18" style="display:none;"></div>
+                            </div>
+                            <div class="calculator-box">
+                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-controls">
+                                    <button class="calc-btn" onclick="changeQty('g-gem-18', -1)">-</button>
+                                    <input type="text" class="calc-input" id="qty-g-gem-18" value="1" readonly>
+                                    <button class="calc-btn" onclick="changeQty('g-gem-18', 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-cart" onclick="addToCart('Gemini Pro 3.6 (18 meses)', 70.00, 'qty-g-gem-18')">🛒 Agregar a Cesta</button>
+                                <button class="btn-yape" onclick="openDirectPayment('Gemini Pro 3.6 (18 meses)', 70.00, 'qty-g-gem-18')">💜 Pagar con Yape o Plin</button>
                             </div>
                         </div>
                     </div>
@@ -1270,6 +1393,36 @@
                             <div class="card-actions">
                                 <button class="btn-cart" onclick="addToCart('Capcut Pro (1 mes)', 23.00, 'qty-capcut-1')">🛒 Agregar a Cesta</button>
                                 <button class="btn-yape" onclick="openDirectPayment('Capcut Pro (1 mes)', 23.00, 'qty-capcut-1')">💜 Pagar con Yape o Plin</button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Autodesk 1 año -->
+                <article class="card general-card" data-category="diseno" data-base-price="75.00" data-name="Autodesk All Apps (1 año)" data-stock="true">
+                    <div class="card-img-container"><img src="autodesk.png" alt="Autodesk 1a"></div>
+                    <div class="card-content">
+                        <div>
+                            <span class="badge-tag">Suite Pro</span>
+                            <h2 class="card-title">Autodesk All Apps (1 año)</h2>
+                            <p class="card-description">AutoCAD, Revit, Inventor, Civil 3D, Maya y 3ds Max.</p>
+                        </div>
+                        <div>
+                            <div class="card-price-box">
+                                <div class="card-price" id="price-g-auto-1">S/. 75.00</div>
+                                <div class="discount-notice" id="disc-g-auto-1" style="display:none;"></div>
+                            </div>
+                            <div class="calculator-box">
+                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-controls">
+                                    <button class="calc-btn" onclick="changeQty('g-auto-1', -1)">-</button>
+                                    <input type="text" class="calc-input" id="qty-g-auto-1" value="1" readonly>
+                                    <button class="calc-btn" onclick="changeQty('g-auto-1', 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-cart" onclick="addToCart('Autodesk All Apps (1 año)', 75.00, 'qty-g-auto-1')">🛒 Agregar a Cesta</button>
+                                <button class="btn-yape" onclick="openDirectPayment('Autodesk All Apps (1 año)', 75.00, 'qty-g-auto-1')">💜 Pagar con Yape o Plin</button>
                             </div>
                         </div>
                     </div>
@@ -1391,6 +1544,35 @@
                     </div>
                 </article>
 
+                <!-- Crunchyroll 1 año -->
+                <article class="card general-card" data-category="iptv" data-base-price="99.00" data-name="Crunchyroll 1 Perfil (1 año)" data-stock="true">
+                    <div class="card-img-container"><img src="crunchyroll.png" alt="Crunchyroll 1a"></div>
+                    <div class="card-content">
+                        <div>
+                            <h2 class="card-title">Crunchyroll 1 Perfil (1 año)</h2>
+                            <p class="card-description">Cuenta Mega Fan individual. Sin anuncios y alta velocidad.</p>
+                        </div>
+                        <div>
+                            <div class="card-price-box">
+                                <div class="card-price" id="price-g-crunch-1">S/. 99.00</div>
+                                <div class="discount-notice" id="disc-g-crunch-1" style="display:none;"></div>
+                            </div>
+                            <div class="calculator-box">
+                                <span class="calc-label">Cantidad:</span>
+                                <div class="calc-controls">
+                                    <button class="calc-btn" onclick="changeQty('g-crunch-1', -1)">-</button>
+                                    <input type="text" class="calc-input" id="qty-g-crunch-1" value="1" readonly>
+                                    <button class="calc-btn" onclick="changeQty('g-crunch-1', 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-cart" onclick="addToCart('Crunchyroll 1 Perfil (1 año)', 99.00, 'qty-g-crunch-1')">🛒 Agregar a Cesta</button>
+                                <button class="btn-yape" onclick="openDirectPayment('Crunchyroll 1 Perfil (1 año)', 99.00, 'qty-g-crunch-1')">💜 Pagar con Yape o Plin</button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
                 <!-- Crunchyroll 3 meses -->
                 <article class="card general-card" data-category="iptv" data-base-price="35.00" data-name="Crunchyroll 1 Perfil (3 meses)" data-stock="true">
                     <div class="card-img-container"><img src="crunchyroll.png" alt="Crunchyroll 3m"></div>
@@ -1463,7 +1645,7 @@
             <p>Estamos preparando un catálogo especial de licencias y juegos para PC y consolas.</p>
         </div>
 
-        <!-- Sección Misión y Visión Corregida -->
+        <!-- Sección Misión y Visión -->
         <div class="info-panel" id="panelNosotros" style="display: none;">
             <h2>Nuestra Misión y Visión</h2>
             <div class="info-box">
@@ -1528,8 +1710,6 @@
             }, 2000);
         }
 
-        // Calculadora de cantidades y descuentos por volumen
-        // 3 a 4 unidades = 10% dcto | 5 o más unidades = 15% dcto
         function changeQty(id, delta) {
             const input = document.getElementById('qty-' + id);
             let val = parseInt(input.value) + delta;
@@ -1547,11 +1727,11 @@
 
             let unitPrice = basePrice;
             if (qty >= 5) {
-                unitPrice = basePrice * 0.85; // 15% descuento
+                unitPrice = basePrice * 0.85;
                 discNotice.innerText = '¡15% dcto aplicado!';
                 discNotice.style.display = 'block';
             } else if (qty >= 3) {
-                unitPrice = basePrice * 0.90; // 10% descuento
+                unitPrice = basePrice * 0.90;
                 discNotice.innerText = '¡10% dcto aplicado!';
                 discNotice.style.display = 'block';
             } else {
@@ -1562,7 +1742,6 @@
             priceDisplay.innerText = `S/. ${finalPrice.toFixed(2)}`;
         }
 
-        // Gestión del Carrito (Cesta)
         function addToCart(productName, basePrice, qtyInputId) {
             const qty = parseInt(document.getElementById(qtyInputId).value);
             let unitPrice = basePrice;
@@ -1802,14 +1981,12 @@
 
             seccionCatalogo.style.display = "block";
 
-            // Mostrar carrusel en Principal o Todos los Software si no se está usando el buscador
             if ((currentFilter === 'principal' || currentFilter === 'all-software') && !isSearching) {
                 seccionDestacados.style.display = "block";
             } else {
                 seccionDestacados.style.display = "none";
             }
 
-            // Corrección en el filtrado para incluir todo correctamente tanto en destacados como en general
             destacadasCards.forEach(card => {
                 const category = card.getAttribute('data-category');
                 const title = card.getAttribute('data-name').toLowerCase();
@@ -1833,7 +2010,6 @@
                 const desc = card.querySelector('.card-description').innerText.toLowerCase();
                 const isStock = card.getAttribute('data-stock') === 'true';
 
-                // Si estamos en "Principal" o "Todos los Software", mostramos todos los ítems generales
                 const matchesCategory = (currentFilter === 'principal' || currentFilter === 'all-software') || (category === currentFilter);
                 const matchesSearch = title.includes(searchText) || desc.includes(searchText);
                 const matchesStock = stockValue === 'all' || (stockValue === 'instock' && isStock);
