@@ -12,7 +12,6 @@
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
-        /* Fondo dinámico animado */
         body {
             background: linear-gradient(-45deg, #070a12, #0d1527, #0b1120, #03060d);
             background-size: 400% 400%;
@@ -28,15 +27,14 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Encabezado */
+        /* Encabezado compacto */
         header {
-            background: rgba(9, 19, 29, 0.9);
+            background: rgba(9, 19, 29, 0.95);
             backdrop-filter: blur(12px);
             color: #ffffff;
             text-align: center;
-            padding: 25px 20px 20px 20px;
+            padding: 15px 10px 10px 10px;
             border-bottom: 2px solid #00b4d8;
-            box-shadow: 0 4px 30px rgba(0, 180, 216, 0.2);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -46,134 +44,168 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
-            margin-bottom: 6px;
+            gap: 10px;
+            margin-bottom: 8px;
         }
 
         @keyframes pulseGlow {
-            0% { box-shadow: 0 0 10px rgba(0, 180, 216, 0.4); }
-            50% { box-shadow: 0 0 25px rgba(0, 180, 216, 0.9); }
-            100% { box-shadow: 0 0 10px rgba(0, 180, 216, 0.4); }
+            0% { box-shadow: 0 0 8px rgba(0, 180, 216, 0.4); }
+            50% { box-shadow: 0 0 18px rgba(0, 180, 216, 0.8); }
+            100% { box-shadow: 0 0 8px rgba(0, 180, 216, 0.4); }
         }
 
         .header-logo {
-            height: 60px;
-            width: 60px;
+            height: 42px;
+            width: 42px;
             object-fit: cover;
             border-radius: 50%;
             animation: pulseGlow 3s infinite ease-in-out;
-            transition: transform 0.4s ease;
-        }
-
-        .header-logo:hover {
-            transform: scale(1.15) rotate(10deg);
         }
 
         header h1 {
-            font-size: 2rem;
+            font-size: 1.5rem;
             color: #00b4d8;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             margin: 0;
-            text-shadow: 0 0 15px rgba(0, 180, 216, 0.4);
         }
 
-        header p {
-            font-size: 0.9rem;
+        /* Pestañas Principales en Celular */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .tab-btn {
+            background: rgba(13, 22, 35, 0.8);
             color: #94a3b8;
-            margin-bottom: 15px;
+            border: 1px solid #00b4d8;
+            padding: 6px 14px;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        /* Panel de Filtros y Ordenamiento */
+        .tab-btn.active {
+            background: #00b4d8;
+            color: #080c14;
+            box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
+        }
+
+        /* Subpestañas / Subcategorías de Software */
+        .sub-nav-container {
+            display: none;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .sub-tab-btn {
+            background: rgba(20, 32, 48, 0.9);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sub-tab-btn.active {
+            background: #38bdf8;
+            color: #080c14;
+            font-weight: bold;
+        }
+
+        /* Panel de Controles Reducido */
         .controls-container {
-            max-width: 800px;
+            max-width: 600px;
             margin: 0 auto;
             display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
+            gap: 6px;
             justify-content: center;
-        }
-
-        .search-input, .select-control {
-            padding: 10px 16px;
-            border-radius: 20px;
-            border: 1px solid #00b4d8;
-            background: rgba(13, 22, 35, 0.95);
-            color: #ffffff;
-            font-size: 0.9rem;
-            outline: none;
-            box-shadow: 0 0 10px rgba(0, 180, 216, 0.2);
-            transition: all 0.3s ease;
+            align-items: center;
         }
 
         .search-input {
-            flex: 1 1 250px;
+            flex: 2;
+            padding: 8px 12px;
+            border-radius: 15px;
+            border: 1px solid #00b4d8;
+            background: rgba(13, 22, 35, 0.95);
+            color: #ffffff;
+            font-size: 0.8rem;
+            outline: none;
         }
 
         .select-control {
+            flex: 1;
+            padding: 8px 6px;
+            border-radius: 15px;
+            border: 1px solid #00b4d8;
+            background: rgba(13, 22, 35, 0.95);
+            color: #ffffff;
+            font-size: 0.75rem;
+            outline: none;
             cursor: pointer;
-        }
-
-        .search-input:focus, .select-control:focus {
-            box-shadow: 0 0 18px rgba(0, 180, 216, 0.6);
-            border-color: #38bdf8;
         }
 
         /* Contenedor de la tienda */
         .container {
             max-width: 1200px;
-            margin: 35px auto;
-            padding: 0 15px;
+            margin: 20px auto;
+            padding: 0 12px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
         }
 
-        /* Tarjeta con efecto 3D */
+        /* Tarjeta de producto */
         .card {
             background: rgba(20, 26, 35, 0.9);
             border: 1px solid #2d3542;
-            border-radius: 16px;
+            border-radius: 14px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
         }
 
         .card:hover {
-            transform: translateY(-12px) scale(1.03);
+            transform: translateY(-6px);
             border-color: #00b4d8;
-            box-shadow: 0 18px 35px rgba(0, 180, 216, 0.35);
         }
 
-        /* Zoom en la imagen */
         .card-img-container {
             width: 100%;
-            height: 220px;
+            height: 190px;
             background-color: #080c14;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            position: relative;
         }
 
         .card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: transform 0.5s ease;
         }
 
         .card:hover .card img {
-            transform: scale(1.25) rotate(2deg);
+            transform: scale(1.2) rotate(1deg);
         }
 
         .card-content {
-            padding: 20px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             flex-grow: 1;
@@ -181,34 +213,28 @@
         }
 
         .card-title {
-            font-size: 1.15rem;
+            font-size: 1rem;
             font-weight: 600;
             color: #ffffff;
-            margin-bottom: 8px;
-            line-height: 1.3;
-            transition: color 0.3s ease;
-        }
-
-        .card:hover .card-title {
-            color: #38bdf8;
+            margin-bottom: 6px;
         }
 
         .card-description {
-            font-size: 0.88rem;
+            font-size: 0.8rem;
             color: #94a3b8;
-            margin-bottom: 15px;
-            line-height: 1.45;
+            margin-bottom: 12px;
+            line-height: 1.35;
         }
 
         .badge-tag {
             display: inline-block;
             background-color: #00b4d8;
             color: #080c14;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: bold;
-            padding: 3px 8px;
+            padding: 2px 6px;
             border-radius: 4px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             text-transform: uppercase;
         }
 
@@ -216,27 +242,22 @@
             display: inline-block;
             background-color: #e63946;
             color: #ffffff;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             font-weight: bold;
-            padding: 4px 10px;
-            border-radius: 6px;
-            margin-bottom: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-bottom: 6px;
             text-transform: uppercase;
         }
 
         .card-price {
-            font-size: 1.45rem;
+            font-size: 1.25rem;
             font-weight: 700;
             color: #38bdf8;
-            margin-bottom: 15px;
-            transition: transform 0.3s ease;
+            margin-bottom: 10px;
         }
 
-        .card:hover .card-price {
-            transform: translateX(5px);
-        }
-
-        /* Botón animado */
+        /* Botón WhatsApp */
         @keyframes shimmer {
             0% { left: -100%; }
             100% { left: 200%; }
@@ -246,17 +267,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
             background: linear-gradient(135deg, #25d366, #1ebd5a);
             color: #ffffff;
             text-decoration: none;
-            padding: 13px;
-            border-radius: 10px;
+            padding: 10px;
+            border-radius: 8px;
             font-weight: bold;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             position: relative;
             overflow: hidden;
-            transition: all 0.3s ease;
         }
 
         .btn-whatsapp::before {
@@ -274,12 +293,6 @@
             animation: shimmer 1s ease-in-out infinite;
         }
 
-        .btn-whatsapp:hover {
-            background: linear-gradient(135deg, #28e06f, #1aa34e);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.5);
-        }
-
         .btn-disabled {
             background: #334155;
             color: #64748b;
@@ -287,75 +300,97 @@
             pointer-events: none;
         }
 
-        /* Botón Flotante de WhatsApp */
+        /* Banner de Próximamente (Juegos) */
+        .banner-upcoming {
+            grid-column: 1 / -1;
+            background: rgba(20, 26, 35, 0.95);
+            border: 2px dashed #00b4d8;
+            border-radius: 16px;
+            padding: 30px 15px;
+            text-align: center;
+        }
+
+        .banner-upcoming h2 {
+            font-size: 1.4rem;
+            color: #38bdf8;
+            margin-bottom: 8px;
+        }
+
+        .banner-upcoming p {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        /* Botón Flotante */
         .float-whatsapp {
             position: fixed;
-            width: 60px;
-            height: 60px;
-            bottom: 25px;
-            right: 25px;
+            width: 50px;
+            height: 50px;
+            bottom: 20px;
+            right: 20px;
             background-color: #25d366;
             color: #FFF;
             border-radius: 50px;
             text-align: center;
-            font-size: 30px;
-            box-shadow: 0px 4px 15px rgba(37, 211, 102, 0.5);
+            font-size: 24px;
+            box-shadow: 0px 4px 12px rgba(37, 211, 102, 0.5);
             z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: center;
             text-decoration: none;
-            transition: all 0.3s ease;
-            animation: pulseGlowGreen 2s infinite;
-        }
-
-        @keyframes pulseGlowGreen {
-            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
-        }
-
-        .float-whatsapp:hover {
-            transform: scale(1.15) rotate(10deg);
         }
 
         footer {
             text-align: center;
-            margin-top: 50px;
+            margin-top: 30px;
             color: #64748b;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
     </style>
 </head>
 <body>
 
-    <!-- Botón Flotante -->
-    <a href="https://wa.me/51933907930?text=Hola,%20quisiera%20consultar%20sobre%20sus%20licencias%20digitales" class="float-whatsapp" target="_blank" title="Contactar por WhatsApp">
-        💬
-    </a>
+    <!-- Botón Flotante de WhatsApp -->
+    <a href="https://wa.me/51933907930?text=Hola,%20quisiera%20consultar%20sobre%20sus%20licencias%20digitales" class="float-whatsapp" target="_blank" title="Contactar por WhatsApp">💬</a>
 
-    <!-- Encabezado con Filtros Avanzados -->
+    <!-- Encabezado -->
     <header>
         <div class="header-brand">
             <img src="lubeltec.png" alt="Logo Lubeltec" class="header-logo">
             <h1>Lubeltec</h1>
         </div>
-        <p>Licencias Digitales Originales a tu Alcance</p>
         
+        <!-- Pestañas Principales -->
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('principal', event)">Principal</button>
+            <button class="tab-btn" onclick="switchTab('software', event)">Software</button>
+            <button class="tab-btn" onclick="switchTab('juegos', event)">Juegos</button>
+        </div>
+
+        <!-- Subpestañas exclusivas para Software -->
+        <div class="sub-nav-container" id="softwareSubTabs">
+            <button class="sub-tab-btn active" onclick="filterSubTab('all', event)">Todos</button>
+            <button class="sub-tab-btn" onclick="filterSubTab('diseno', event)">Diseño</button>
+            <button class="sub-tab-btn" onclick="filterSubTab('so', event)">Sistemas</button>
+            <button class="sub-tab-btn" onclick="filterSubTab('ia', event)">IA / Prod.</button>
+            <button class="sub-tab-btn" onclick="filterSubTab('edu', event)">Educación</button>
+        </div>
+
+        <!-- Barra de Control Ultra Compacta -->
         <div class="controls-container">
-            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar por nombre..." oninput="updateProducts()">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar..." oninput="updateProducts()">
             
             <select id="sortSelect" class="select-control" onchange="updateProducts()">
-                <option value="default">Ordenar por...</option>
-                <option value="price-asc">Precio: Menor a Mayor</option>
-                <option value="price-desc">Precio: Mayor a Menor</option>
-                <option value="alpha-asc">Nombre: A - Z</option>
-                <option value="alpha-desc">Nombre: Z - A</option>
+                <option value="default">Ordenar</option>
+                <option value="price-asc">S/. Menor</option>
+                <option value="price-desc">S/. Mayor</option>
+                <option value="alpha-asc">A - Z</option>
             </select>
 
             <select id="stockSelect" class="select-control" onchange="updateProducts()">
-                <option value="all">Todos los productos</option>
-                <option value="instock">Solo Disponibles</option>
+                <option value="all">Stock</option>
+                <option value="instock">Disponible</option>
             </select>
         </div>
     </header>
@@ -363,7 +398,7 @@
     <main class="container" id="productContainer">
 
         <!-- Office 365 -->
-        <article class="card" data-price="45.00" data-name="Office 365 (1 año)" data-stock="true">
+        <article class="card" data-category="software" data-subcategory="ia" data-price="45.00" data-name="Office 365 (1 año)" data-stock="true">
             <div class="card-img-container">
                 <img src="office365.png" alt="Office 365 (1 año)">
             </div>
@@ -375,15 +410,13 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 45.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Office%20365%20(1%20año)%20-%20S/.45.00" target="_blank" class="btn-whatsapp">
-                        Pedir por WhatsApp
-                    </a>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Office%20365%20(1%20año)%20-%20S/.45.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
                 </div>
             </div>
         </article>
 
         <!-- Canva (1 año) -->
-        <article class="card" data-price="35.00" data-name="Canva Pro (1 año)" data-stock="true">
+        <article class="card" data-category="software" data-subcategory="diseno" data-price="35.00" data-name="Canva Pro (1 año)" data-stock="true">
             <div class="card-img-container">
                 <img src="canva.png" alt="Canva Pro (1 año)">
             </div>
@@ -395,15 +428,13 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 35.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(1%20año)%20-%20S/.35.00" target="_blank" class="btn-whatsapp">
-                        Pedir por WhatsApp
-                    </a>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(1%20año)%20-%20S/.35.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
                 </div>
             </div>
         </article>
 
         <!-- Canva (2 años) -->
-        <article class="card" data-price="45.00" data-name="Canva Pro (2 años)" data-stock="true">
+        <article class="card" data-category="software" data-subcategory="diseno" data-price="45.00" data-name="Canva Pro (2 años)" data-stock="true">
             <div class="card-img-container">
                 <img src="canva.png" alt="Canva Pro (2 años)">
             </div>
@@ -414,15 +445,13 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 45.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(2%20años)%20-%20S/.45.00" target="_blank" class="btn-whatsapp">
-                        Pedir por WhatsApp
-                    </a>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(2%20años)%20-%20S/.45.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
                 </div>
             </div>
         </article>
 
         <!-- Canva (3 años) -->
-        <article class="card" data-price="55.00" data-name="Canva Pro (3 años)" data-stock="true">
+        <article class="card" data-category="software" data-subcategory="diseno" data-price="55.00" data-name="Canva Pro (3 años)" data-stock="true">
             <div class="card-img-container">
                 <img src="canva.png" alt="Canva Pro (3 años)">
             </div>
@@ -433,15 +462,13 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 55.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(3%20años)%20-%20S/.55.00" target="_blank" class="btn-whatsapp">
-                        Pedir por WhatsApp
-                    </a>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Canva%20Pro%20(3%20años)%20-%20S/.55.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
                 </div>
             </div>
         </article>
 
-        <!-- Canva (para siempre) - Agotado -->
-        <article class="card" data-price="99.00" data-name="Canva Pro (para siempre)" data-stock="false">
+        <!-- Canva (para siempre) -->
+        <article class="card" data-category="software" data-subcategory="diseno" data-price="99.00" data-name="Canva Pro (para siempre)" data-stock="false">
             <div class="card-img-container">
                 <img src="canva.png" alt="Canva Pro (para siempre)">
             </div>
@@ -459,7 +486,7 @@
         </article>
 
         <!-- Gemini Pro (18 meses) -->
-        <article class="card" data-price="70.00" data-name="Gemini Pro 3.6 (18 meses)" data-stock="true">
+        <article class="card" data-category="software" data-subcategory="ia" data-price="70.00" data-name="Gemini Pro 3.6 (18 meses)" data-stock="true">
             <div class="card-img-container">
                 <img src="gemini18.png" alt="Gemini Pro (18 meses)">
             </div>
@@ -471,15 +498,13 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 70.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(18%20meses)%20-%20S/.70.00" target="_blank" class="btn-whatsapp">
-                        Pedir por WhatsApp
-                    </a>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(18%20meses)%20-%20S/.70.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
                 </div>
             </div>
         </article>
 
         <!-- Gemini Pro (12 meses) -->
-        <article class="card" data-price="50.00" data-name="Gemini Pro 3.6 (12 meses)" data-stock="true">
+        <article class="card" data-category="software" data-subcategory="ia" data-price="50.00" data-name="Gemini Pro 3.6 (12 meses)" data-stock="true">
             <div class="card-img-container">
                 <img src="gemini12.png" alt="Gemini Pro (12 meses)">
             </div>
@@ -490,15 +515,13 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 50.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(12%20meses)%20-%20S/.50.00" target="_blank" class="btn-whatsapp">
-                        Pedir por WhatsApp
-                    </a>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Gemini%20Pro%20(12%20meses)%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
                 </div>
             </div>
         </article>
 
         <!-- Windows 10/11 Pro -->
-        <article class="card" data-price="50.00" data-name="Windows 10/11 Pro (Siempre)" data-stock="true">
+        <article class="card" data-category="software" data-subcategory="so" data-price="50.00" data-name="Windows 10/11 Pro (Siempre)" data-stock="true">
             <div class="card-img-container">
                 <img src="windows11.png" alt="Windows 10/11 Pro">
             </div>
@@ -510,15 +533,13 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 50.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Windows%2010/11%20Pro%20-%20S/.50.00" target="_blank" class="btn-whatsapp">
-                        Pedir por WhatsApp
-                    </a>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Windows%2010/11%20Pro%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
                 </div>
             </div>
         </article>
 
         <!-- Windows 10/11 Home -->
-        <article class="card" data-price="50.00" data-name="Windows 10/11 Home (Siempre)" data-stock="true">
+        <article class="card" data-category="software" data-subcategory="so" data-price="50.00" data-name="Windows 10/11 Home (Siempre)" data-stock="true">
             <div class="card-img-container">
                 <img src="windows11.png" alt="Windows 10/11 Home">
             </div>
@@ -529,15 +550,13 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 50.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Windows%2010/11%20Home%20-%20S/.50.00" target="_blank" class="btn-whatsapp">
-                        Pedir por WhatsApp
-                    </a>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Windows%2010/11%20Home%20-%20S/.50.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
                 </div>
             </div>
         </article>
 
         <!-- Duolingo (12 meses) -->
-        <article class="card" data-price="144.00" data-name="Duolingo Super (12 meses)" data-stock="true">
+        <article class="card" data-category="software" data-subcategory="edu" data-price="144.00" data-name="Duolingo Super (12 meses)" data-stock="true">
             <div class="card-img-container">
                 <img src="duolingo.png" alt="Duolingo (12 meses)">
             </div>
@@ -548,15 +567,13 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 144.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Duolingo%20(12%20meses)%20-%20S/.144.00" target="_blank" class="btn-whatsapp">
-                        Pedir por WhatsApp
-                    </a>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Duolingo%20(12%20meses)%20-%20S/.144.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
                 </div>
             </div>
         </article>
 
         <!-- Flujo TV -->
-        <article class="card" data-price="20.00" data-name="Flujo TV (1 mes)" data-stock="true">
+        <article class="card" data-category="streaming" data-subcategory="streaming" data-price="20.00" data-name="Flujo TV (1 mes)" data-stock="true">
             <div class="card-img-container">
                 <img src="flujotv.png" alt="Flujo TV">
             </div>
@@ -567,15 +584,13 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 20.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Flujo%20TV%20-%20S/.20.00" target="_blank" class="btn-whatsapp">
-                        Pedir por WhatsApp
-                    </a>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Flujo%20TV%20-%20S/.20.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
                 </div>
             </div>
         </article>
 
         <!-- Capcut Pro -->
-        <article class="card" data-price="23.00" data-name="Capcut Pro (1 mes)" data-stock="true">
+        <article class="card" data-category="software" data-subcategory="diseno" data-price="23.00" data-name="Capcut Pro (1 mes)" data-stock="true">
             <div class="card-img-container">
                 <img src="capcut.png" alt="Capcut pro (1 mes)">
             </div>
@@ -586,15 +601,13 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 23.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Capcut%20Pro%20(1%20mes)%20-%20S/.23.00" target="_blank" class="btn-whatsapp">
-                        Pedir por WhatsApp
-                    </a>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Capcut%20Pro%20(1%20mes)%20-%20S/.23.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
                 </div>
             </div>
         </article>
 
         <!-- Autodesk (1 año) -->
-        <article class="card" data-price="75.00" data-name="Autodesk All Apps (1 año)" data-stock="true">
+        <article class="card" data-category="software" data-subcategory="diseno" data-price="75.00" data-name="Autodesk All Apps (1 año)" data-stock="true">
             <div class="card-img-container">
                 <img src="autodesk.png" alt="Autodesk All Apps (1 año)">
             </div>
@@ -606,15 +619,13 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 75.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(1%20año)%20-%20S/.75.00" target="_blank" class="btn-whatsapp">
-                        Pedir por WhatsApp
-                    </a>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(1%20año)%20-%20S/.75.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
                 </div>
             </div>
         </article>
 
         <!-- Autodesk (6 meses) -->
-        <article class="card" data-price="49.00" data-name="Autodesk All Apps (6 meses)" data-stock="true">
+        <article class="card" data-category="software" data-subcategory="diseno" data-price="49.00" data-name="Autodesk All Apps (6 meses)" data-stock="true">
             <div class="card-img-container">
                 <img src="autodesk.png" alt="Autodesk All Apps (6 meses)">
             </div>
@@ -625,15 +636,13 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 49.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(6%20meses)%20-%20S/.49.00" target="_blank" class="btn-whatsapp">
-                        Pedir por WhatsApp
-                    </a>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(6%20meses)%20-%20S/.49.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
                 </div>
             </div>
         </article>
 
         <!-- Autodesk (3 meses) -->
-        <article class="card" data-price="29.00" data-name="Autodesk All Apps (3 meses)" data-stock="true">
+        <article class="card" data-category="software" data-subcategory="diseno" data-price="29.00" data-name="Autodesk All Apps (3 meses)" data-stock="true">
             <div class="card-img-container">
                 <img src="autodesk.png" alt="Autodesk All Apps (3 meses)">
             </div>
@@ -644,15 +653,13 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 29.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(3%20meses)%20-%20S/.29.00" target="_blank" class="btn-whatsapp">
-                        Pedir por WhatsApp
-                    </a>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Autodesk%20All%20Apps%20(3%20meses)%20-%20S/.29.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
                 </div>
             </div>
         </article>
 
-        <!-- Crunchyroll - 1 perfil (1 año) -->
-        <article class="card" data-price="99.00" data-name="Crunchyroll 1 Perfil (1 año)" data-stock="true">
+        <!-- Crunchyroll (1 año) -->
+        <article class="card" data-category="streaming" data-subcategory="streaming" data-price="99.00" data-name="Crunchyroll 1 Perfil (1 año)" data-stock="true">
             <div class="card-img-container">
                 <img src="crunchyroll.png" alt="Crunchyroll Mega Fan (1 año)">
             </div>
@@ -663,15 +670,13 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 99.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%201%20Perfil%20(1%20año)%20-%20S/.99.00" target="_blank" class="btn-whatsapp">
-                        Pedir por WhatsApp
-                    </a>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%201%20Perfil%20(1%20año)%20-%20S/.99.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
                 </div>
             </div>
         </article>
 
-        <!-- Crunchyroll - 1 perfil (3 meses) -->
-        <article class="card" data-price="35.00" data-name="Crunchyroll 1 Perfil (3 meses)" data-stock="true">
+        <!-- Crunchyroll (3 meses) -->
+        <article class="card" data-category="streaming" data-subcategory="streaming" data-price="35.00" data-name="Crunchyroll 1 Perfil (3 meses)" data-stock="true">
             <div class="card-img-container">
                 <img src="crunchyroll.png" alt="Crunchyroll Mega Fan (3 meses)">
             </div>
@@ -682,15 +687,13 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 35.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%201%20Perfil%20(3%20meses)%20-%20S/.35.00" target="_blank" class="btn-whatsapp">
-                        Pedir por WhatsApp
-                    </a>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%201%20Perfil%20(3%20meses)%20-%20S/.35.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
                 </div>
             </div>
         </article>
 
-        <!-- Crunchyroll - Completo (6 meses) -->
-        <article class="card" data-price="89.00" data-name="Crunchyroll Cuenta Completa (6 meses)" data-stock="true">
+        <!-- Crunchyroll (6 meses) -->
+        <article class="card" data-category="streaming" data-subcategory="streaming" data-price="89.00" data-name="Crunchyroll Cuenta Completa (6 meses)" data-stock="true">
             <div class="card-img-container">
                 <img src="crunchyroll.png" alt="Crunchyroll Completo (6 meses)">
             </div>
@@ -701,15 +704,13 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 89.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%20Completo%20(6%20meses)%20-%20S/.89.00" target="_blank" class="btn-whatsapp">
-                        Pedir por WhatsApp
-                    </a>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Crunchyroll%20Completo%20(6%20meses)%20-%20S/.89.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
                 </div>
             </div>
         </article>
 
         <!-- Spotify (1 mes) -->
-        <article class="card" data-price="15.00" data-name="Spotify Premium (1 mes)" data-stock="true">
+        <article class="card" data-category="streaming" data-subcategory="streaming" data-price="15.00" data-name="Spotify Premium (1 mes)" data-stock="true">
             <div class="card-img-container">
                 <img src="spotify.png" alt="Spotify Premium (1 mes)">
             </div>
@@ -720,12 +721,16 @@
                 </div>
                 <div>
                     <div class="card-price">S/. 15.00</div>
-                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Spotify%20Premium%20(1%20mes)%20-%20S/.15.00" target="_blank" class="btn-whatsapp">
-                        Pedir por WhatsApp
-                    </a>
+                    <a href="https://wa.me/51933907930?text=Hola,%20deseo%20comprar:%20Spotify%20Premium%20(1%20mes)%20-%20S/.15.00" target="_blank" class="btn-whatsapp">Pedir por WhatsApp</a>
                 </div>
             </div>
         </article>
+
+        <!-- Banner de aviso para Juegos -->
+        <div class="banner-upcoming" id="bannerJuegos" style="display: none;">
+            <h2>🎮 Próximamente Juegos Económicos</h2>
+            <p>Estamos preparando un catálogo especial de licencias y juegos para PC y consolas a precios súper accesibles. ¡Atento a nuestras actualizaciones!</p>
+        </div>
 
     </main>
 
@@ -733,33 +738,94 @@
         <p>&copy; Catálogo Digital Lubeltec. Todos los derechos reservados.</p>
     </footer>
 
-    <!-- Lógica en JS para búsqueda, ordenamiento y filtros -->
+    <!-- Lógica de Pestañas, Subpestañas y Filtros -->
     <script>
+        let currentTab = 'principal';
+        let currentSubTab = 'all';
+
+        function switchTab(tabName, event) {
+            currentTab = tabName;
+            currentSubTab = 'all';
+            
+            // Marcar pestaña activa
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Mostrar/Ocultar subpestañas de Software
+            const softwareSubTabs = document.getElementById('softwareSubTabs');
+            if (currentTab === 'software') {
+                softwareSubTabs.style.display = 'flex';
+                // Resetear subpestañas activas
+                const subButtons = document.querySelectorAll('.sub-tab-btn');
+                subButtons.forEach(btn => btn.classList.remove('active'));
+                subButtons[0].classList.add('active');
+            } else {
+                softwareSubTabs.style.display = 'none';
+            }
+
+            updateProducts();
+        }
+
+        function filterSubTab(subTabName, event) {
+            currentSubTab = subTabName;
+            
+            const subButtons = document.querySelectorAll('.sub-tab-btn');
+            subButtons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            updateProducts();
+        }
+
         function updateProducts() {
             const container = document.getElementById('productContainer');
             const cardsArray = Array.from(container.getElementsByClassName('card'));
+            const bannerJuegos = document.getElementById('bannerJuegos');
             
             const searchText = document.getElementById('searchInput').value.toLowerCase();
             const sortValue = document.getElementById('sortSelect').value;
             const stockValue = document.getElementById('stockSelect').value;
 
-            // 1. Filtrar productos por búsqueda y stock
+            // Manejo de la pestaña Juegos
+            if (currentTab === 'juegos') {
+                cardsArray.forEach(card => card.style.display = "none");
+                bannerJuegos.style.display = "block";
+                return;
+            } else {
+                bannerJuegos.style.display = "none";
+            }
+
+            // Filtrar productos
             cardsArray.forEach(card => {
+                const category = card.getAttribute('data-category');
+                const subcategory = card.getAttribute('data-subcategory');
                 const title = card.getAttribute('data-name').toLowerCase();
                 const desc = card.querySelector('.card-description').innerText.toLowerCase();
                 const isStock = card.getAttribute('data-stock') === 'true';
 
+                // Lógica de visualización
+                let matchesTab = false;
+                if (currentTab === 'principal') {
+                    matchesTab = true; // Principal muestra todos los software y servicios
+                } else if (currentTab === 'software') {
+                    if (currentSubTab === 'all') {
+                        matchesTab = (category === 'software');
+                    } else {
+                        matchesTab = (category === 'software' && subcategory === currentSubTab);
+                    }
+                }
+
                 const matchesSearch = title.includes(searchText) || desc.includes(searchText);
                 const matchesStock = stockValue === 'all' || (stockValue === 'instock' && isStock);
 
-                if (matchesSearch && matchesStock) {
+                if (matchesTab && matchesSearch && matchesStock) {
                     card.style.display = "flex";
                 } else {
                     card.style.display = "none";
                 }
             });
 
-            // 2. Ordenar productos en el DOM
+            // Ordenar productos
             if (sortValue !== 'default') {
                 cardsArray.sort((a, b) => {
                     const priceA = parseFloat(a.getAttribute('data-price'));
@@ -770,11 +836,9 @@
                     if (sortValue === 'price-asc') return priceA - priceB;
                     if (sortValue === 'price-desc') return priceB - priceA;
                     if (sortValue === 'alpha-asc') return nameA.localeCompare(nameB);
-                    if (sortValue === 'alpha-desc') return nameB.localeCompare(nameA);
                     return 0;
                 });
 
-                // Reordenar elementos dentro del contenedor
                 cardsArray.forEach(card => container.appendChild(card));
             }
         }
