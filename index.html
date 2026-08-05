@@ -8,7 +8,7 @@
     <!-- Ícono de la URL (Favicon) -->
     <link rel="icon" href="lubeltec.png" type="image/png">
 
-    <!-- INTEGRACIÓN SEGURA DE FIREBASE SINCRONIZADA -->
+    <!-- INTEGRACIÓN DE FIREBASE PARA SINCRONIZACIÓN EN LA NUBE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -28,13 +28,17 @@
 
         const productsCol = collection(db, "products");
         onSnapshot(productsCol, (snapshot) => {
-            if (!snapshot.empty) {
+            if (snapshot.empty) {
+                if (typeof window.seedInitialProducts === "function") {
+                    window.seedInitialProducts();
+                }
+            } else {
                 let cloudProds = [];
                 snapshot.forEach((docSnap) => {
                     cloudProds.push({ id: docSnap.id, ...docSnap.data() });
                 });
                 if (cloudProds.length > 0) {
-                    window.products = cloudProds;
+                    products = cloudProds;
                     if (typeof window.renderCatalog === "function") {
                         window.renderCatalog();
                         window.updateProducts();
@@ -42,10 +46,6 @@
                             window.renderAdminProductList();
                         }
                     }
-                }
-            } else {
-                if (typeof window.seedInitialProducts === "function") {
-                    window.seedInitialProducts();
                 }
             }
         });
@@ -2062,6 +2062,7 @@
             { name: "Soporte Trujillo Principal", phone: "929770729" }
         ];
 
+        // Catálogo base de seguridad. Si Firebase está vacío, esto se subirá automáticamente a la nube.
         let products = [
             { id: 'win-pro', name: 'Windows 10/11 Pro (Siempre)', price: 50.00, category: 'win', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'windows11.png', desc: 'Licencia digital permanente (OEM). Reactivación de por vida.' },
             { id: 'off-365', name: 'Office 365 (1 año)', price: 45.00, category: 'ia', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'office365.png', desc: 'Instálalo en hasta 5 dispositivos. Word, Excel, PowerPoint, Outlook y Teams.' },
