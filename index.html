@@ -1516,8 +1516,6 @@
         <div class="header-top">
             <div class="header-left-group">
                 <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMenu()" title="Menú de Categorías">☰</button>
-                
-                <!-- INICIO DE SESIÓN / BOTÓN AL LADO DE LA HAMBURGUESA -->
                 <button class="login-shortcut-btn" onclick="openAdminLogin()" title="Iniciar Sesión">🔐 Iniciar Sesión</button>
                 
                 <div class="active-user-badge" id="activeUserBadge">
@@ -1543,7 +1541,7 @@
             ¡Descuentos automáticos: <span>3+ unids (10%)</span> | <span>5+ unids (13%)</span> | <span>8+ unids (20%)</span>!
         </div>
 
-        <!-- Menú Desplegable (Catálogo Administración Eliminado) -->
+        <!-- Menú Desplegable -->
         <div class="menu-dropdown" id="menuDropdown">
             <button class="cat-chip active" id="chip-principal" onclick="filterCategory('principal', event)">🏠 Principal</button>
             <button class="cat-chip" id="chip-software" onclick="toggleSubmenu('softwareSubmenu', event)">📂 Software ▾</button>
@@ -1807,7 +1805,6 @@
             const now = Date.now();
 
             if (u !== 'luislmvg88' && loginAttempts[u] && loginAttempts[u].lockUntil > now) {
-                const remainingMins = Math.ceil((loginAttempts[u].lockUntil - now) / 60000);
                 alert(`Demasiados intentos fallidos para el usuario ${u}. Cuenta bloqueada temporalmente por 15 minutos.`);
                 return;
             }
@@ -1841,7 +1838,6 @@
             }
         }
 
-        // Habilitar la tecla "Enter" o "Intro" para iniciar sesión
         document.getElementById('adminPass').addEventListener('keydown', function(event) {
             if (event.key === 'Enter') {
                 verifyAdminLogin();
@@ -2258,8 +2254,9 @@
                     collabNotice = `<div style="font-size:0.65rem; color:#f59e0b; font-weight:bold;">✨ Precio Colaborador (-${collabDiscountPct}%)</div>`;
                 }
                 
+                // NOTA: Se evita el uso de ID único estático por duplicidad en carrusel y grid. Se maneja por clases y atributos data-.
                 const cardHtml = `
-                    <article class="card ${isFeatured ? 'destacada' : 'general-card'}" data-category="${p.category}" data-base-price="${effectivePrice}" data-name="${p.name}" data-stock="${p.stock}">
+                    <article class="card ${isFeatured ? 'destacada' : 'general-card'}" data-category="${p.category}" data-base-price="${effectivePrice}" data-name="${p.name}" data-stock="${p.stock}" data-id="${p.id}">
                         <div class="card-img-container"><img src="${p.img}" alt="${p.name}"></div>
                         <div class="card-content">
                             <div>
@@ -2271,25 +2268,25 @@
                             <div>
                                 <div class="card-price-box">
                                     <div class="card-price-container">
-                                        <div class="card-price" id="price-${p.id}">S/. ${effectivePrice.toFixed(2)}</div>
-                                        <div class="original-price" id="orig-price-${p.id}" style="display:none;"></div>
+                                        <div class="card-price product-price-el">S/. ${effectivePrice.toFixed(2)}</div>
+                                        <div class="original-price product-orig-price-el" style="display:none;"></div>
                                     </div>
-                                    <div class="discount-notice" id="disc-${p.id}" style="display:none;"></div>
+                                    <div class="discount-notice product-disc-el" style="display:none;"></div>
                                 </div>
                                 <div class="calculator-box">
                                     <div class="calc-label-container">
                                         <span class="calc-label">Cantidad:</span>
-                                        <button class="calc-reset-btn" onclick="resetQty('${p.id}')" title="Restablecer cantidad">↺</button>
+                                        <button class="calc-reset-btn" onclick="resetQty(this)" title="Restablecer cantidad">↺</button>
                                     </div>
                                     <div class="calc-controls">
-                                        <button class="calc-btn" onclick="changeQty('${p.id}', -1)">-</button>
-                                        <input type="text" class="calc-input" id="qty-${p.id}" value="1" readonly>
-                                        <button class="calc-btn" onclick="changeQty('${p.id}', 1)">+</button>
+                                        <button class="calc-btn" onclick="changeQty(this, -1)">-</button>
+                                        <input type="text" class="calc-input product-qty-input" value="1" readonly>
+                                        <button class="calc-btn" onclick="changeQty(this, 1)">+</button>
                                     </div>
                                 </div>
                                 <div class="card-actions">
-                                    <button class="btn-cart ${!p.stock?'btn-disabled':''}" onclick="addToCart('${p.name}', ${effectivePrice}, 'qty-${p.id}', '${p.id}')">🛒 Agregar al Carrito</button>
-                                    <button class="btn-yape ${!p.stock?'btn-disabled':''}" onclick="openDirectPayment('${p.name}', ${effectivePrice}, 'qty-${p.id}', '${p.id}')">💜 Pagar con Yape o Plin</button>
+                                    <button class="btn-cart ${!p.stock?'btn-disabled':''}" onclick="addToCart(this, '${p.name}', ${effectivePrice}, '${p.id}')">🛒 Agregar al Carrito</button>
+                                    <button class="btn-yape ${!p.stock?'btn-disabled':''}" onclick="openDirectPayment(this, '${p.name}', ${effectivePrice}, '${p.id}')">💜 Pagar con Yape o Plin</button>
                                 </div>
                             </div>
                         </div>
@@ -2346,20 +2343,26 @@
             updateProducts();
         }
 
-        function changeQty(id, delta) {
-            const input = document.getElementById('qty-' + id);
+        function changeQty(btnElement, delta) {
+            const card = btnElement.closest('.card');
+            const input = card.querySelector('.product-qty-input');
             if(!input) return;
             let val = parseInt(input.value) + delta;
             if (val < 1) val = 1;
             input.value = val;
-            recalculateCardPrice(id, val);
+            
+            const prodId = card.getAttribute('data-id');
+            recalculateCardPrice(card, prodId, val);
         }
 
-        function resetQty(id) {
-            const input = document.getElementById('qty-' + id);
+        function resetQty(btnElement) {
+            const card = btnElement.closest('.card');
+            const input = card.querySelector('.product-qty-input');
             if(!input) return;
             input.value = 1;
-            recalculateCardPrice(id, 1);
+            
+            const prodId = card.getAttribute('data-id');
+            recalculateCardPrice(card, prodId, 1);
         }
 
         function getActiveTier(prodObj, qty) {
@@ -2376,18 +2379,14 @@
             return null;
         }
 
-        function recalculateCardPrice(id, qty) {
-            const input = document.getElementById('qty-' + id);
-            if(!input) return;
-            const card = input.closest('.card');
+        function recalculateCardPrice(card, prodId, qty) {
             let basePrice = parseFloat(card.getAttribute('data-base-price'));
-            
-            const prodObj = products.find(p => p.id === id);
+            const prodObj = products.find(p => p.id === prodId);
             if (!prodObj) return;
 
-            const priceDisplay = document.getElementById('price-' + id);
-            const origPriceDisplay = document.getElementById('orig-price-' + id);
-            const discNotice = document.getElementById('disc-' + id);
+            const priceDisplay = card.querySelector('.product-price-el');
+            const origPriceDisplay = card.querySelector('.product-orig-price-el');
+            const discNotice = card.querySelector('.product-disc-el');
 
             let unitPrice = basePrice;
             const originalTotal = basePrice * qty;
@@ -2411,8 +2410,10 @@
             if(priceDisplay) priceDisplay.innerText = `S/. ${finalPrice.toFixed(2)}`;
         }
 
-        function addToCart(productName, basePrice, qtyInputId, prodId) {
-            const qty = parseInt(document.getElementById(qtyInputId).value);
+        function addToCart(btnElement, productName, basePrice, prodId) {
+            const card = btnElement.closest('.card');
+            const input = card.querySelector('.product-qty-input');
+            const qty = parseInt(input.value);
             const prodObj = products.find(p => p.id === prodId);
             
             let unitPrice = basePrice;
@@ -2546,8 +2547,10 @@
             document.getElementById('paymentModal').style.display = 'flex';
         }
 
-        function openDirectPayment(productName, basePrice, qtyInputId, prodId) {
-            const qty = parseInt(document.getElementById(qtyInputId).value);
+        function openDirectPayment(btnElement, productName, basePrice, prodId) {
+            const card = btnElement.closest('.card');
+            const input = card.querySelector('.product-qty-input');
+            const qty = parseInt(input.value);
             const prodObj = products.find(p => p.id === prodId);
             let unitPrice = basePrice;
             
