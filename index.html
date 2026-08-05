@@ -484,155 +484,224 @@
             border-radius: 4px;
         }
 
-        /* DISEÑO DEL MENÚ LATERAL DESLIZANTE TIPO DRAWER (Estilo Falabella) */
-        .drawer-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(5px);
-            z-index: 5000;
-            display: none;
+        /* Menú Desplegable con animación de deslizamiento suave (acordeón) */
+        .menu-dropdown {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
             opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .drawer-overlay.open {
-            display: block;
-            opacity: 1;
-        }
-
-        .drawer-menu {
-            position: fixed;
-            top: 0;
-            left: -380px;
-            width: 360px;
-            max-width: 90%;
-            height: 100%;
-            background: #0d1527;
-            border-right: 2px solid #00b4d8;
-            z-index: 5010;
             display: flex;
-            flex-direction: column;
-            transition: left 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 5px 0 25px rgba(0,0,0,0.8);
-        }
-
-        .drawer-menu.open {
-            left: 0;
-        }
-
-        .drawer-header {
-            background: #101726;
-            padding: 16px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid rgba(0, 180, 216, 0.3);
-        }
-
-        .drawer-header h3 {
-            color: #38bdf8;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .drawer-close-btn {
-            background: rgba(230, 57, 70, 0.2);
-            border: 1px solid #e63946;
-            color: #ff6b6b;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
             justify-content: center;
-            font-weight: bold;
-            font-size: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .menu-dropdown.open {
+            max-height: 220px;
+            opacity: 1;
+            margin-bottom: 10px;
+            padding: 8px 4px;
+        }
+
+        /* Submenú con animación de deslizamiento suave */
+        .submenu-software {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+            opacity: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            justify-content: center;
+            width: 100%;
+            background: rgba(10, 16, 26, 0.9);
+            padding: 0 8px;
+            border-radius: 10px;
+            border: 1px dashed rgba(0, 180, 216, 0.4);
+            margin-top: 4px;
+        }
+
+        .submenu-software.open {
+            max-height: 150px;
+            opacity: 1;
+            padding: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .submenu-software.open {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                justify-content: flex-start;
+                scrollbar-width: thin;
+                scrollbar-color: #00b4d8 transparent;
+            }
+            .submenu-software::-webkit-scrollbar {
+                height: 3px;
+            }
+            .submenu-software::-webkit-scrollbar-thumb {
+                background: #00b4d8;
+                border-radius: 4px;
+            }
+            .sub-chip {
+                flex: 0 0 auto;
+                white-space: nowrap;
+            }
+        }
+
+        .cat-chip {
+            background: rgba(20, 32, 48, 0.95);
+            color: #94a3b8;
+            border: 1px solid rgba(0, 180, 216, 0.3);
+            padding: 5px 12px;
+            border-radius: 14px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
             transition: all 0.2s ease;
         }
 
-        .drawer-close-btn:hover {
-            background: #e63946;
-            color: #fff;
-        }
-
-        .drawer-body {
-            padding: 15px 20px;
-            overflow-y: auto;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            scrollbar-width: thin;
-            scrollbar-color: #00b4d8 transparent;
-        }
-
-        .drawer-item-group {
-            display: flex;
-            flex-direction: column;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding-bottom: 8px;
-        }
-
-        .drawer-main-btn {
-            background: rgba(20, 32, 48, 0.8);
-            color: #e6edf3;
-            border: 1px solid rgba(0, 180, 216, 0.25);
-            padding: 10px 14px;
+        .sub-chip {
+            background: rgba(13, 22, 35, 0.9);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            padding: 4px 10px;
             border-radius: 10px;
-            font-size: 0.9rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .cat-chip:hover, .sub-chip:hover {
+            border-color: #00b4d8;
+            color: #ffffff;
+        }
+
+        .cat-chip.active, .sub-chip.active {
+            background: linear-gradient(135deg, #00b4d8, #0083a0);
+            color: #080c14;
+            border-color: #38bdf8;
+            box-shadow: 0 0 8px rgba(0, 180, 216, 0.5);
+            font-weight: bold;
+        }
+
+        .admin-nav-header {
+            position: relative;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .admin-hamburger-btn {
+            background: rgba(0, 180, 216, 0.15);
+            color: #38bdf8;
+            border: 1px solid #00b4d8;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        .admin-hamburger-btn:hover {
+            background: #00b4d8;
+            color: #080c14;
+        }
+
+        .admin-dropdown-menu {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: rgba(13, 22, 35, 0.95);
+            border: 1px solid rgba(0, 180, 216, 0.4);
+            padding: 8px;
+            border-radius: 10px;
+            margin-top: 6px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .admin-dropdown-menu.open {
+            display: flex;
+        }
+
+        .admin-tab-btn {
+            background: rgba(20, 32, 48, 0.8);
+            border: 1px solid rgba(0, 180, 216, 0.3);
+            color: #94a3b8;
+            padding: 7px 10px;
+            border-radius: 8px;
+            font-size: 0.78rem;
             font-weight: 600;
             cursor: pointer;
             text-align: left;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             transition: all 0.2s ease;
         }
-
-        .drawer-main-btn:hover {
-            background: #00b4d8;
-            color: #080c14;
-            border-color: #38bdf8;
-        }
-
-        .drawer-sub-list {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.35s ease, padding 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            padding-left: 10px;
-        }
-
-        .drawer-sub-list.open {
-            max-height: 300px;
-            padding-top: 8px;
-            padding-bottom: 4px;
-        }
-
-        .drawer-sub-btn {
-            background: rgba(13, 22, 35, 0.9);
-            color: #38bdf8;
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 0.82rem;
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.2s ease;
-        }
-
-        .drawer-sub-btn:hover {
-            background: rgba(0, 180, 216, 0.2);
+        .admin-tab-btn:hover {
             color: #fff;
             border-color: #00b4d8;
+        }
+        .admin-tab-btn.active {
+            background: linear-gradient(135deg, #00b4d8, #0083a0);
+            color: #080c14;
+            border-color: #38bdf8;
+            font-weight: bold;
+        }
+
+        .admin-tab-pane {
+            display: none;
+        }
+        .admin-tab-pane.active {
+            display: block;
+        }
+
+        .switch-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.25);
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 180, 216, 0.2);
+            margin-bottom: 10px;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 22px;
+        }
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #334155;
+            transition: .3s;
+            border-radius: 22px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #22c55e;
+        }
+        input:checked + .slider:before {
+            transform: translateX(22px);
         }
 
         .controls-container {
@@ -980,6 +1049,7 @@
             pointer-events: none;
         }
 
+        /* Animación de Implosión y Estallido al cerrar modales */
         @keyframes implosionClose {
             0% { transform: scale(1); opacity: 1; filter: blur(0px); }
             40% { transform: scale(0.75); opacity: 0.8; filter: blur(1px); }
@@ -1535,45 +1605,6 @@
         </div>
     </div>
 
-    <!-- MENÚ LATERAL DESLIZANTE (DRAWER) ESTILO FALABELLA -->
-    <div class="drawer-overlay" id="drawerOverlay" onclick="toggleMenu()"></div>
-    <div class="drawer-menu" id="drawerMenu">
-        <div class="drawer-header">
-            <h3>📂 Menú de Categorías</h3>
-            <button class="drawer-close-btn" onclick="toggleMenu()">✕</button>
-        </div>
-        <div class="drawer-body">
-            <button class="drawer-main-btn active" onclick="filterCategory('principal', event); toggleMenu();">
-                <span>🏠 Principal</span>
-            </button>
-
-            <div class="drawer-item-group">
-                <button class="drawer-main-btn" onclick="toggleSubmenu('drawerSoftwareSub', event)">
-                    <span>📂 Software</span>
-                    <span>▾</span>
-                </button>
-                <div class="drawer-sub-list" id="drawerSoftwareSub">
-                    <button class="drawer-sub-btn" onclick="filterCategory('all-software', event); toggleMenu();">Todos los Software</button>
-                    <button class="drawer-sub-btn" onclick="filterCategory('win', event); toggleMenu();">💻 Windows 10/11</button>
-                    <button class="drawer-sub-btn" onclick="filterCategory('diseno', event); toggleMenu();">🎨 Diseño</button>
-                    <button class="drawer-sub-btn" onclick="filterCategory('ia', event); toggleMenu();">🤖 IA</button>
-                    <button class="drawer-sub-btn" onclick="filterCategory('iptv', event); toggleMenu();">📺 IPTV</button>
-                    <button class="drawer-sub-btn" onclick="filterCategory('musica', event); toggleMenu();">🎵 Música</button>
-                    <button class="drawer-sub-btn" onclick="filterCategory('edu', event); toggleMenu();">📚 Educación</button>
-                    <button class="drawer-sub-btn" onclick="filterCategory('antivirus', event); toggleMenu();">🛡️ Antivirus</button>
-                </div>
-            </div>
-
-            <button class="drawer-main-btn" onclick="filterCategory('juegos', event); toggleMenu();">
-                <span>🎮 Juegos</span>
-            </button>
-
-            <button class="drawer-main-btn" onclick="filterCategory('nosotros', event); toggleMenu();">
-                <span>📌 Visión y Misión</span>
-            </button>
-        </div>
-    </div>
-
     <!-- BOTÓN FLOTANTE PARPADEANTE DE SOPORTE TÉCNICO -->
     <div class="float-support-btn" id="floatSupportBtn" onclick="openSupportModal()" title="Soporte Técnico y Mantenimiento">
         <span style="font-size: 1.1rem;">🛠️</span>
@@ -1695,7 +1726,7 @@
             <div id="adminSessionInfo" style="font-size: 0.8rem; color: #22c55e; margin-bottom: 8px; font-weight: bold; text-align: left;"></div>
 
             <div class="admin-nav-header">
-                <button class="admin-hamburger-btn" onclick="toggleAdminMenuInternal()" id="adminHamburgerBtn">
+                <button class="admin-hamburger-btn" onclick="toggleAdminMenu()" id="adminHamburgerBtn">
                     ☰ Menú de Opciones
                 </button>
 
@@ -2076,6 +2107,26 @@
             ¡Descuentos automáticos: <span>3+ unids (5%)</span> | <span>6+ unids (10%)</span> | <span>10+ unids (15%)</span>!
         </div>
 
+        <!-- Menú Desplegable Principal -->
+        <div class="menu-dropdown" id="menuDropdown">
+            <button class="cat-chip active" id="chip-principal" onclick="filterCategory('principal', event)">🏠 Principal</button>
+            <button class="cat-chip" id="chip-software" onclick="toggleSubmenu('softwareSubmenu', event)">📂 Software ▾</button>
+            <button class="cat-chip" onclick="filterCategory('juegos', event)">🎮 Juegos</button>
+            <button class="cat-chip" onclick="filterCategory('nosotros', event)">📌 Visión y Misión</button>
+
+            <!-- Submenú de Software Desplegable -->
+            <div class="submenu-software" id="softwareSubmenu">
+                <button class="sub-chip active" onclick="filterCategory('all-software', event)">Todos los Software</button>
+                <button class="sub-chip" onclick="filterCategory('win', event)">💻 Windows 10/11</button>
+                <button class="sub-chip" onclick="filterCategory('diseno', event)">🎨 Diseño</button>
+                <button class="sub-chip" onclick="filterCategory('ia', event)">🤖 IA</button>
+                <button class="sub-chip" onclick="filterCategory('iptv', event)">📺 IPTV</button>
+                <button class="sub-chip" onclick="filterCategory('musica', event)">🎵 Música</button>
+                <button class="sub-chip" onclick="filterCategory('edu', event)">📚 Educación</button>
+                <button class="sub-chip" onclick="filterCategory('antivirus', event)">🛡️ Antivirus</button>
+            </div>
+        </div>
+
         <!-- Filtros -->
         <div class="controls-container">
             <div class="search-wrapper">
@@ -2276,13 +2327,10 @@
             }
         }
 
-        // Control del Menú Deslizante Lateral (Drawer)
         function toggleMenu() {
-            const menu = document.getElementById('drawerMenu');
-            const overlay = document.getElementById('drawerOverlay');
+            const menu = document.getElementById('menuDropdown');
             const btn = document.getElementById('hamburgerBtn');
             menu.classList.toggle('open');
-            overlay.classList.toggle('open');
             btn.classList.toggle('active');
         }
 
@@ -2290,6 +2338,17 @@
             event.stopPropagation();
             const submenu = document.getElementById(submenuId);
             submenu.classList.toggle('open');
+        }
+
+        // Animación de cierre con implosión y estallido
+        function closeModalWithImplosion(modalId) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            modal.classList.add('imploding');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                modal.classList.remove('imploding');
+            }, 350);
         }
 
         function toggleProductForm() {
@@ -2504,7 +2563,7 @@
 
         function filterCategory(category, event) {
             currentFilter = category;
-            const chips = document.querySelectorAll('.cat-chip, .sub-chip, .drawer-main-btn, .drawer-sub-btn');
+            const chips = document.querySelectorAll('.cat-chip, .sub-chip');
             chips.forEach(chip => chip.classList.remove('active'));
             if(event) event.target.classList.add('active');
 
@@ -2519,6 +2578,8 @@
             currentFilter = 'principal';
             const chips = document.querySelectorAll('.cat-chip, .sub-chip');
             chips.forEach(chip => chip.classList.remove('active'));
+            document.getElementById('chip-principal').classList.add('active');
+            document.getElementById('softwareSubmenu').classList.remove('open');
             
             document.getElementById('searchInput').value = '';
             document.getElementById('clearSearchBtn').style.display = 'none';
@@ -2642,7 +2703,7 @@
             }
         }
 
-        function toggleAdminMenuInternal() {
+        function toggleAdminMenu() {
             const menu = document.getElementById('adminDropdownMenu');
             const btn = document.getElementById('adminHamburgerBtn');
             menu.classList.toggle('open');
