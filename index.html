@@ -31,38 +31,9 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Cronómetro Flotante No Intrusivo */
+        /* Cronómetro Flotante Desactivado */
         .promo-timer-float {
-            position: fixed;
-            top: 75px;
-            right: 15px;
-            background: rgba(16, 23, 38, 0.92);
-            backdrop-filter: blur(8px);
-            border: 1px solid #00b4d8;
-            color: #ffffff;
-            padding: 8px 12px;
-            border-radius: 12px;
-            display: none;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5), 0 0 10px rgba(0, 180, 216, 0.3);
-            z-index: 1500;
-            font-size: 0.75rem;
-            animation: pulseGlow 3s infinite ease-in-out;
-        }
-
-        .promo-timer-float.show {
-            display: flex;
-        }
-
-        .timer-digits {
-            font-weight: bold;
-            color: #22c55e;
-            background: rgba(0,0,0,0.4);
-            padding: 2px 6px;
-            border-radius: 6px;
-            font-family: monospace;
-            font-size: 0.8rem;
+            display: none !important;
         }
 
         /* Notificación Flotante con Check Animado */
@@ -1440,14 +1411,8 @@
 </head>
 <body>
 
-    <!-- CRONÓMETRO FLOTANTE DE OFERTAS EN PANTALLA PRINCIPAL -->
-    <div class="promo-timer-float" id="promoTimerFloat">
-        <span>⚡ Oferta Relámpago:</span>
-        <span class="timer-digits" id="timerDigitsDisplay">00:00:00</span>
-    </div>
-
     <!-- BOTÓN FLOTANTE PARPADEANTE DE SOPORTE TÉCNICO (Abajo a la izquierda) -->
-    <div class="float-support-btn" onclick="openSupportModal()" title="Soporte Técnico y Mantenimiento">
+    <div class="float-support-btn" id="floatSupportBtn" onclick="openSupportModal()" title="Soporte Técnico y Mantenimiento">
         <span style="font-size: 1.1rem;">🛠️</span>
         <div>
             <div style="color: #38bdf8; font-size: 0.72rem;">¿Necesitas ayuda?</div>
@@ -1463,16 +1428,22 @@
             <p>Servicios especializados de limpieza física, optimización, formateo y reparación. Elige tu ubicación y modalidad:</p>
             
             <ul style="font-size: 0.75rem; color: #cbd5e1; margin-bottom: 12px; padding-left: 15px;">
-                <li><strong>Lima y Trujillo:</strong> Presencial / Domicilio y Remoto.</li>
-                <li><strong>Otras Provincias:</strong> Exclusivamente Remoto.</li>
+                <li id="supportInfoLima"><strong>Lima y Otras Provincias:</strong> Presencial / Domicilio y Remoto.</li>
+                <li id="supportInfoTrujillo"><strong>Trujillo:</strong> Presencial / Domicilio y Remoto.</li>
             </ul>
 
             <div class="support-form-group">
                 <label>Selecciona tu Ciudad / Ubicación:</label>
-                <select id="supportCitySelect" onchange="updateSupportWhatsAppLink()">
-                    <option value="lima">Lima (Presencial / Domicilio / Remoto)</option>
-                    <option value="trujillo">Trujillo (Presencial / Domicilio / Remoto)</option>
-                    <option value="otras">Otras Provincias (Solo Remoto)</option>
+                <select id="supportCitySelect" onchange="onSupportCityChange()">
+                    <!-- Opciones dinámicas según activación -->
+                </select>
+            </div>
+
+            <!-- SELECTOR DINÁMICO DE AGENTE / NÚMERO ALTERNATIVO -->
+            <div class="support-form-group" id="agentSelectGroup">
+                <label id="agentSelectLabel">Selecciona el Agente / Contacto:</label>
+                <select id="supportAgentSelect" onchange="updateSupportWhatsAppLink()">
+                    <!-- Se carga dinámicamente -->
                 </select>
             </div>
 
@@ -1574,9 +1545,8 @@
                 <div class="admin-dropdown-menu" id="adminDropdownMenu">
                     <button class="admin-tab-btn active" onclick="switchAdminTab('tabDescuentos', this)" id="tabBtnDescuentos">🌐 1. Descuentos y Configuración</button>
                     <button class="admin-tab-btn" onclick="switchAdminTab('tabSoporteConfig', this)" id="tabBtnSoporteConfig">📱 2. Números de WhatsApp - Soporte Técnico</button>
-                    <button class="admin-tab-btn" onclick="switchAdminTab('tabCronometro', this)" id="tabBtnCronometro">⏱️ 3. Configuración del Cronómetro</button>
-                    <button class="admin-tab-btn" onclick="switchAdminTab('tabUsuarios', this)" id="tabBtnUsuarios">👥 4. Gestión de Usuarios</button>
-                    <button class="admin-tab-btn" onclick="switchAdminTab('tabProductos', this)" id="tabBtnProductos">📦 5. Gestión de Productos</button>
+                    <button class="admin-tab-btn" onclick="switchAdminTab('tabUsuarios', this)" id="tabBtnUsuarios">👥 3. Gestión de Usuarios</button>
+                    <button class="admin-tab-btn" onclick="switchAdminTab('tabProductos', this)" id="tabBtnProductos">📦 4. Gestión de Productos</button>
                 </div>
             </div>
 
@@ -1584,7 +1554,7 @@
             <div class="admin-tab-pane active" id="tabDescuentos">
                 <div class="global-config-box">
                     <h4>🌐 Configuración Global y Características</h4>
-                    <p>Activa o desactiva las características principales del sitio mediante interruptores y configura umbrales.</p>
+                    <p>Activa o desactiva las características principales del sitio mediante interruptores y configura umbrales de descuento.</p>
                     
                     <!-- Switch de Estado de Descuentos -->
                     <div class="switch-container">
@@ -1631,7 +1601,7 @@
                                 </div>
                                 <div class="tier-sub-group">
                                     <span>% Dcto</span>
-                                    <input type="number" id="gTier1Pct" value="10">
+                                    <input type="number" id="gTier1Pct" value="5">
                                 </div>
                             </div>
                         </div>
@@ -1640,11 +1610,11 @@
                             <div class="tier-vertical-inputs">
                                 <div class="tier-sub-group">
                                     <span>Cant. Mín</span>
-                                    <input type="number" id="gTier2Qty" value="5">
+                                    <input type="number" id="gTier2Qty" value="6">
                                 </div>
                                 <div class="tier-sub-group">
                                     <span>% Dcto</span>
-                                    <input type="number" id="gTier2Pct" value="13">
+                                    <input type="number" id="gTier2Pct" value="10">
                                 </div>
                             </div>
                         </div>
@@ -1653,11 +1623,11 @@
                             <div class="tier-vertical-inputs">
                                 <div class="tier-sub-group">
                                     <span>Cant. Mín</span>
-                                    <input type="number" id="gTier3Qty" value="8">
+                                    <input type="number" id="gTier3Qty" value="10">
                                 </div>
                                 <div class="tier-sub-group">
                                     <span>% Dcto</span>
-                                    <input type="number" id="gTier3Pct" value="20">
+                                    <input type="number" id="gTier3Pct" value="15">
                                 </div>
                             </div>
                         </div>
@@ -1666,73 +1636,44 @@
                 </div>
             </div>
 
-            <!-- SUBPANEL ESPECÍFICO: NÚMEROS DE WHATSAPP - SOPORTE TÉCNICO -->
+            <!-- SUBPANEL INDEPENDIENTE: NÚMEROS DE WHATSAPP - SOPORTE TÉCNICO CON EDICIÓN INDEPENDIENTE -->
             <div class="admin-tab-pane" id="tabSoporteConfig">
                 <div style="background: rgba(0, 180, 216, 0.08); border: 1px solid rgba(0, 180, 216, 0.3); padding: 14px; border-radius: 12px; text-align: left;">
                     <h4 style="color: #38bdf8; font-size: 0.92rem; margin-bottom: 6px;">📱 Números de WhatsApp - Soporte Técnico</h4>
-                    <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 12px;">Aquí puedes modificar individualmente los números de contacto de WhatsApp para cada ciudad o zona de soporte técnico.</p>
+                    <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 12px;">Activa/desactiva ubicaciones y gestiona agentes o números alternativos de manera independiente.</p>
                     
-                    <div class="admin-form-group">
-                        <label>Lima y Otras Provincias (Contacto Principal):</label>
-                        <input type="text" id="settingSupportLimaPhone" placeholder="Ej. 933907930" value="933907930" onchange="saveGlobalSettings()">
-                    </div>
-
-                    <div class="admin-form-group" style="margin-bottom: 0;">
-                        <label>Trujillo (Contacto Específico):</label>
-                        <input type="text" id="settingSupportTrujilloPhone" placeholder="Ej. 9929770729" value="929770729" onchange="saveGlobalSettings()">
-                    </div>
-                </div>
-            </div>
-
-            <!-- SUBPANEL 2: CONFIGURACIÓN DEL CRONÓMETRO DE OFERTAS (OPCIÓN SEPARADA) -->
-            <div class="admin-tab-pane" id="tabCronometro">
-                <div style="background: rgba(0, 180, 216, 0.08); border: 1px solid rgba(0, 180, 216, 0.3); padding: 14px; border-radius: 12px; text-align: left;">
-                    <h4 style="color: #38bdf8; font-size: 0.92rem; margin-bottom: 4px;">⏱️ Configuración del Cronómetro de Ofertas</h4>
-                    <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 12px;">Elige el modo de funcionamiento del cronómetro flotante en la página principal.</p>
-                    
-                    <!-- Opción 1: Activar/Desactivar por Switch/Botón -->
-                    <div class="switch-container">
-                        <div>
-                            <strong style="font-size: 0.8rem; color: #fff; display:block;">Activar / Desactivar Cronómetro</strong>
-                            <span style="font-size: 0.68rem; color: #94a3b8;">Muestra u oculta la ventanita flotante</span>
+                    <!-- Control y Activación de Lima y Otras Provincias -->
+                    <div style="background: rgba(0,0,0,0.25); padding: 10px; border-radius: 8px; margin-bottom: 12px; border: 1px solid rgba(0, 180, 216, 0.2);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <strong style="font-size: 0.8rem; color: #38bdf8;">📍 Lima y Otras Provincias</strong>
+                            <label class="switch" style="transform: scale(0.8);">
+                                <input type="checkbox" id="settingLimaActive" onchange="saveGlobalSettings()">
+                                <span class="slider"></span>
+                            </label>
                         </div>
-                        <label class="switch">
-                            <input type="checkbox" id="settingTimerSwitch" onchange="saveTimerSettings()">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-
-                    <div class="admin-form-group">
-                        <label>Modo de Funcionamiento:</label>
-                        <select id="settingTimerMode" onchange="toggleTimerModeInputs()">
-                            <option value="duration">Duración en Horas</option>
-                            <option value="range">Rango Horario del Día</option>
-                            <option value="calendar">Fecha y Hora Específica (Calendario)</option>
-                        </select>
-                    </div>
-
-                    <!-- Sub-opción A: Duración -->
-                    <div class="admin-form-group" id="modeDurationGroup">
-                        <label>Cantidad de Horas de Oferta:</label>
-                        <input type="number" id="settingTimerHours" value="12" min="1" max="168" onchange="saveTimerSettings()">
-                    </div>
-
-                    <!-- Sub-opción B: Rango Horario -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; display: none;" id="modeRangeGroup">
-                        <div class="admin-form-group">
-                            <label>Hora Inicio:</label>
-                            <input type="time" id="settingTimeStart" value="08:00" onchange="saveTimerSettings()">
-                        </div>
-                        <div class="admin-form-group">
-                            <label>Hora Fin:</label>
-                            <input type="time" id="settingTimeEnd" value="22:00" onchange="saveTimerSettings()">
+                        <div id="adminLimaAgentsList" style="margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px;"></div>
+                        <div style="display: flex; gap: 6px;">
+                            <input type="text" id="newLimaAgentName" placeholder="Nombre Usuario" style="flex:1; padding:5px; background:#070a12; border:1px solid #00b4d8; border-radius:6px; color:#fff; font-size:0.78rem;">
+                            <input type="text" id="newLimaAgentPhone" placeholder="WhatsApp" style="flex:1; padding:5px; background:#070a12; border:1px solid #00b4d8; border-radius:6px; color:#fff; font-size:0.78rem;">
+                            <button class="admin-btn-action" onclick="addSupportAgent('lima')" style="font-size:0.7rem; padding: 5px 10px;">Agregar</button>
                         </div>
                     </div>
 
-                    <!-- Sub-opción C: Calendario -->
-                    <div class="admin-form-group" style="display: none;" id="modeCalendarGroup">
-                        <label>Fecha y Hora Límite (Calendario):</label>
-                        <input type="datetime-local" id="settingCalendarDateTime" onchange="saveTimerSettings()">
+                    <!-- Control y Activación de Trujillo -->
+                    <div style="background: rgba(0,0,0,0.25); padding: 10px; border-radius: 8px; margin-bottom: 4px; border: 1px solid rgba(0, 180, 216, 0.2);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <strong style="font-size: 0.8rem; color: #38bdf8;">📍 Trujillo</strong>
+                            <label class="switch" style="transform: scale(0.8);">
+                                <input type="checkbox" id="settingTrujilloActive" onchange="saveGlobalSettings()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div id="adminTrujilloAgentsList" style="margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px;"></div>
+                        <div style="display: flex; gap: 6px;">
+                            <input type="text" id="newTrujilloAgentName" placeholder="Nombre Usuario" style="flex:1; padding:5px; background:#070a12; border:1px solid #00b4d8; border-radius:6px; color:#fff; font-size:0.78rem;">
+                            <input type="text" id="newTrujilloAgentPhone" placeholder="WhatsApp" style="flex:1; padding:5px; background:#070a12; border:1px solid #00b4d8; border-radius:6px; color:#fff; font-size:0.78rem;">
+                            <button class="admin-btn-action" onclick="addSupportAgent('trujillo')" style="font-size:0.7rem; padding: 5px 10px;">Agregar</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1830,7 +1771,7 @@
                                 </div>
                                 <div class="tier-box-col">
                                     <span>Porcentaje %</span>
-                                    <input type="number" id="tier1Pct" value="10">
+                                    <input type="number" id="tier1Pct" value="5">
                                 </div>
                             </div>
                         </div>
@@ -1840,11 +1781,11 @@
                             <div class="tier-box-inputs">
                                 <div class="tier-box-col">
                                     <span>Cant. Mínima</span>
-                                    <input type="number" id="tier2Qty" value="5">
+                                    <input type="number" id="tier2Qty" value="6">
                                 </div>
                                 <div class="tier-box-col">
                                     <span>Porcentaje %</span>
-                                    <input type="number" id="tier2Pct" value="13">
+                                    <input type="number" id="tier2Pct" value="10">
                                 </div>
                             </div>
                         </div>
@@ -1854,11 +1795,11 @@
                             <div class="tier-box-inputs">
                                 <div class="tier-box-col">
                                     <span>Cant. Mínima</span>
-                                    <input type="number" id="tier3Qty" value="8">
+                                    <input type="number" id="tier3Qty" value="10">
                                 </div>
                                 <div class="tier-box-col">
                                     <span>Porcentaje %</span>
-                                    <input type="number" id="tier3Pct" value="20">
+                                    <input type="number" id="tier3Pct" value="15">
                                 </div>
                             </div>
                         </div>
@@ -1969,7 +1910,7 @@
         <div class="slogan-text">✨ Software Original y Licencias Digitales a tu Alcance ✨</div>
 
         <div class="payment-methods-badge" id="dynamicPromoBadge">
-            ¡Descuentos automáticos: <span>3+ unids (10%)</span> | <span>5+ unids (13%)</span> | <span>8+ unids (20%)</span>!
+            ¡Descuentos automáticos: <span>3+ unids (5%)</span> | <span>6+ unids (10%)</span> | <span>10+ unids (15%)</span>!
         </div>
 
         <!-- Menú Desplegable -->
@@ -2065,25 +2006,25 @@
 
     <script>
         let globalTiers = [
-            { qty: 3, pct: 10 },
-            { qty: 5, pct: 13 },
-            { qty: 8, pct: 20 }
+            { qty: 3, pct: 5 },
+            { qty: 6, pct: 10 },
+            { qty: 10, pct: 15 }
         ];
 
         let discountsActive = true;
         let toastsActive = true;
         let holidayTheme = 'normal';
-        
-        let timerActive = true;
-        let timerMode = 'duration'; 
-        let timerHours = 12;
-        let timeStart = '08:00';
-        let timeEnd = '22:00';
-        let calendarDateTime = '';
+        let timerActive = false;
 
-        // Números de WhatsApp de Soporte Técnico (Editables por el Administrador)
-        let supportLimaPhone = '933907930';
-        let supportTrujilloPhone = '9929770729';
+        // Estados y Agentes de Soporte Técnico
+        let supportLimaActive = true;
+        let supportTrujilloActive = true;
+        let supportLimaAgents = [
+            { name: "Soporte Lima Principal", phone: "933907930" }
+        ];
+        let supportTrujilloAgents = [
+            { name: "Soporte Trujillo Principal", phone: "9929770729" }
+        ];
 
         let products = [
             { id: 'win-pro', name: 'Windows 10/11 Pro (Siempre)', price: 50.00, category: 'win', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'windows11.png', desc: 'Licencia digital permanente (OEM). Reactivación de por vida.' },
@@ -2108,7 +2049,7 @@
         ];
 
         let usersDB = [
-            { user: 'luislmvg88', pass: '5610023.', role: 'admin', canAddDelete: true },
+            { user: 'luislmvg88', pass: '5610023', role: 'admin', canAddDelete: true },
             { user: 'admin2', pass: '123456', role: 'admin2', canAddDelete: false },
             { user: 'colab1', pass: '123456', role: 'colaborador', canAddDelete: false }
         ];
@@ -2138,29 +2079,17 @@
         if(localStorage.getItem('lubeltec_holiday_theme')) {
             holidayTheme = localStorage.getItem('lubeltec_holiday_theme');
         }
-        if(localStorage.getItem('lubeltec_support_lima')) {
-            supportLimaPhone = localStorage.getItem('lubeltec_support_lima');
+        if(localStorage.getItem('lubeltec_support_lima_active') !== null) {
+            supportLimaActive = localStorage.getItem('lubeltec_support_lima_active') === 'true';
         }
-        if(localStorage.getItem('lubeltec_support_trujillo')) {
-            supportTrujilloPhone = localStorage.getItem('lubeltec_support_trujillo');
+        if(localStorage.getItem('lubeltec_support_trujillo_active') !== null) {
+            supportTrujilloActive = localStorage.getItem('lubeltec_support_trujillo_active') === 'true';
         }
-        if(localStorage.getItem('lubeltec_timer_active') !== null) {
-            timerActive = localStorage.getItem('lubeltec_timer_active') === 'true';
+        if(localStorage.getItem('lubeltec_support_lima_agents')) {
+            try { supportLimaAgents = JSON.parse(localStorage.getItem('lubeltec_support_lima_agents')); } catch(e) {}
         }
-        if(localStorage.getItem('lubeltec_timer_mode')) {
-            timerMode = localStorage.getItem('lubeltec_timer_mode');
-        }
-        if(localStorage.getItem('lubeltec_timer_hours')) {
-            timerHours = parseInt(localStorage.getItem('lubeltec_timer_hours')) || 12;
-        }
-        if(localStorage.getItem('lubeltec_time_start')) {
-            timeStart = localStorage.getItem('lubeltec_time_start');
-        }
-        if(localStorage.getItem('lubeltec_time_end')) {
-            timeEnd = localStorage.getItem('lubeltec_time_end');
-        }
-        if(localStorage.getItem('lubeltec_calendar_datetime')) {
-            calendarDateTime = localStorage.getItem('lubeltec_calendar_datetime');
+        if(localStorage.getItem('lubeltec_support_trujillo_agents')) {
+            try { supportTrujilloAgents = JSON.parse(localStorage.getItem('lubeltec_support_trujillo_agents')); } catch(e) {}
         }
 
         let currentFilter = 'principal';
@@ -2183,14 +2112,10 @@
             localStorage.setItem('lubeltec_discounts_active', discountsActive);
             localStorage.setItem('lubeltec_toasts_active', toastsActive);
             localStorage.setItem('lubeltec_holiday_theme', holidayTheme);
-            localStorage.setItem('lubeltec_support_lima', supportLimaPhone);
-            localStorage.setItem('lubeltec_support_trujillo', supportTrujilloPhone);
-            localStorage.setItem('lubeltec_timer_active', timerActive);
-            localStorage.setItem('lubeltec_timer_mode', timerMode);
-            localStorage.setItem('lubeltec_timer_hours', timerHours);
-            localStorage.setItem('lubeltec_time_start', timeStart);
-            localStorage.setItem('lubeltec_time_end', timeEnd);
-            localStorage.setItem('lubeltec_calendar_datetime', calendarDateTime);
+            localStorage.setItem('lubeltec_support_lima_active', supportLimaActive);
+            localStorage.setItem('lubeltec_support_trujillo_active', supportTrujilloActive);
+            localStorage.setItem('lubeltec_support_lima_agents', JSON.stringify(supportLimaAgents));
+            localStorage.setItem('lubeltec_support_trujillo_agents', JSON.stringify(supportTrujilloAgents));
         }
 
         function toggleMenu() {
@@ -2206,32 +2131,82 @@
             submenu.classList.toggle('open');
         }
 
+        function checkSupportAvailability() {
+            const floatBtn = document.getElementById('floatSupportBtn');
+            if (!supportLimaActive && !supportTrujilloActive) {
+                floatBtn.style.display = 'none';
+            } else {
+                floatBtn.style.display = 'flex';
+            }
+        }
+        checkSupportAvailability();
+
         function openSupportModal() {
             document.getElementById('supportModal').style.display = 'flex';
+            populateSupportCityDropdown();
+            populateSupportAgentDropdown();
+            updateSupportWhatsAppLink();
+        }
+
+        function populateSupportCityDropdown() {
+            const citySelect = document.getElementById('supportCitySelect');
+            let html = '';
+            let infoLima = document.getElementById('supportInfoLima');
+            let infoTrujillo = document.getElementById('supportInfoTrujillo');
+
+            if (supportLimaActive) {
+                html += `<option value="lima">Lima (Presencial / Domicilio / Remoto)</option>`;
+                html += `<option value="otras">Otras Provincias (Solo Remoto)</option>`;
+                if(infoLima) infoLima.style.display = 'list-item';
+            } else {
+                if(infoLima) infoLima.style.display = 'none';
+            }
+
+            if (supportTrujilloActive) {
+                html += `<option value="trujillo">Trujillo (Presencial / Domicilio / Remoto)</option>`;
+                if(infoTrujillo) infoTrujillo.style.display = 'list-item';
+            } else {
+                if(infoTrujillo) infoTrujillo.style.display = 'none';
+            }
+
+            citySelect.innerHTML = html;
+        }
+
+        function populateSupportAgentDropdown() {
+            const citySelect = document.getElementById('supportCitySelect');
+            if (!citySelect || citySelect.options.length === 0) return;
+            const city = citySelect.value;
+            const agentSelect = document.getElementById('supportAgentSelect');
+            let agentsList = (city === 'trujillo') ? supportTrujilloAgents : supportLimaAgents;
+
+            let html = '';
+            agentsList.forEach((ag, idx) => {
+                html += `<option value="${ag.phone}">${ag.name} (${ag.phone})</option>`;
+            });
+            agentSelect.innerHTML = html;
+        }
+
+        function onSupportCityChange() {
+            populateSupportAgentDropdown();
             updateSupportWhatsAppLink();
         }
 
         function updateSupportWhatsAppLink() {
-            const city = document.getElementById('supportCitySelect').value;
-            const modality = document.getElementById('supportModalitySelect').value;
+            const citySelect = document.getElementById('supportCitySelect');
+            if (!citySelect || citySelect.options.length === 0) return;
+            const city = citySelect.value;
+            const agentSelect = document.getElementById('supportAgentSelect');
             const type = document.getElementById('supportTypeSelect').value;
             const btn = document.getElementById('supportWhatsappBtn');
             const anydeskDiv = document.getElementById('anydeskContainer');
 
-            let phone = supportLimaPhone; 
-            let cityNameText = 'Lima';
+            let agentsList = (city === 'trujillo') ? supportTrujilloAgents : supportLimaAgents;
+            let phone = agentSelect.value || (agentsList[0] ? agentsList[0].phone : '933907930');
+            let cityNameText = city === 'trujillo' ? 'Trujillo' : (city === 'otras' ? 'Otras Provincias' : 'Lima');
             let modalityText = 'Remoto';
 
-            if (city === 'trujillo') {
-                phone = supportTrujilloPhone; 
-                cityNameText = 'Trujillo';
-            } else if (city === 'otras') {
-                phone = supportLimaPhone;
-                cityNameText = 'Otras Provincias';
+            if (city === 'otras') {
                 document.getElementById('supportModalitySelect').value = 'remoto';
-            } else if (city === 'lima') {
-                phone = supportLimaPhone;
-                cityNameText = 'Lima';
             }
 
             const currentModality = document.getElementById('supportModalitySelect').value;
@@ -2247,6 +2222,104 @@
 
             const msg = `Hola,%20deseo%20solicitar%20el%20servicio%20de%20${encodeURIComponent(typeNameText)}%20en%20la%20ciudad%20de%20${encodeURIComponent(cityNameText)}%20(Modalidad:%20${encodeURIComponent(modalityText)}).`;
             btn.href = `https://wa.me/51${phone}?text=${msg}`;
+        }
+
+        function addSupportAgent(cityType) {
+            if (!currentUser || currentUser.role !== 'admin') return;
+            let nameInput = document.getElementById(cityType === 'trujillo' ? 'newTrujilloAgentName' : 'newLimaAgentName');
+            let phoneInput = document.getElementById(cityType === 'trujillo' ? 'newTrujilloAgentPhone' : 'newLimaAgentPhone');
+
+            let name = nameInput.value.trim();
+            let phone = phoneInput.value.trim();
+
+            if (!name || !phone) {
+                alert('Por favor ingrese el nombre del usuario y su número de WhatsApp.');
+                return;
+            }
+
+            if (cityType === 'trujillo') {
+                supportTrujilloAgents.push({ name, phone });
+            } else {
+                supportLimaAgents.push({ name, phone });
+            }
+
+            nameInput.value = '';
+            phoneInput.value = '';
+            saveSettingsStorage();
+            renderAdminSupportAgents();
+            checkSupportAvailability();
+            alert('Usuario/Agente agregado con éxito.');
+        }
+
+        function editSupportAgent(cityType, index) {
+            if (!currentUser || currentUser.role !== 'admin') return;
+            let agentsList = (cityType === 'trujillo') ? supportTrujilloAgents : supportLimaAgents;
+            let ag = agentsList[index];
+
+            let newName = prompt("Editar nombre del usuario / agente:", ag.name);
+            if (newName === null) return;
+            let newPhone = prompt("Editar número de WhatsApp:", ag.phone);
+            if (newPhone === null) return;
+
+            if (newName.trim() !== '' && newPhone.trim() !== '') {
+                ag.name = newName.trim();
+                ag.phone = newPhone.trim();
+                saveSettingsStorage();
+                renderAdminSupportAgents();
+                alert('Datos actualizados con éxito.');
+            } else {
+                alert('Los campos no pueden estar vacíos.');
+            }
+        }
+
+        function deleteSupportAgent(cityType, index) {
+            if (!currentUser || currentUser.role !== 'admin') return;
+            if (cityType === 'trujillo') {
+                if (supportTrujilloAgents.length <= 1) {
+                    alert('Debe mantener al menos un contacto en Trujillo.');
+                    return;
+                }
+                supportTrujilloAgents.splice(index, 1);
+            } else {
+                if (supportLimaAgents.length <= 1) {
+                    alert('Debe mantener al menos un contacto en Lima.');
+                    return;
+                }
+                supportLimaAgents.splice(index, 1);
+            }
+            saveSettingsStorage();
+            renderAdminSupportAgents();
+            checkSupportAvailability();
+        }
+
+        function renderAdminSupportAgents() {
+            let limaHtml = '';
+            supportLimaAgents.forEach((ag, idx) => {
+                limaHtml += `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.3); padding:5px 8px; border-radius:6px; font-size:0.75rem; margin-bottom:4px;">
+                        <span>👤 <strong>${ag.name}</strong> - 📱 ${ag.phone}</span>
+                        <div>
+                            <button class="admin-btn-action" style="font-size:0.6rem; padding:2px 6px;" onclick="editSupportAgent('lima', ${idx})">Editar</button>
+                            ${supportLimaAgents.length > 1 ? `<button class="admin-btn-danger" style="font-size:0.6rem; padding:2px 6px;" onclick="deleteSupportAgent('lima', ${idx})">Eliminar</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('adminLimaAgentsList').innerHTML = limaHtml;
+
+            let trujilloHtml = '';
+            supportTrujilloAgents.forEach((ag, idx) => {
+                trujilloHtml += `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.3); padding:5px 8px; border-radius:6px; font-size:0.75rem; margin-bottom:4px;">
+                        <span>👤 <strong>${ag.name}</strong> - 📱 ${ag.phone}</span>
+                        <div>
+                            <button class="admin-btn-action" style="font-size:0.6rem; padding:2px 6px;" onclick="editSupportAgent('trujillo', ${idx})">Editar</button>
+                            ${supportTrujilloAgents.length > 1 ? `<button class="admin-btn-danger" style="font-size:0.6rem; padding:2px 6px;" onclick="deleteSupportAgent('trujillo', ${idx})">Eliminar</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('adminTrujilloAgentsList').innerHTML = trujilloHtml;
         }
 
         function filterCategory(category, event) {
@@ -2331,9 +2404,11 @@
             if (foundUser) {
                 if (loginAttempts[u]) delete loginAttempts[u];
                 currentUser = foundUser;
-                closeAdminLogin();
-                openAdminPanel();
-                updateActiveUserHeaderUI();
+                closeAdminLogin(); // Cierra el modal de login
+                updateActiveUserHeaderUI(); // Actualiza el badge en la cabecera
+                alert(`¡Bienvenido, ${currentUser.user}! Has iniciado sesión correctamente.`);
+                // Se dirige directamente a la pantalla principal sin abrir el panel de control
+                resetToPrincipal(); 
             } else {
                 if (u === 'luislmvg88') {
                     alert('Contraseña incorrecta para el Administrador Principal.');
@@ -2417,14 +2492,6 @@
             document.getElementById('adminHamburgerBtn').classList.remove('active');
         }
 
-        function toggleTimerModeInputs() {
-            const mode = document.getElementById('settingTimerMode').value;
-            document.getElementById('modeDurationGroup').style.display = mode === 'duration' ? 'block' : 'none';
-            document.getElementById('modeRangeGroup').style.display = mode === 'range' ? 'grid' : 'none';
-            document.getElementById('modeCalendarGroup').style.display = mode === 'calendar' ? 'block' : 'none';
-            saveTimerSettings();
-        }
-
         function openAdminPanel() {
             resetAdminForm();
             renderAdminProductList();
@@ -2432,7 +2499,6 @@
             const sessionInfo = document.getElementById('adminSessionInfo');
             const tabDescuentosBtn = document.getElementById('tabBtnDescuentos');
             const tabSoporteConfigBtn = document.getElementById('tabBtnSoporteConfig');
-            const tabCronometroBtn = document.getElementById('tabBtnCronometro');
             const tabUsuariosBtn = document.getElementById('tabBtnUsuarios');
             const tabProductosBtn = document.getElementById('tabBtnProductos');
 
@@ -2442,7 +2508,6 @@
             if (currentUser.role === 'admin') {
                 tabDescuentosBtn.style.display = 'block';
                 tabSoporteConfigBtn.style.display = 'block';
-                tabCronometroBtn.style.display = 'block';
                 tabUsuariosBtn.style.display = 'block';
                 tabProductosBtn.style.display = 'block';
                 
@@ -2450,16 +2515,9 @@
                 document.getElementById('settingDiscountsSwitch').checked = discountsActive;
                 document.getElementById('settingToastsSwitch').checked = toastsActive;
                 document.getElementById('settingHolidayTheme').value = holidayTheme;
-                document.getElementById('settingSupportLimaPhone').value = supportLimaPhone;
-                document.getElementById('settingSupportTrujilloPhone').value = supportTrujilloPhone;
-
-                document.getElementById('settingTimerSwitch').checked = timerActive;
-                document.getElementById('settingTimerMode').value = timerMode;
-                document.getElementById('settingTimerHours').value = timerHours;
-                document.getElementById('settingTimeStart').value = timeStart;
-                document.getElementById('settingTimeEnd').value = timeEnd;
-                document.getElementById('settingCalendarDateTime').value = calendarDateTime;
-                toggleTimerModeInputs();
+                document.getElementById('settingLimaActive').checked = supportLimaActive;
+                document.getElementById('settingTrujilloActive').checked = supportTrujilloActive;
+                renderAdminSupportAgents();
 
                 if(globalTiers[0]) { document.getElementById('gTier1Qty').value = globalTiers[0].qty; document.getElementById('gTier1Pct').value = globalTiers[0].pct; }
                 if(globalTiers[1]) { document.getElementById('gTier2Qty').value = globalTiers[1].qty; document.getElementById('gTier2Pct').value = globalTiers[1].pct; }
@@ -2470,7 +2528,6 @@
             } else {
                 tabDescuentosBtn.style.display = 'none';
                 tabSoporteConfigBtn.style.display = 'none';
-                tabCronometroBtn.style.display = 'none';
                 tabUsuariosBtn.style.display = 'none';
                 tabProductosBtn.style.display = 'block';
                 switchAdminTab('tabProductos', tabProductosBtn);
@@ -2491,79 +2548,15 @@
             discountsActive = document.getElementById('settingDiscountsSwitch').checked;
             toastsActive = document.getElementById('settingToastsSwitch').checked;
             holidayTheme = document.getElementById('settingHolidayTheme').value;
-            supportLimaPhone = document.getElementById('settingSupportLimaPhone').value.trim() || '933907930';
-            supportTrujilloPhone = document.getElementById('settingSupportTrujilloPhone').value.trim() || '9929770729';
+            supportLimaActive = document.getElementById('settingLimaActive').checked;
+            supportTrujilloActive = document.getElementById('settingTrujilloActive').checked;
 
             saveSettingsStorage();
+            checkSupportAvailability();
             updateDynamicBanner();
             renderCatalog();
             updateProducts();
         }
-
-        function saveTimerSettings() {
-            if (!currentUser || currentUser.role !== 'admin') return;
-            timerActive = document.getElementById('settingTimerSwitch').checked;
-            timerMode = document.getElementById('settingTimerMode').value;
-            timerHours = parseInt(document.getElementById('settingTimerHours').value) || 12;
-            timeStart = document.getElementById('settingTimeStart').value;
-            timeEnd = document.getElementById('settingTimeEnd').value;
-            calendarDateTime = document.getElementById('settingCalendarDateTime').value;
-
-            saveSettingsStorage();
-            updatePromoTimerDisplay();
-        }
-
-        function updatePromoTimerDisplay() {
-            const timerFloat = document.getElementById('promoTimerFloat');
-            const digits = document.getElementById('timerDigitsDisplay');
-
-            if (!timerActive) {
-                timerFloat.classList.remove('show');
-                return;
-            }
-
-            timerFloat.classList.add('show');
-            const now = new Date();
-            let distance = 0;
-
-            if (timerMode === 'duration') {
-                if (!window.durationEndTime) {
-                    window.durationEndTime = Date.now() + (timerHours * 3600 * 1000);
-                }
-                distance = window.durationEndTime - Date.now();
-                if (distance < 0) {
-                    window.durationEndTime = Date.now() + (timerHours * 3600 * 1000);
-                    distance = window.durationEndTime - Date.now();
-                }
-            } else if (timerMode === 'range') {
-                const [endH, endM] = timeEnd.split(':').map(Number);
-                let endDate = new Date();
-                endDate.setHours(endH, endM, 0, 0);
-
-                distance = endDate.getTime() - now.getTime();
-                if (distance < 0) {
-                    endDate.setDate(endDate.getDate() + 1);
-                    distance = endDate.getTime() - now.getTime();
-                }
-            } else if (timerMode === 'calendar') {
-                if (calendarDateTime) {
-                    const targetDate = new Date(calendarDateTime);
-                    distance = targetDate.getTime() - now.getTime();
-                } else {
-                    distance = 86400000; 
-                }
-            }
-
-            if (distance < 0) distance = 0;
-
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            digits.innerText = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        }
-        setInterval(updatePromoTimerDisplay, 1000);
-        updatePromoTimerDisplay();
 
         function saveCollabDiscountSetting() {
             if (!currentUser || currentUser.role !== 'admin') return;
@@ -2582,11 +2575,11 @@
         function applyGlobalDiscountsToAll() {
             if (!currentUser || currentUser.role !== 'admin') return;
             const t1q = parseInt(document.getElementById('gTier1Qty').value) || 3;
-            const t1p = parseFloat(document.getElementById('gTier1Pct').value) || 10;
-            const t2q = parseInt(document.getElementById('gTier2Qty').value) || 5;
-            const t2p = parseFloat(document.getElementById('gTier2Pct').value) || 13;
-            const t3q = parseInt(document.getElementById('gTier3Qty').value) || 8;
-            const t3p = parseFloat(document.getElementById('gTier3Pct').value) || 20;
+            const t1p = parseFloat(document.getElementById('gTier1Pct').value) || 5;
+            const t2q = parseInt(document.getElementById('gTier2Qty').value) || 6;
+            const t2p = parseFloat(document.getElementById('gTier2Pct').value) || 10;
+            const t3q = parseInt(document.getElementById('gTier3Qty').value) || 10;
+            const t3p = parseFloat(document.getElementById('gTier3Pct').value) || 15;
 
             globalTiers = [
                 { qty: t1q, pct: t1p },
@@ -2708,9 +2701,9 @@
             const allowDiscount = document.getElementById('newProdAllowDiscount').value === 'true';
             
             const tiers = [
-                { qty: parseInt(document.getElementById('tier1Qty').value) || 3, pct: parseFloat(document.getElementById('tier1Pct').value) || 10 },
-                { qty: parseInt(document.getElementById('tier2Qty').value) || 5, pct: parseFloat(document.getElementById('tier2Pct').value) || 13 },
-                { qty: parseInt(document.getElementById('tier3Qty').value) || 8, pct: parseFloat(document.getElementById('tier3Pct').value) || 20 }
+                { qty: parseInt(document.getElementById('tier1Qty').value) || 3, pct: parseFloat(document.getElementById('tier1Pct').value) || 5 },
+                { qty: parseInt(document.getElementById('tier2Qty').value) || 6, pct: parseFloat(document.getElementById('tier2Pct').value) || 10 },
+                { qty: parseInt(document.getElementById('tier3Qty').value) || 10, pct: parseFloat(document.getElementById('tier3Pct').value) || 15 }
             ].filter(t => !isNaN(t.qty) && !isNaN(t.pct));
 
             const badge = document.getElementById('newProdBadge').value.trim();
