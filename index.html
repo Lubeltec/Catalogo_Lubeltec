@@ -8,7 +8,7 @@
     <!-- Ícono de la URL (Favicon) -->
     <link rel="icon" href="lubeltec.png" type="image/png">
 
-    <!-- INTEGRACIÓN DE FIREBASE PARA SINCRONIZACIÓN EN LA NUBE -->
+    <!-- INTEGRACIÓN SEGURA DE FIREBASE SINCRONIZADA -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -28,17 +28,13 @@
 
         const productsCol = collection(db, "products");
         onSnapshot(productsCol, (snapshot) => {
-            if (snapshot.empty) {
-                if (typeof window.seedInitialProducts === "function") {
-                    window.seedInitialProducts();
-                }
-            } else {
+            if (!snapshot.empty) {
                 let cloudProds = [];
                 snapshot.forEach((docSnap) => {
                     cloudProds.push({ id: docSnap.id, ...docSnap.data() });
                 });
                 if (cloudProds.length > 0) {
-                    products = cloudProds;
+                    window.products = cloudProds;
                     if (typeof window.renderCatalog === "function") {
                         window.renderCatalog();
                         window.updateProducts();
@@ -46,6 +42,10 @@
                             window.renderAdminProductList();
                         }
                     }
+                }
+            } else {
+                if (typeof window.seedInitialProducts === "function") {
+                    window.seedInitialProducts();
                 }
             }
         });
@@ -2062,7 +2062,6 @@
             { name: "Soporte Trujillo Principal", phone: "929770729" }
         ];
 
-        // Catálogo completo original de 19 productos
         let products = [
             { id: 'win-pro', name: 'Windows 10/11 Pro (Siempre)', price: 50.00, category: 'win', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'windows11.png', desc: 'Licencia digital permanente (OEM). Reactivación de por vida.' },
             { id: 'off-365', name: 'Office 365 (1 año)', price: 45.00, category: 'ia', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'office365.png', desc: 'Instálalo en hasta 5 dispositivos. Word, Excel, PowerPoint, Outlook y Teams.' },
@@ -2102,7 +2101,6 @@
         let currentUser = null; 
         let lastActivityTime = Date.now();
 
-        // Recuperar sesión persistente al presionar F5 o actualizar
         const savedSession = sessionStorage.getItem('lubeltec_current_user');
         const savedSessionTime = sessionStorage.getItem('lubeltec_session_time');
         
@@ -2127,7 +2125,7 @@
         setInterval(() => {
             if (currentUser) {
                 const elapsed = Date.now() - lastActivityTime;
-                if (elapsed >= 60 * 60 * 1000) { // 1 hora de inactividad
+                if (elapsed >= 60 * 60 * 1000) {
                     currentUser = null;
                     sessionStorage.removeItem('lubeltec_current_user');
                     sessionStorage.removeItem('lubeltec_session_time');
@@ -2139,9 +2137,6 @@
             }
         }, 60000);
 
-        if(localStorage.getItem('lubeltec_products')) {
-            try { products = JSON.parse(localStorage.getItem('lubeltec_products')); } catch(e) {}
-        }
         if(localStorage.getItem('lubeltec_users')) {
             try { usersDB = JSON.parse(localStorage.getItem('lubeltec_users')); } catch(e) {}
         }
