@@ -114,6 +114,65 @@
             display: none !important;
         }
 
+        @keyframes popupExplosion {
+            0% { transform: scale(0.3); opacity: 0; filter: blur(5px); }
+            60% { transform: scale(1.1); opacity: 1; filter: blur(0px); }
+            100% { transform: scale(1); opacity: 1; filter: blur(0px); }
+        }
+
+        .cart-popup-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 4000;
+        }
+
+        .cart-popup-content {
+            background: linear-gradient(135deg, #101726, #162238);
+            border: 2px solid #22c55e;
+            color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 25px rgba(34, 197, 94, 0.5);
+            animation: popupExplosion 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            max-width: 380px;
+            width: 90%;
+        }
+
+        .cart-popup-check {
+            width: 60px;
+            height: 60px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #080c14;
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0 auto 15px auto;
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.8);
+        }
+
+        .cart-popup-content h3 {
+            color: #38bdf8;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+
+        .cart-popup-content p {
+            font-size: 0.85rem;
+            color: #cbd5e1;
+        }
+
         .toast-notification {
             position: fixed;
             bottom: 30px;
@@ -188,7 +247,7 @@
             backdrop-filter: blur(12px);
             color: #ffffff;
             text-align: center;
-            padding: 10px 12px;
+            padding: 12px 16px;
             border-bottom: 2px solid #00b4d8;
             position: sticky;
             top: 0;
@@ -196,32 +255,53 @@
         }
 
         .header-top {
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            align-items: center;
-            max-width: 600px;
-            margin: 0 auto 4px auto;
-            gap: 8px;
-        }
-
-        .header-left-group {
             display: flex;
             align-items: center;
-            gap: 6px;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto 6px auto;
+            gap: 12px;
+        }
+
+        .header-left-cluster {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .hamburger-btn {
+            background: rgba(0, 180, 216, 0.15);
+            color: #38bdf8;
+            border: 1px solid #00b4d8;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-btn:hover, .hamburger-btn.active {
+            background: #00b4d8;
+            color: #080c14;
+            box-shadow: 0 0 12px rgba(0, 180, 216, 0.6);
         }
 
         .login-shortcut-btn {
             background: rgba(0, 180, 216, 0.15);
             border: 1px solid #00b4d8;
             color: #38bdf8;
-            padding: 6px 10px;
-            border-radius: 10px;
-            font-size: 0.75rem;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             transition: all 0.2s ease;
         }
         .login-shortcut-btn:hover {
@@ -230,21 +310,21 @@
         }
 
         .active-user-badge {
-            background: rgba(0, 180, 216, 0.12);
-            border: 1px solid rgba(0, 180, 216, 0.4);
+            background: rgba(0, 180, 216, 0.15);
+            border: 1px solid #00b4d8;
             color: #38bdf8;
-            padding: 4px 8px;
-            border-radius: 10px;
-            font-size: 0.75rem;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
             font-weight: 600;
             display: none;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             cursor: pointer;
         }
         .active-user-badge:hover {
-            background: rgba(0, 180, 216, 0.25);
-            border-color: #00b4d8;
+            background: #00b4d8;
+            color: #080c14;
         }
 
         .active-username-text {
@@ -264,7 +344,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             transition: all 0.2s ease;
         }
         .logout-exit-btn:hover {
@@ -273,80 +353,93 @@
             transform: scale(1.1);
         }
 
-        .hamburger-btn {
-            background: rgba(0, 180, 216, 0.15);
-            color: #38bdf8;
-            border: 1px solid #00b4d8;
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            font-size: 1.2rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .hamburger-btn:hover, .hamburger-btn.active {
-            background: #00b4d8;
-            color: #080c14;
-            box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
-        }
-
         .header-brand {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             cursor: pointer;
             user-select: none;
         }
 
         @keyframes pulseGlow {
             0% { box-shadow: 0 0 8px rgba(0, 180, 216, 0.4); }
-            50% { box-shadow: 0 0 18px rgba(0, 180, 216, 0.8); }
+            50% { box-shadow: 0 0 20px rgba(0, 180, 216, 0.9); }
             100% { box-shadow: 0 0 8px rgba(0, 180, 216, 0.4); }
         }
 
         .header-logo {
-            height: 32px;
-            width: 32px;
+            height: 38px;
+            width: 38px;
             object-fit: cover;
             border-radius: 50%;
             animation: pulseGlow 3s infinite ease-in-out;
+            border: 1px solid #00b4d8;
         }
 
         header h1 {
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             color: #00b4d8;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             margin: 0;
+            font-weight: 800;
         }
 
+        /* Botón de Carrito Minimalista (Sólo Ícono y Cantidad, sin la palabra Carrito) */
         .cart-btn {
-            background: rgba(0, 180, 216, 0.2);
-            border: 1px solid #00b4d8;
+            background: rgba(0, 180, 216, 0.15);
+            border: 2px solid #00b4d8;
             color: #38bdf8;
-            padding: 6px 12px;
-            border-radius: 12px;
+            padding: 8px 16px;
+            border-radius: 14px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 1rem;
             font-weight: bold;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+            box-shadow: 0 0 15px rgba(0, 180, 216, 0.4);
             transition: all 0.3s ease;
         }
 
         .cart-btn:hover {
+            transform: scale(1.06);
+            box-shadow: 0 0 22px rgba(0, 180, 216, 0.9);
             background: #00b4d8;
             color: #080c14;
         }
 
+        .admin-quick-edit-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 180, 216, 0.85);
+            color: #080c14;
+            border: 1px solid #38bdf8;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.85rem;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+        .admin-quick-edit-btn:hover {
+            background: #00b4d8;
+            transform: scale(1.15);
+        }
+
+        .card {
+            position: relative;
+        }
+
         .slogan-text {
-            font-size: 0.76rem;
+            font-size: 0.78rem;
             color: #38bdf8;
             font-style: italic;
             margin-bottom: 4px;
@@ -355,12 +448,12 @@
         }
 
         .hours-badge {
-            font-size: 0.68rem;
+            font-size: 0.7rem;
             color: #38bdf8;
             background: rgba(0, 180, 216, 0.1);
             border: 1px solid rgba(0, 180, 216, 0.3);
-            padding: 2px 8px;
-            border-radius: 6px;
+            padding: 3px 10px;
+            border-radius: 8px;
             display: inline-block;
             margin-bottom: 4px;
             font-weight: 600;
@@ -893,7 +986,7 @@
         }
 
         .calc-input {
-            width: 32px;
+            width: 35px;
             text-align: center;
             background: #09131d;
             color: #ffffff;
@@ -950,12 +1043,6 @@
             color: #64748b;
             cursor: not-allowed;
             pointer-events: none;
-        }
-
-        @keyframes explosionClose {
-            0% { transform: scale(1); opacity: 1; filter: blur(0px); }
-            50% { transform: scale(1.15); opacity: 0.5; filter: blur(2px); }
-            100% { transform: scale(0.2); opacity: 0; filter: blur(5px); }
         }
 
         .modal-overlay {
@@ -1496,6 +1583,15 @@
 </head>
 <body>
 
+    <!-- VENTANA EMERGENTE EXPLOSIVA Y ANIMADA AL CENTRO AL AGREGAR PRODUCTOS -->
+    <div class="cart-popup-modal" id="cartPopupModal">
+        <div class="cart-popup-content">
+            <div class="cart-popup-check">✓</div>
+            <h3>¡Producto Agregado!</h3>
+            <p>Se ha añadido con éxito a tu carrito de compras.</p>
+        </div>
+    </div>
+
     <!-- BOTÓN FLOTANTE PARPADEANTE DE SOPORTE TÉCNICO (Abajo a la izquierda) -->
     <div class="float-support-btn" id="floatSupportBtn" onclick="openSupportModal()" title="Soporte Técnico y Mantenimiento">
         <span style="font-size: 1.1rem;">🛠️</span>
@@ -1561,7 +1657,7 @@
 
     <a href="https://wa.me/51933907930?text=Hola,%20quisiera%20consultar%20sobre%20sus%20licencias%20digitales" class="float-whatsapp" target="_blank" title="Contactar por WhatsApp">💬</a>
 
-    <!-- Notificación Flotante de Check Animado -->
+    <!-- Notificación Flotante Inferior -->
     <div class="toast-notification" id="toastNotification">
         <div class="toast-check">✓</div>
         <span>¡Agregado al carrito con éxito!</span>
@@ -1790,15 +1886,13 @@
                 </div>
             </div>
 
-            <!-- SUBPANEL 4: GESTIÓN DE PRODUCTOS (CON FORMULARIO DESPLEGABLE / COLAPSABLE) -->
+            <!-- SUBPANEL 4: GESTIÓN DE PRODUCTOS -->
             <div class="admin-tab-pane" id="tabProductos">
                 
-                <!-- BOTÓN PARA DESPLEGAR / OCULTAR EL FORMULARIO DE NUEVO PRODUCTO -->
                 <button type="button" onclick="toggleProductForm()" id="toggleFormBtn" style="background: rgba(0, 180, 216, 0.2); border: 1px solid #00b4d8; color: #38bdf8; width: 100%; padding: 8px; border-radius: 10px; font-weight: bold; font-size: 0.8rem; cursor: pointer; margin-bottom: 12px; transition: all 0.2s ease;">
                     📂 Desplegar Formulario de Nuevo Producto ▼
                 </button>
 
-                <!-- CONTENEDOR DEL FORMULARIO (OCULTO POR DEFECTO PARA DAR ESPACIO AL SCROLL DE LA LISTA) -->
                 <div style="background: rgba(0,180,216,0.06); padding: 12px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(0,180,216,0.3); text-align:left; display: none;" id="productFormContainer">
                     <h4 style="color:#38bdf8; font-size:0.88rem; margin-bottom:8px;" id="formActionTitle">➕ Agregar Nuevo Producto</h4>
                     
@@ -1908,9 +2002,13 @@
                     </div>
                 </div>
 
-                <h4 style="color:#38bdf8; font-size:0.88rem; margin-bottom:8px; text-align:left;">📋 Lista de Productos Actuales (Con desplazamiento cómodo)</h4>
-                <!-- LISTADO AMPLIO Y CÓMODO PARA HACER SCROLL -->
-                <div class="cart-items-list" id="adminProductListContainer" style="max-height: 320px; overflow-y: auto;"></div>
+                <!-- BUSCADOR PARA LA LISTA DE PRODUCTOS ACTUALES -->
+                <div style="margin-bottom: 8px;">
+                    <input type="text" id="adminProductSearchInput" placeholder="🔍 Buscar producto en la lista..." oninput="filterAdminProductList()" style="width: 100%; padding: 7px 10px; background: #070a12; border: 1px solid #00b4d8; border-radius: 8px; color: #fff; font-size: 0.78rem; outline: none;">
+                </div>
+
+                <h4 style="color:#38bdf8; font-size:0.88rem; margin-bottom:8px; text-align:left;">📋 Lista de Productos Actuales</h4>
+                <div class="cart-items-list" id="adminProductListContainer" style="max-height: 300px; overflow-y: auto;"></div>
             </div>
 
         </div>
@@ -1965,25 +2063,28 @@
     </div>
 
     <header>
+        <!-- ORDEN EXACTO SOLICITADO: 1. Hamburguesa, 2. Logo y Nombre, 3. Iniciar Sesión / Usuario, 4. Carrito (Sólo Ícono y Cantidad) -->
         <div class="header-top">
-            <div class="header-left-group">
+            <div class="header-left-cluster">
                 <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMenu()" title="Menú de Categorías">☰</button>
-                <button class="login-shortcut-btn" onclick="openAdminLogin()" title="Iniciar Sesión">🔐 Iniciar Sesión</button>
                 
+                <div class="header-brand" onclick="resetToPrincipal()" title="Ir al menú principal">
+                    <img src="lubeltec.png" alt="Logo Lubeltec" class="header-logo">
+                    <h1>Lubeltec</h1>
+                </div>
+            </div>
+
+            <div class="header-auth-group">
+                <button class="login-shortcut-btn" onclick="openAdminLogin()" title="Iniciar Sesión">🔐 Iniciar Sesión</button>
                 <div class="active-user-badge" id="activeUserBadge" onclick="openAdminPanel()" title="Hacer clic para abrir Panel de Control">
                     <span class="active-username-text">👤 <span id="activeUserNameText">Usuario</span></span>
-                    
                     <button class="logout-exit-btn" onclick="event.stopPropagation(); promptLogout();" title="Cerrar Sesión">🚪</button>
                 </div>
             </div>
-            
-            <div class="header-brand" onclick="resetToPrincipal()" title="Ir al menú principal">
-                <img src="lubeltec.png" alt="Logo Lubeltec" class="header-logo">
-                <h1>Lubeltec</h1>
-            </div>
 
-            <button class="cart-btn" onclick="openCartModal()">
-                🛒 Carrito (<span id="cartCount">0</span>)
+            <!-- Carrito minimalista (Sin la palabra Carrito, solo ícono y cantidad) -->
+            <button class="cart-btn" onclick="openCartModal()" title="Ver Carrito">
+                🛒 (<span id="cartCount">0</span>)
             </button>
         </div>
 
@@ -2227,7 +2328,6 @@
             submenu.classList.toggle('open');
         }
 
-        // Función para desplegar u ocultar el formulario de productos en el admin
         function toggleProductForm() {
             const formContainer = document.getElementById('productFormContainer');
             const toggleBtn = document.getElementById('toggleFormBtn');
@@ -2238,6 +2338,11 @@
                 formContainer.style.display = 'none';
                 toggleBtn.innerText = '📂 Desplegar Formulario de Nuevo Producto ▼';
             }
+        }
+
+        function filterAdminProductList() {
+            const query = document.getElementById('adminProductSearchInput').value.toLowerCase().trim();
+            renderAdminProductList(query);
         }
 
         function checkSupportAvailability() {
@@ -2357,7 +2462,7 @@
             saveSettingsStorage();
             renderAdminSupportAgents();
             checkSupportAvailability();
-            alert('Usuario/Agente agregado. Haga clic en "Guardar y Aplicar Cambios de Soporte" para sincronizar.');
+            alert('Usuario/Agente agregado.');
         }
 
         function editSupportAgent(cityType, index) {
@@ -2375,7 +2480,7 @@
                 ag.phone = newPhone.trim();
                 saveSettingsStorage();
                 renderAdminSupportAgents();
-                alert('Datos actualizados y guardados en la nube con éxito.');
+                alert('Datos actualizados.');
             } else {
                 alert('Los campos no pueden estar vacíos.');
             }
@@ -2399,7 +2504,6 @@
             saveSettingsStorage();
             renderAdminSupportAgents();
             checkSupportAvailability();
-            alert('Cambios aplicados y sincronizados en la nube.');
         }
 
         function renderAdminSupportAgents() {
@@ -2565,6 +2669,7 @@
                 if(loginBtn) loginBtn.style.display = 'flex';
                 badge.style.display = 'none';
             }
+            renderCatalog();
         }
 
         function promptLogout() {
@@ -2648,6 +2753,17 @@
             }
 
             document.getElementById('adminPanelModal').style.display = 'flex';
+        }
+
+        function quickEditProduct(id) {
+            if (!currentUser || currentUser.role !== 'admin') {
+                alert('Debe iniciar sesión como Administrador para usar esta función.');
+                return;
+            }
+            openAdminPanel();
+            const tabProductosBtn = document.getElementById('tabBtnProductos');
+            switchAdminTab('tabProductos', tabProductosBtn);
+            editProduct(id);
         }
 
         function closeAdminPanel() {
@@ -2898,7 +3014,6 @@
             const p = products.find(prod => prod.id === id);
             if (!p) return;
 
-            // Al hacer clic en editar, desplegamos automáticamente el formulario para que sea visible
             const formContainer = document.getElementById('productFormContainer');
             const toggleBtn = document.getElementById('toggleFormBtn');
             formContainer.style.display = 'block';
@@ -2945,7 +3060,6 @@
             document.getElementById('saveProdBtn').innerText = '💾 Guardar y Publicar Producto';
             document.getElementById('cancelEditBtn').style.display = 'none';
 
-            // Volver a colapsar el formulario para dejar espacio a la lista
             document.getElementById('productFormContainer').style.display = 'none';
             document.getElementById('toggleFormBtn').innerText = '📂 Desplegar Formulario de Nuevo Producto ▼';
         }
@@ -2974,15 +3088,22 @@
             }
         }
 
-        function renderAdminProductList() {
+        function renderAdminProductList(filterQuery = '') {
             const container = document.getElementById('adminProductListContainer');
             if(!container) return;
-            if(products.length === 0) {
-                container.innerHTML = '<p style="color:#94a3b8; font-size:0.8rem;">No hay productos registrados.</p>';
+
+            let filteredProducts = products;
+            if (filterQuery) {
+                filteredProducts = products.filter(p => p.name.toLowerCase().includes(filterQuery));
+            }
+
+            if(filteredProducts.length === 0) {
+                container.innerHTML = '<p style="color:#94a3b8; font-size:0.8rem; padding: 10px;">No se encontraron productos coincidentes.</p>';
                 return;
             }
+
             let html = '';
-            products.forEach(p => {
+            filteredProducts.forEach(p => {
                 let currentTiers = p.tiers && p.tiers.length > 0 ? p.tiers : globalTiers;
                 let dctoInfo = discountsActive && p.allowDiscount ? currentTiers.map(t => `${t.pct}% (≥${t.qty})`).join(', ') : 'Desactivados';
                 let canDelete = !(currentUser.role === 'admin2' || (currentUser.role === 'colaborador' && !currentUser.canAddDelete));
@@ -3047,9 +3168,18 @@
                     effectivePrice = p.price * factorCollab;
                     collabNotice = `<div style="font-size:0.65rem; color:#f59e0b; font-weight:bold;">✨ Precio Colaborador (-${collabDiscountPct}%)</div>`;
                 }
+
+                let quickEditBtnHtml = (currentUser && currentUser.role === 'admin') 
+                    ? `<button class="admin-quick-edit-btn" onclick="quickEditProduct('${p.id}')" title="Editar producto directamente">✏️</button>` 
+                    : '';
                 
+                // INHABILITAR CONTADOR SI EL PRODUCTO NO TIENE STOCK
+                const disabledAttr = !p.stock ? 'disabled' : '';
+                const disabledClass = !p.stock ? 'btn-disabled' : '';
+
                 const cardHtml = `
                     <article class="card ${isFeatured ? 'destacada' : 'general-card'}" data-category="${p.category}" data-base-price="${effectivePrice}" data-name="${p.name}" data-stock="${p.stock}" data-id="${p.id}">
+                        ${quickEditBtnHtml}
                         <div class="card-img-container"><img src="${p.img}" alt="${p.name}"></div>
                         <div class="card-content">
                             <div>
@@ -3069,12 +3199,12 @@
                                 <div class="calculator-box">
                                     <div class="calc-label-container">
                                         <span class="calc-label">Cantidad:</span>
-                                        <button class="calc-reset-btn" onclick="resetQty(this)" title="Restablecer cantidad">↺</button>
+                                        <button class="calc-reset-btn ${disabledClass}" onclick="resetQty(this)" title="Restablecer cantidad" ${disabledAttr}>↺</button>
                                     </div>
                                     <div class="calc-controls">
-                                        <button class="calc-btn" onclick="changeQty(this, -1)">-</button>
-                                        <input type="text" class="calc-input product-qty-input" value="0" readonly>
-                                        <button class="calc-btn" onclick="changeQty(this, 1)">+</button>
+                                        <button class="calc-btn ${disabledClass}" onclick="changeQty(this, -1)" ${disabledAttr}>-</button>
+                                        <input type="text" class="calc-input product-qty-input" value="01" readonly>
+                                        <button class="calc-btn ${disabledClass}" onclick="changeQty(this, 1)" ${disabledAttr}>+</button>
                                     </div>
                                 </div>
                                 <div class="card-actions">
@@ -3094,6 +3224,15 @@
 
             track.innerHTML = carouselHtml;
             grid.innerHTML = gridHtml;
+        }
+
+        function showCartPopupModal() {
+            const modal = document.getElementById('cartPopupModal');
+            if(!modal) return;
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 1800);
         }
 
         function showToast() {
@@ -3140,11 +3279,15 @@
 
         function changeQty(btnElement, delta) {
             const card = btnElement.closest('.card');
+            const isStock = card.getAttribute('data-stock') === 'true';
+            if (!isStock) return; // Bloquear si no hay stock
+
             const input = card.querySelector('.product-qty-input');
             if(!input) return;
             let val = parseInt(input.value) + delta;
-            if (val < 0) val = 0;
-            input.value = val;
+            if (val < 1) val = 1;
+            
+            input.value = val < 10 ? '0' + val : val;
             
             const prodId = card.getAttribute('data-id');
             recalculateCardPrice(card, prodId, val);
@@ -3152,12 +3295,15 @@
 
         function resetQty(btnElement) {
             const card = btnElement.closest('.card');
+            const isStock = card.getAttribute('data-stock') === 'true';
+            if (!isStock) return;
+
             const input = card.querySelector('.product-qty-input');
             if(!input) return;
-            input.value = 0;
+            input.value = '01';
             
             const prodId = card.getAttribute('data-id');
-            recalculateCardPrice(card, prodId, 0);
+            recalculateCardPrice(card, prodId, 1);
         }
 
         function getActiveTier(prodObj, qty) {
@@ -3207,6 +3353,9 @@
 
         function addToCart(btnElement, productName, basePrice, prodId) {
             const card = btnElement.closest('.card');
+            const isStock = card.getAttribute('data-stock') === 'true';
+            if (!isStock) return;
+
             const input = card.querySelector('.product-qty-input');
             const qty = parseInt(input.value);
             
@@ -3246,7 +3395,11 @@
             }
 
             updateCartUI();
+            showCartPopupModal();
             showToast();
+
+            input.value = '01';
+            recalculateCardPrice(card, prodId, 1);
         }
 
         function updateCartItemQty(index, delta) {
@@ -3282,7 +3435,8 @@
         }
 
         function updateCartUI() {
-            document.getElementById('cartCount').innerText = cart.reduce((sum, item) => sum + item.qty, 0);
+            const totalItemsCount = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cartCount').innerText = totalItemsCount;
             
             const container = document.getElementById('cartItemsContainer');
             if (cart.length === 0) {
@@ -3350,6 +3504,9 @@
 
         function openDirectPayment(btnElement, productName, basePrice, prodId) {
             const card = btnElement.closest('.card');
+            const isStock = card.getAttribute('data-stock') === 'true';
+            if (!isStock) return;
+
             const input = card.querySelector('.product-qty-input');
             const qty = parseInt(input.value);
 
@@ -3361,7 +3518,7 @@
             const prodObj = products.find(p => p.id === prodId);
             let unitPrice = basePrice;
             
-            const activeTier = prodObj ? getActiveTier(prodObj, qty) : null;
+            const activeTier = getActiveTier(prodObj, qty);
             if (activeTier) {
                 unitPrice = basePrice * (1 - (activeTier.pct / 100));
             }
@@ -3374,6 +3531,9 @@
             document.getElementById('modalConfirmBtn').href = `https://wa.me/51933907930?text=${whatsappMsg}`;
 
             document.getElementById('paymentModal').style.display = 'flex';
+
+            input.value = '01';
+            recalculateCardPrice(card, prodId, 1);
         }
 
         function closePaymentModal() { closeModalWithExplosion('paymentModal'); }
@@ -3520,7 +3680,7 @@
 
                     if (sortValue === 'price-desc') return priceB - priceA;
                     if (sortValue === 'price-asc') return priceA - priceB;
-                    if (sortValue === 'alpha-asc') return nameA.localeCompare(nameB);
+                    if (sortValue === 'alpha-asc') nameA.localeCompare(nameB);
                     return 0;
                 });
 
