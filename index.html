@@ -2042,7 +2042,21 @@
         let currentUser = null; 
         let lastActivityTime = Date.now();
 
-        // Control de Inactividad de 1 Hora
+        // Recuperar sesión persistente al actualizar la página (F5)
+        const savedSession = sessionStorage.getItem('lubeltec_current_user');
+        const savedSessionTime = sessionStorage.getItem('lubeltec_session_time');
+        
+        if (savedSession && savedSessionTime) {
+            const elapsedSinceLogin = Date.now() - parseInt(savedSessionTime);
+            if (elapsedSinceLogin < 60 * 60 * 1000) {
+                currentUser = JSON.parse(savedSession);
+                lastActivityTime = Date.now();
+            } else {
+                sessionStorage.removeItem('lubeltec_current_user');
+                sessionStorage.removeItem('lubeltec_session_time');
+            }
+        }
+
         function resetInactivityTimer() {
             lastActivityTime = Date.now();
         }
@@ -2053,8 +2067,10 @@
         setInterval(() => {
             if (currentUser) {
                 const elapsed = Date.now() - lastActivityTime;
-                if (elapsed >= 60 * 60 * 1000) { // 1 hora
+                if (elapsed >= 60 * 60 * 1000) { // 1 hora de inactividad
                     currentUser = null;
+                    sessionStorage.removeItem('lubeltec_current_user');
+                    sessionStorage.removeItem('lubeltec_session_time');
                     updateActiveUserHeaderUI();
                     alert('La sesión ha caducado por 1 hora de inactividad.');
                     renderCatalog();
@@ -2409,6 +2425,11 @@
             if (foundUser) {
                 if (loginAttempts[u]) delete loginAttempts[u];
                 currentUser = foundUser;
+                
+                // Guardar en sessionStorage para persistir al actualizar (F5)
+                sessionStorage.setItem('lubeltec_current_user', JSON.stringify(currentUser));
+                sessionStorage.setItem('lubeltec_session_time', Date.now().toString());
+
                 closeAdminLogin();
                 updateActiveUserHeaderUI();
                 resetInactivityTimer();
@@ -2464,6 +2485,8 @@
             closeModalWithExplosion('logoutConfirmModal');
             if (proceed) {
                 currentUser = null;
+                sessionStorage.removeItem('lubeltec_current_user');
+                sessionStorage.removeItem('lubeltec_session_time');
                 updateActiveUserHeaderUI();
                 closeModalWithExplosion('adminPanelModal');
                 alert('Has cerrado sesión correctamente.');
@@ -2911,7 +2934,7 @@
                                     </div>
                                     <div class="calc-controls">
                                         <button class="calc-btn" onclick="changeQty(this, -1)">-</button>
-                                        <input type="text" class="calc-input product-qty-input" value="1" readonly>
+                                        <input type="text" class="calc-input product-qty-input" value="0" readonly>
                                         <button class="calc-btn" onclick="changeQty(this, 1)">+</button>
                                     </div>
                                 </div>
@@ -2981,7 +3004,7 @@
             const input = card.querySelector('.product-qty-input');
             if(!input) return;
             let val = parseInt(input.value) + delta;
-            if (val < 1) val = 1;
+            if (val < 0) val = 0;
             input.value = val;
             
             const prodId = card.getAttribute('data-id');
@@ -2992,14 +3015,14 @@
             const card = btnElement.closest('.card');
             const input = card.querySelector('.product-qty-input');
             if(!input) return;
-            input.value = 1;
+            input.value = 0;
             
             const prodId = card.getAttribute('data-id');
-            recalculateCardPrice(card, prodId, 1);
+            recalculateCardPrice(card, prodId, 0);
         }
 
         function getActiveTier(prodObj, qty) {
-            if (!discountsActive || !prodObj.allowDiscount) return null;
+            if (!discountsActive || !prodObj.allowDiscount || qty <= 0) return null;
             let currentTiers = (prodObj.tiers && prodObj.tiers.length > 0) ? prodObj.tiers : globalTiers;
             if (!currentTiers || currentTiers.length === 0) return null;
 
@@ -3047,6 +3070,12 @@
             const card = btnElement.closest('.card');
             const input = card.querySelector('.product-qty-input');
             const qty = parseInt(input.value);
+            
+            if (qty <= 0) {
+                alert('Por favor selecciona una cantidad mayor a 0.');
+                return;
+            }
+
             const prodObj = products.find(p => p.id === prodId);
             
             let unitPrice = basePrice;
@@ -3184,6 +3213,12 @@
             const card = btnElement.closest('.card');
             const input = card.querySelector('.product-qty-input');
             const qty = parseInt(input.value);
+
+            if (qty <= 0) {
+                alert('Por favor selecciona una cantidad mayor a 0 para pagar.');
+                return;
+            }
+
             const prodObj = products.find(p => p.id === prodId);
             let unitPrice = basePrice;
             
@@ -3301,7 +3336,6 @@
 
             if(seccionCatalogo) seccionCatalogo.style.display = "block";
 
-            // Si hay búsqueda activa, ocultamos destacados para mostrar exclusivamente el resultado limpio
             if ((currentFilter === 'principal' || currentFilter === 'all-software') && !isSearching) {
                 if(seccionDestacados) seccionDestacados.style.display = "block";
             } else { if(seccionDestacados) seccionDestacados.style.display = "none"; }
@@ -3358,6 +3392,7 @@
         renderCatalog();
         updateProducts();
         updateDynamicBanner();
+        updateActiveUserHeaderUI();
     </script>
 </body>
 </html>
