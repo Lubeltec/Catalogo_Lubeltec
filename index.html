@@ -26,6 +26,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // Sincronización de Productos
         const productsCol = collection(db, "products");
         onSnapshot(productsCol, (snapshot) => {
             if (!snapshot.empty) {
@@ -50,6 +51,20 @@
             }
         });
 
+        // Sincronización Exclusiva de Usuarios desde Firebase Firestore (Sin datos en el código fuente)
+        const usersCol = collection(db, "users");
+        onSnapshot(usersCol, (snapshot) => {
+            let cloudUsers = [];
+            snapshot.forEach((docSnap) => {
+                cloudUsers.push(docSnap.data());
+            });
+            usersDB = cloudUsers;
+            if (typeof window.renderUsersList === "function") {
+                window.renderUsersList();
+            }
+        });
+
+        // Sincronización de Configuración Global y Logs
         const settingsDocRef = doc(db, "settings", "global_config");
         onSnapshot(settingsDocRef, (docSnap) => {
             if (docSnap.exists()) {
@@ -84,6 +99,16 @@
         window.deleteProductFromCloud = async function(productId) {
             const prodRef = doc(db, "products", productId);
             await deleteDoc(prodRef);
+        };
+
+        window.saveUserToCloud = async function(userData) {
+            const userRef = doc(db, "users", userData.user);
+            await setDoc(userRef, userData, { merge: true });
+        };
+
+        window.deleteUserFromCloud = async function(username) {
+            const userRef = doc(db, "users", username);
+            await deleteDoc(userRef);
         };
 
         window.saveSettingsToCloud = async function(settingsData) {
@@ -2141,7 +2166,7 @@
                     <div class="cart-items-list" id="activityLogsContainer" style="max-height: 280px; overflow-y: auto;">
                         <p style="color: #94a3b8; font-size: 0.8rem; padding: 10px;">No hay registros de cambios todavía.</p>
                     </div>
-                    <!-- REGLA 1: Solo el Administrador Principal (role === 'admin') puede limpiar el historial -->
+                    <!-- Solo el Administrador Principal (role === 'admin') ve este botón -->
                     <button class="admin-btn-danger" id="clearLogsBtn" onclick="clearActivityLogs()" style="font-size: 0.72rem; padding: 5px 10px; display: none;">🗑️ Limpiar Historial</button>
                 </div>
             </div>
@@ -2328,7 +2353,7 @@
     </footer>
 
     <script>
-        // Declaración global de variables requeridas por Firebase
+        // Variables globales del catálogo y configuración
         let products = [
             { id: 'win-pro', name: 'Windows 10/11 Pro (Siempre)', price: 50.00, category: 'win', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'windows11.png', desc: 'Licencia digital permanente (OEM). Reactivación de por vida.' },
             { id: 'off-365', name: 'Office 365 (1 año)', price: 45.00, category: 'ia', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'office365.png', desc: 'Instálalo en hasta 5 dispositivos. Word, Excel, PowerPoint, Outlook y Teams.' },
@@ -2372,18 +2397,13 @@
         ];
 
         let activityLogs = [];
+        let usersDB = []; // Se cargan exclusivamente desde Firebase
 
         window.seedInitialProducts = async function() {
             for (let p of products) {
                 if (window.saveProductToCloud) await window.saveProductToCloud(p);
             }
         };
-
-        let usersDB = [
-            { user: 'luislmvg88', pass: '5610023', role: 'admin', canAddDelete: true },
-            { user: 'admin2', pass: '123456', role: 'admin2', canAddDelete: false },
-            { user: 'colab1', pass: '123456', role: 'colaborador', canAddDelete: false }
-        ];
 
         let collabDiscountPct = 10; 
         let loginAttempts = {}; 
@@ -2404,35 +2424,6 @@
             }
         }
 
-        if(localStorage.getItem('lubeltec_activity_logs')) {
-            try { activityLogs = JSON.parse(localStorage.getItem('lubeltec_activity_logs')); } catch(e) {}
-        }
-
-        function resetInactivityTimer() {
-            lastActivityTime = Date.now();
-        }
-        ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt => {
-            window.addEventListener(evt, resetInactivityTimer);
-        });
-
-        setInterval(() => {
-            if (currentUser) {
-                const elapsed = Date.now() - lastActivityTime;
-                if (elapsed >= 60 * 60 * 1000) {
-                    currentUser = null;
-                    sessionStorage.removeItem('lubeltec_current_user');
-                    sessionStorage.removeItem('lubeltec_session_time');
-                    updateActiveUserHeaderUI();
-                    alert('La sesión ha caducado por 1 hora de inactividad.');
-                    renderCatalog();
-                    updateProducts();
-                }
-            }
-        }, 60000);
-
-        if(localStorage.getItem('lubeltec_users')) {
-            try { usersDB = JSON.parse(localStorage.getItem('lubeltec_users')); } catch(e) {}
-        }
         if(localStorage.getItem('lubeltec_collab_dcto')) {
             collabDiscountPct = parseFloat(localStorage.getItem('lubeltec_collab_dcto')) || 10;
         }
@@ -2454,7 +2445,6 @@
 
             if (activityLogs.length > 50) activityLogs.pop();
 
-            localStorage.setItem('lubeltec_activity_logs', JSON.stringify(activityLogs));
             saveSettingsStorage();
             renderActivityLogs();
         }
@@ -2463,7 +2453,6 @@
             const container = document.getElementById('activityLogsContainer');
             if (!container) return;
 
-            // REGLA 1: Solo el Administrador Principal (role === 'admin') ve el botón de limpiar historial
             const clearBtn = document.getElementById('clearLogsBtn');
             if (clearBtn) {
                 if (currentUser && currentUser.role === 'admin') {
@@ -2500,7 +2489,6 @@
             }
             if (confirm('¿Estás seguro de vaciar el historial de registros?')) {
                 activityLogs = [];
-                localStorage.removeItem('lubeltec_activity_logs');
                 saveSettingsStorage();
                 renderActivityLogs();
             }
@@ -2508,9 +2496,6 @@
 
         function saveProductsToStorage() {
             localStorage.setItem('lubeltec_products', JSON.stringify(products));
-        }
-        function saveUsersToStorage() {
-            localStorage.setItem('lubeltec_users', JSON.stringify(usersDB));
         }
         function saveCollabDctoStorage() {
             localStorage.setItem('lubeltec_collab_dcto', collabDiscountPct);
@@ -3017,7 +3002,6 @@
         }
 
         function quickEditProduct(id) {
-            // REGLA 2: Validar permiso CRUD para edición rápida
             if (currentUser && currentUser.role === 'colaborador' && !currentUser.canAddDelete) {
                 alert('No tiene privilegios para editar productos. Solicite el permiso al Administrador.');
                 return;
@@ -3081,7 +3065,7 @@
             updateProducts();
         }
 
-        function addNewUser() {
+        async function addNewUser() {
             if (!currentUser || currentUser.role !== 'admin') return;
             const u = document.getElementById('newLoginUser').value.trim();
             const p = document.getElementById('newLoginPass').value.trim();
@@ -3097,46 +3081,48 @@
                 return;
             }
 
-            usersDB.push({ user: u, pass: p, role: r, canAddDelete: false });
-            saveUsersToStorage();
+            const newUserObj = { user: u, pass: p, role: r, canAddDelete: false };
+            usersDB.push(newUserObj);
+            if (window.saveUserToCloud) await window.saveUserToCloud(newUserObj);
+
             document.getElementById('newLoginUser').value = '';
             document.getElementById('newLoginPass').value = '';
             renderUsersList();
             logAdminAction(`Nuevo usuario creado: ${u} (Rol: ${r})`);
-            alert('Usuario creado con éxito.');
+            alert('Usuario creado con éxito y sincronizado en la nube.');
         }
 
-        function deleteUser(username) {
+        async function deleteUser(username) {
             if(username === 'luislmvg88') {
                 alert('No se puede eliminar al administrador principal.');
                 return;
             }
             if(confirm(`¿Eliminar usuario ${username}?`)) {
                 usersDB = usersDB.filter(usr => usr.user !== username);
-                saveUsersToStorage();
+                if (window.deleteUserFromCloud) await window.deleteUserFromCloud(username);
                 renderUsersList();
                 logAdminAction(`Usuario eliminado: ${username}`);
             }
         }
 
-        function editUserPassword(username) {
+        async function editUserPassword(username) {
             const usr = usersDB.find(u => u.user === username);
             if(!usr) return;
             const newPass = prompt(`Ingrese la nueva contraseña para el usuario ${username}:`, usr.pass);
             if(newPass !== null && newPass.trim() !== '') {
                 usr.pass = newPass.trim();
-                saveUsersToStorage();
+                if (window.saveUserToCloud) await window.saveUserToCloud(usr);
                 renderUsersList();
                 logAdminAction(`Contraseña actualizada para el usuario: ${username}`);
                 alert('Contraseña actualizada con éxito.');
             }
         }
 
-        function toggleUserPrivilege(username) {
+        async function toggleUserPrivilege(username) {
             const usr = usersDB.find(u => u.user === username);
             if(usr) {
                 usr.canAddDelete = !usr.canAddDelete;
-                saveUsersToStorage();
+                if (window.saveUserToCloud) await window.saveUserToCloud(usr);
                 renderUsersList();
                 logAdminAction(`Privilegios CRUD modificados para el usuario: ${username} (${usr.canAddDelete ? 'Otorgados' : 'Revocados'})`);
             }
@@ -3181,7 +3167,6 @@
         }
 
         async function saveProduct() {
-            // REGLA 2: Validar permiso CRUD antes de guardar o editar producto
             if (currentUser && currentUser.role === 'colaborador' && !currentUser.canAddDelete) {
                 alert('No tiene privilegios para agregar o editar productos. Solicite el permiso al Administrador.');
                 return;
@@ -3260,7 +3245,6 @@
         }
 
         function editProduct(id) {
-            // REGLA 2: Validar permiso CRUD antes de abrir edición
             if (currentUser && currentUser.role === 'colaborador' && !currentUser.canAddDelete) {
                 alert('No tiene privilegios para editar productos. Solicite el permiso al Administrador.');
                 return;
@@ -3320,7 +3304,6 @@
         }
 
         async function deleteProduct(id) {
-            // REGLA 2: Validar permiso CRUD antes de eliminar
             if(currentUser && currentUser.role === 'admin2') {
                 alert('El Administrador 2 no tiene privilegios para eliminar productos.');
                 return;
@@ -3365,7 +3348,6 @@
                 let currentTiers = p.tiers && p.tiers.length > 0 ? p.tiers : globalTiers;
                 let dctoInfo = discountsActive && p.allowDiscount ? currentTiers.map(t => `${t.pct}% (≥${t.qty})`).join(', ') : 'Desactivados';
                 
-                // REGLA 2: Ocultar o bloquear botones de editar/eliminar si el colaborador no tiene permiso CRUD
                 let canEditDelete = !(currentUser && currentUser.role === 'colaborador' && !currentUser.canAddDelete);
                 let editBtnHtml = canEditDelete ? `<button class="admin-btn-action" onclick="editProduct('${p.id}')">Editar</button>` : `<span style="color:#64748b; font-size:0.7rem;">Sin Permiso</span>`;
                 let delBtnHtml = canEditDelete && currentUser.role !== 'admin2' ? `<button class="admin-btn-danger" onclick="deleteProduct('${p.id}')">Eliminar</button>` : '';
