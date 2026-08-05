@@ -8,7 +8,7 @@
     <!-- Ícono de la URL (Favicon) -->
     <link rel="icon" href="lubeltec.png" type="image/png">
 
-    <!-- INTEGRACIÓN DE FIREBASE PARA DINAMISMO EN LA NUBE -->
+    <!-- INTEGRACIÓN DE FIREBASE PARA SINCRONIZACIÓN EN LA NUBE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -34,13 +34,19 @@
                     window.seedInitialProducts();
                 }
             } else {
-                window.products = [];
+                window.cloudProductsLoaded = [];
                 snapshot.forEach((docSnap) => {
-                    window.products.push({ id: docSnap.id, ...docSnap.data() });
+                    window.cloudProductsLoaded.push({ id: docSnap.id, ...docSnap.data() });
                 });
-                if (typeof window.renderCatalog === "function") {
-                    window.renderCatalog();
-                    window.updateProducts();
+                if (window.cloudProductsLoaded.length > 0) {
+                    window.products = window.cloudProductsLoaded;
+                    if (typeof window.renderCatalog === "function") {
+                        window.renderCatalog();
+                        window.updateProducts();
+                        if (typeof window.renderAdminProductList === "function") {
+                            window.renderAdminProductList();
+                        }
+                    }
                 }
             }
         });
@@ -226,6 +232,7 @@
             color: #ffffff;
         }
 
+        /* Botón de cierre de sesión con icono de salida 🚪 */
         .logout-exit-btn {
             background: rgba(230, 57, 70, 0.2);
             border: 1px solid #e63946;
@@ -513,6 +520,7 @@
             display: block;
         }
 
+        /* Estilo para el Switch deslizante */
         .switch-container {
             display: flex;
             align-items: center;
@@ -909,6 +917,7 @@
             pointer-events: none;
         }
 
+        /* Animación de Explosión / Desvanecimiento al Cerrar Ventanas Emergentes */
         @keyframes explosionClose {
             0% { transform: scale(1); opacity: 1; filter: blur(0px); }
             50% { transform: scale(1.15); opacity: 0.5; filter: blur(2px); }
@@ -1353,6 +1362,7 @@
             font-size: 0.75rem;
         }
 
+        /* BOTÓN FLOTANTE PARPADEANTE DE SOPORTE TÉCNICO (Abajo a la izquierda) */
         @keyframes blinkSupportBtn {
             0% { transform: scale(1); box-shadow: 0 0 10px rgba(0, 180, 216, 0.4); border-color: #00b4d8; }
             50% { transform: scale(1.06); box-shadow: 0 0 22px rgba(0, 180, 216, 0.9), 0 0 10px rgba(34, 197, 94, 0.6); border-color: #22c55e; }
@@ -1383,6 +1393,7 @@
             transform: scale(1.08);
         }
 
+        /* Estilos para el Modal Flotante de Soporte Técnico */
         .support-modal-card {
             background: linear-gradient(135deg, #101726, #162238);
             border: 2px solid #00b4d8;
@@ -1429,6 +1440,7 @@
             outline: none;
         }
 
+        /* Botón de descarga de AnyDesk */
         .btn-anydesk {
             display: flex;
             align-items: center;
@@ -1453,6 +1465,7 @@
 </head>
 <body>
 
+    <!-- BOTÓN FLOTANTE PARPADEANTE DE SOPORTE TÉCNICO (Abajo a la izquierda) -->
     <div class="float-support-btn" id="floatSupportBtn" onclick="openSupportModal()" title="Soporte Técnico y Mantenimiento">
         <span style="font-size: 1.1rem;">🛠️</span>
         <div>
@@ -1461,6 +1474,7 @@
         </div>
     </div>
 
+    <!-- MODAL DE SOPORTE TÉCNICO Y MANTENIMIENTO -->
     <div class="modal-overlay" id="supportModal">
         <div class="support-modal-card">
             <button class="close-modal" onclick="closeModalWithExplosion('supportModal')">✕</button>
@@ -1475,12 +1489,15 @@
             <div class="support-form-group">
                 <label>Selecciona tu Ciudad / Ubicación:</label>
                 <select id="supportCitySelect" onchange="onSupportCityChange()">
+                    <!-- Opciones dinámicas según activación -->
                 </select>
             </div>
 
+            <!-- SELECTOR DINÁMICO DE AGENTE / NÚMERO ALTERNATIVO -->
             <div class="support-form-group" id="agentSelectGroup">
                 <label id="agentSelectLabel">Selecciona el Agente / Contacto:</label>
                 <select id="supportAgentSelect" onchange="updateSupportWhatsAppLink()">
+                    <!-- Se carga dinámicamente -->
                 </select>
             </div>
 
@@ -1501,6 +1518,7 @@
                 </select>
             </div>
 
+            <!-- BOTÓN DE DESCARGA ANYDESK E INFORMACIÓN DE PUESTO DE TRABAJO -->
             <div id="anydeskContainer" style="display: none; margin-top: 8px;">
                 <p style="font-size: 0.73rem; color: #22c55e; margin-bottom: 6px; line-height: 1.3;">
                     📌 <strong>Importante:</strong> En caso de seleccionar modalidad remota, descarga AnyDesk para que nos puedas compartir "tu puesto de trabajo" que son aproximadamente 10 dígitos numéricos.
@@ -1518,11 +1536,13 @@
 
     <a href="https://wa.me/51933907930?text=Hola,%20quisiera%20consultar%20sobre%20sus%20licencias%20digitales" class="float-whatsapp" target="_blank" title="Contactar por WhatsApp">💬</a>
 
+    <!-- Notificación Flotante de Check Animado -->
     <div class="toast-notification" id="toastNotification">
         <div class="toast-check">✓</div>
         <span>¡Agregado al carrito con éxito!</span>
     </div>
 
+    <!-- Notificaciones Dinámicas de Compras Recientes -->
     <div class="recent-purchase-toast" id="recentPurchaseToast">
         <span style="font-size: 1.2rem;">🛒</span>
         <div>
@@ -1530,6 +1550,7 @@
         </div>
     </div>
 
+    <!-- Modal de Advertencia de Cierre de Sesión -->
     <div class="modal-overlay" id="logoutConfirmModal">
         <div class="modal-card" style="max-width: 380px;">
             <h3 class="modal-title" style="color: #ff6b6b; margin-bottom: 10px;">⚠️ Cerrar Sesión</h3>
@@ -1541,6 +1562,7 @@
         </div>
     </div>
 
+    <!-- Modal Login Administrador / Colaborador -->
     <div class="modal-overlay" id="adminLoginModal">
         <div class="modal-card">
             <button class="close-modal" onclick="closeModalWithExplosion('adminLoginModal')">✕</button>
@@ -1560,6 +1582,7 @@
         </div>
     </div>
 
+    <!-- Panel de Administración con Menú Hamburguesa para Subpaneles -->
     <div class="modal-overlay" id="adminPanelModal">
         <div class="modal-card">
             <button class="close-modal" onclick="closeModalWithExplosion('adminPanelModal')">✕</button>
@@ -1567,6 +1590,7 @@
             
             <div id="adminSessionInfo" style="font-size: 0.8rem; color: #22c55e; margin-bottom: 8px; font-weight: bold; text-align: left;"></div>
 
+            <!-- MENÚ HAMBURGUESA INTERNO DEL PANEL DE CONTROL -->
             <div class="admin-nav-header">
                 <button class="admin-hamburger-btn" onclick="toggleAdminMenu()" id="adminHamburgerBtn">
                     ☰ Menú de Opciones
@@ -1580,11 +1604,13 @@
                 </div>
             </div>
 
+            <!-- SUBPANEL 1: CONFIGURACIÓN DE DESCUENTOS Y SWITCHES -->
             <div class="admin-tab-pane active" id="tabDescuentos">
                 <div class="global-config-box">
                     <h4>🌐 Configuración Global y Características</h4>
                     <p>Activa o desactiva las características principales del sitio mediante interruptores y configura umbrales de descuento.</p>
                     
+                    <!-- Switch de Estado de Descuentos -->
                     <div class="switch-container">
                         <div>
                             <strong style="font-size: 0.8rem; color: #fff; display:block;">Estado de Descuentos</strong>
@@ -1596,6 +1622,7 @@
                         </label>
                     </div>
 
+                    <!-- Switch de Alertas Toast Recientes -->
                     <div class="switch-container">
                         <div>
                             <strong style="font-size: 0.8rem; color: #fff; display:block;">Alertas Toast Recientes</strong>
@@ -1663,11 +1690,13 @@
                 </div>
             </div>
 
+            <!-- SUBPANEL INDEPENDIENTE: NÚMEROS DE WHATSAPP - SOPORTE TÉCNICO CON EDICIÓN INDEPENDIENTE -->
             <div class="admin-tab-pane" id="tabSoporteConfig">
                 <div style="background: rgba(0, 180, 216, 0.08); border: 1px solid rgba(0, 180, 216, 0.3); padding: 14px; border-radius: 12px; text-align: left;">
                     <h4 style="color: #38bdf8; font-size: 0.92rem; margin-bottom: 6px;">📱 Números de WhatsApp - Soporte Técnico</h4>
                     <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 12px;">Activa/desactiva ubicaciones y gestiona agentes o números alternativos de manera independiente.</p>
                     
+                    <!-- Control y Activación de Lima y Otras Provincias -->
                     <div style="background: rgba(0,0,0,0.25); padding: 10px; border-radius: 8px; margin-bottom: 12px; border: 1px solid rgba(0, 180, 216, 0.2);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                             <strong style="font-size: 0.8rem; color: #38bdf8;">📍 Lima y Otras Provincias</strong>
@@ -1684,6 +1713,7 @@
                         </div>
                     </div>
 
+                    <!-- Control y Activación de Trujillo -->
                     <div style="background: rgba(0,0,0,0.25); padding: 10px; border-radius: 8px; margin-bottom: 4px; border: 1px solid rgba(0, 180, 216, 0.2);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                             <strong style="font-size: 0.8rem; color: #38bdf8;">📍 Trujillo</strong>
@@ -1702,6 +1732,7 @@
                 </div>
             </div>
 
+            <!-- SUBPANEL 3: GESTIÓN DE USUARIOS Y DESCUENTO DE COLABORADOR -->
             <div class="admin-tab-pane" id="tabUsuarios">
                 <div style="background: rgba(230,57,70,0.06); padding: 12px; border-radius: 12px; margin-bottom: 15px; border: 1px dashed rgba(230,57,70,0.4); text-align:left;">
                     <h4 style="color:#ff6b6b; font-size:0.88rem; margin-bottom:6px;">👥 Gestionar Usuarios, Claves y Beneficios</h4>
@@ -1737,6 +1768,7 @@
                 </div>
             </div>
 
+            <!-- SUBPANEL 4: GESTIÓN DE PRODUCTOS -->
             <div class="admin-tab-pane" id="tabProductos">
                 <div style="background: rgba(0,180,216,0.06); padding: 12px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(0,180,216,0.3); text-align:left;" id="productFormContainer">
                     <h4 style="color:#38bdf8; font-size:0.88rem; margin-bottom:8px;" id="formActionTitle">➕ Agregar Nuevo Producto</h4>
@@ -1849,12 +1881,14 @@
 
                 <h4 style="color:#38bdf8; font-size:0.88rem; margin-bottom:8px; text-align:left;">📋 Lista de Productos Actuales</h4>
                 <div class="cart-items-list" id="adminProductListContainer" style="max-height: 180px;">
+                    <!-- Listado dinámico -->
                 </div>
             </div>
 
         </div>
     </div>
 
+    <!-- Modal de Carrito -->
     <div class="modal-overlay" id="cartModal">
         <div class="modal-card">
             <button class="close-modal" onclick="closeModalWithExplosion('cartModal')">✕</button>
@@ -1877,6 +1911,7 @@
         </div>
     </div>
 
+    <!-- Modal Pago Yape / Plin -->
     <div class="modal-overlay" id="paymentModal">
         <div class="modal-card">
             <button class="close-modal" onclick="closeModalWithExplosion('paymentModal')">✕</button>
@@ -1910,6 +1945,7 @@
                 <div class="active-user-badge" id="activeUserBadge">
                     <span class="active-username-text" onclick="openAdminPanel()" title="Hacer clic para abrir Panel de Control">👤 <span id="activeUserNameText">Usuario</span></span>
                     
+                    <!-- Botón de cierre de sesión con icono de puerta de salida 🚪 -->
                     <button class="logout-exit-btn" onclick="promptLogout()" title="Cerrar Sesión">🚪</button>
                 </div>
             </div>
@@ -1931,12 +1967,14 @@
             ¡Descuentos automáticos: <span>3+ unids (5%)</span> | <span>6+ unids (10%)</span> | <span>10+ unids (15%)</span>!
         </div>
 
+        <!-- Menú Desplegable -->
         <div class="menu-dropdown" id="menuDropdown">
             <button class="cat-chip active" id="chip-principal" onclick="filterCategory('principal', event)">🏠 Principal</button>
             <button class="cat-chip" id="chip-software" onclick="toggleSubmenu('softwareSubmenu', event)">📂 Software ▾</button>
             <button class="cat-chip" onclick="filterCategory('juegos', event)">🎮 Juegos</button>
             <button class="cat-chip" onclick="filterCategory('nosotros', event)">📌 Visión y Misión</button>
 
+            <!-- Submenú de Software Agrupado -->
             <div class="submenu-software" id="softwareSubmenu">
                 <button class="sub-chip active" onclick="filterCategory('all-software', event)">Todos los Software</button>
                 <button class="sub-chip" onclick="filterCategory('win', event)">💻 Windows 10/11</button>
@@ -1949,6 +1987,7 @@
             </div>
         </div>
 
+        <!-- Filtros -->
         <div class="controls-container">
             <div class="search-wrapper">
                 <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar licencia..." oninput="handleSearchInput()">
@@ -1972,20 +2011,25 @@
 
     <main class="container" id="productContainer">
 
+        <!-- SECCIÓN: CARRUSEL DE DESTACADOS -->
         <div id="seccionDestacados">
             <h2 class="section-title">🔥 Programas Destacados</h2>
             <div class="carousel-container" id="carouselContainer">
                 <div class="carousel-track" id="carouselTrack">
+                    <!-- Se carga dinámicamente -->
                 </div>
             </div>
         </div>
 
+        <!-- SECCIÓN: CATÁLOGO GENERAL -->
         <div id="seccionCatalogo">
             <h2 class="section-title">📦 Catálogo General de Licencias</h2>
             <div class="grid-layout" id="catalogoGrid">
+                <!-- Se carga dinámicamente -->
             </div>
         </div>
 
+        <!-- Banners e Info -->
         <div class="banner-upcoming" id="bannerAntivirus" style="display: none;">
             <h2>🛡️ Próximamente Licencias de Antivirus</h2>
             <p>Estamos incorporando las mejores licencias originales para la protección de tus dispositivos.</p>
@@ -2026,6 +2070,7 @@
         let holidayTheme = 'normal';
         let timerActive = false;
 
+        // Estados y Agentes de Soporte Técnico
         let supportLimaActive = true;
         let supportTrujilloActive = true;
         let supportLimaAgents = [
@@ -2035,10 +2080,7 @@
             { name: "Soporte Trujillo Principal", phone: "929770729" }
         ];
 
-        // Los productos ahora se cargan de la nube, pero definimos los iniciales por si la BD está vacía
-        window.products = [];
-
-        const initialProducts = [
+        let products = [
             { id: 'win-pro', name: 'Windows 10/11 Pro (Siempre)', price: 50.00, category: 'win', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'windows11.png', desc: 'Licencia digital permanente (OEM). Reactivación de por vida.' },
             { id: 'off-365', name: 'Office 365 (1 año)', price: 45.00, category: 'ia', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'office365.png', desc: 'Instálalo en hasta 5 dispositivos. Word, Excel, PowerPoint, Outlook y Teams.' },
             { id: 'gem-18', name: 'Gemini Pro 3.6 (18 meses)', price: 70.00, category: 'ia', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'gemini18.png', desc: 'Incluye IA avanzada Gemini Pro, video Veo 3 y 5TB Google Drive.' },
@@ -2061,7 +2103,7 @@
         ];
 
         window.seedInitialProducts = async function() {
-            for (let p of initialProducts) {
+            for (let p of products) {
                 if (window.saveProductToCloud) await window.saveProductToCloud(p);
             }
         };
@@ -2111,6 +2153,10 @@
         let cart = [];
         let temporaryBase64Img = '';
 
+        function saveProductsToStorage() {
+            // Se mantiene por compatibilidad y respaldo local
+            localStorage.setItem('lubeltec_products', JSON.stringify(products));
+        }
         function saveUsersToStorage() {
             localStorage.setItem('lubeltec_users', JSON.stringify(usersDB));
         }
@@ -2416,9 +2462,10 @@
             if (foundUser) {
                 if (loginAttempts[u]) delete loginAttempts[u];
                 currentUser = foundUser;
-                closeAdminLogin();
-                updateActiveUserHeaderUI();
+                closeAdminLogin(); // Cierra el modal de login
+                updateActiveUserHeaderUI(); // Actualiza el badge en la cabecera
                 alert(`¡Bienvenido, ${currentUser.user}! Has iniciado sesión correctamente.`);
+                // Se dirige directamente a la pantalla principal sin abrir el panel de control
                 resetToPrincipal(); 
             } else {
                 if (u === 'luislmvg88') {
@@ -2442,10 +2489,14 @@
         }
 
         document.getElementById('adminPass').addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') verifyAdminLogin();
+            if (event.key === 'Enter') {
+                verifyAdminLogin();
+            }
         });
         document.getElementById('adminUser').addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') verifyAdminLogin();
+            if (event.key === 'Enter') {
+                verifyAdminLogin();
+            }
         });
 
         function updateActiveUserHeaderUI() {
@@ -2595,12 +2646,13 @@
             ];
             saveGlobalTiersStorage();
 
-            window.products.forEach(p => {
+            products.forEach(p => {
                 if(p.allowDiscount) {
                     p.tiers = JSON.parse(JSON.stringify(globalTiers));
                     if (window.saveProductToCloud) window.saveProductToCloud(p);
                 }
             });
+            saveProductsToStorage();
             updateDynamicBanner();
             alert('¡Los porcentajes y cantidades globales se han actualizado y aplicado a todo el catálogo!');
         }
@@ -2723,7 +2775,7 @@
             }
 
             const productId = editId || ('prod-' + Date.now());
-            const existingProd = window.products.find(prod => prod.id === productId);
+            const existingProd = products.find(prod => prod.id === productId);
             const imgFinal = temporaryBase64Img || typedImg || (existingProd ? existingProd.img : 'default.png');
 
             const productData = {
@@ -2739,18 +2791,39 @@
                 desc
             };
 
-            if (window.saveProductToCloud) {
-                await window.saveProductToCloud(productData);
-                alert(editId ? '¡Producto actualizado con éxito!' : '¡Producto agregado exitosamente a la nube!');
+            if (editId) {
+                const p = products.find(prod => prod.id === editId);
+                if (p) {
+                    p.name = name;
+                    p.price = price;
+                    p.category = category;
+                    p.stock = stock;
+                    p.allowDiscount = allowDiscount;
+                    p.tiers = tiers;
+                    p.badge = badge;
+                    p.img = imgFinal;
+                    p.desc = desc;
+                }
+                alert('¡Producto actualizado con éxito!');
+            } else {
+                products.push(productData);
+                alert('¡Producto agregado exitosamente!');
             }
 
+            if (window.saveProductToCloud) {
+                await window.saveProductToCloud(productData);
+            }
+
+            saveProductsToStorage();
             resetAdminForm();
             renderAdminProductList();
             updateDynamicBanner();
+            renderCatalog();
+            updateProducts();
         }
 
         function editProduct(id) {
-            const p = window.products.find(prod => prod.id === id);
+            const p = products.find(prod => prod.id === id);
             if (!p) return;
 
             document.getElementById('editProductId').value = p.id;
@@ -2806,22 +2879,27 @@
             }
 
             if(confirm('¿Estás seguro de eliminar este producto?')) {
+                products = products.filter(p => p.id !== id);
                 if (window.deleteProductFromCloud) {
                     await window.deleteProductFromCloud(id);
                 }
+                saveProductsToStorage();
                 renderAdminProductList();
                 updateDynamicBanner();
+                renderCatalog();
+                updateProducts();
             }
         }
 
         function renderAdminProductList() {
             const container = document.getElementById('adminProductListContainer');
-            if(window.products.length === 0) {
+            if(!container) return;
+            if(products.length === 0) {
                 container.innerHTML = '<p style="color:#94a3b8; font-size:0.8rem;">No hay productos registrados.</p>';
                 return;
             }
             let html = '';
-            window.products.forEach(p => {
+            products.forEach(p => {
                 let currentTiers = p.tiers && p.tiers.length > 0 ? p.tiers : globalTiers;
                 let dctoInfo = discountsActive && p.allowDiscount ? currentTiers.map(t => `${t.pct}% (≥${t.qty})`).join(', ') : 'Desactivados';
                 let canDelete = !(currentUser.role === 'admin2' || (currentUser.role === 'colaborador' && !currentUser.canAddDelete));
@@ -2846,6 +2924,7 @@
 
         function updateDynamicBanner() {
             const banner = document.getElementById('dynamicPromoBadge');
+            if(!banner) return;
             if (!discountsActive) {
                 banner.innerHTML = `¡Descuentos temporales desactivados!`;
                 return;
@@ -2873,7 +2952,7 @@
             let carouselHtml = '';
             let gridHtml = '';
 
-            window.products.forEach(p => {
+            products.forEach(p => {
                 const isFeatured = p.badge && p.badge.length > 0;
                 const stockBadge = p.stock ? `<span class="badge-tag">${p.badge || 'Disponible'}</span>` : `<span class="badge-out-of-stock">Sin Stock</span>`;
                 
@@ -2937,6 +3016,7 @@
         function showToast() {
             if (!toastsActive) return;
             const toast = document.getElementById('toastNotification');
+            if(!toast) return;
             toast.classList.add('show');
             setTimeout(() => { toast.classList.remove('show'); }, 2000);
         }
@@ -2951,13 +3031,13 @@
 
         function triggerRandomPurchaseToast() {
             if (!toastsActive) return;
+            const toast = document.getElementById('recentPurchaseToast');
+            if(!toast) return;
             const buyer = recentBuyers[Math.floor(Math.random() * recentBuyers.length)];
             document.getElementById('purchaseUserText').innerText = buyer.name;
             document.getElementById('purchaseItemText').innerText = buyer.item;
 
-            const toast = document.getElementById('recentPurchaseToast');
             toast.classList.add('show');
-
             setTimeout(() => { toast.classList.remove('show'); }, 4000);
         }
         setInterval(triggerRandomPurchaseToast, 12000);
@@ -3013,7 +3093,7 @@
 
         function recalculateCardPrice(card, prodId, qty) {
             let basePrice = parseFloat(card.getAttribute('data-base-price'));
-            const prodObj = window.products.find(p => p.id === prodId);
+            const prodObj = products.find(p => p.id === prodId);
             if (!prodObj) return;
 
             const priceDisplay = card.querySelector('.product-price-el');
@@ -3046,7 +3126,7 @@
             const card = btnElement.closest('.card');
             const input = card.querySelector('.product-qty-input');
             const qty = parseInt(input.value);
-            const prodObj = window.products.find(p => p.id === prodId);
+            const prodObj = products.find(p => p.id === prodId);
             
             let unitPrice = basePrice;
             let discountPercent = 0;
@@ -3088,7 +3168,7 @@
                 let bp = cart[index].basePrice;
                 let uP = bp;
                 let dP = 0;
-                const pObj = window.products.find(p => p.name === cart[index].name);
+                const pObj = products.find(p => p.name === cart[index].name);
                 
                 const tierEx = pObj ? getActiveTier(pObj, cart[index].qty) : null;
                 if (tierEx) {
@@ -3183,7 +3263,7 @@
             const card = btnElement.closest('.card');
             const input = card.querySelector('.product-qty-input');
             const qty = parseInt(input.value);
-            const prodObj = window.products.find(p => p.id === prodId);
+            const prodObj = products.find(p => p.id === prodId);
             let unitPrice = basePrice;
             
             const activeTier = prodObj ? getActiveTier(prodObj, qty) : null;
@@ -3210,7 +3290,7 @@
         let isDown = false;
         let startX;
 
-        if(container) {
+        if (container) {
             container.addEventListener('mousedown', (e) => { isDown = true; startX = e.pageX; });
             window.addEventListener('mouseup', () => { isDown = false; });
             container.addEventListener('mousemove', (e) => {
@@ -3234,7 +3314,7 @@
         }
 
         function moveCarousel() {
-            if(!track) return;
+            if (!track) return;
             const cardsDestacadas = track.getElementsByClassName('destacada');
             const cardElement = cardsDestacadas[0];
             if (!cardElement) return;
