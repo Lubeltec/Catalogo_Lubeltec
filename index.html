@@ -2141,7 +2141,8 @@
                     <div class="cart-items-list" id="activityLogsContainer" style="max-height: 280px; overflow-y: auto;">
                         <p style="color: #94a3b8; font-size: 0.8rem; padding: 10px;">No hay registros de cambios todavía.</p>
                     </div>
-                    <button class="admin-btn-danger" onclick="clearActivityLogs()" style="font-size: 0.72rem; padding: 5px 10px;">🗑️ Limpiar Historial</button>
+                    <!-- REGLA 1: Solo el Administrador Principal (role === 'admin') puede limpiar el historial -->
+                    <button class="admin-btn-danger" id="clearLogsBtn" onclick="clearActivityLogs()" style="font-size: 0.72rem; padding: 5px 10px; display: none;">🗑️ Limpiar Historial</button>
                 </div>
             </div>
 
@@ -2462,6 +2463,16 @@
             const container = document.getElementById('activityLogsContainer');
             if (!container) return;
 
+            // REGLA 1: Solo el Administrador Principal (role === 'admin') ve el botón de limpiar historial
+            const clearBtn = document.getElementById('clearLogsBtn');
+            if (clearBtn) {
+                if (currentUser && currentUser.role === 'admin') {
+                    clearBtn.style.display = 'inline-block';
+                } else {
+                    clearBtn.style.display = 'none';
+                }
+            }
+
             if (activityLogs.length === 0) {
                 container.innerHTML = `<p style="color: #94a3b8; font-size: 0.8rem; padding: 10px;">No hay registros de cambios todavía.</p>`;
                 return;
@@ -2483,7 +2494,7 @@
         }
 
         function clearActivityLogs() {
-            if (currentUser && currentUser.role !== 'admin') {
+            if (!currentUser || currentUser.role !== 'admin') {
                 alert('Solo el Administrador Principal puede limpiar el registro.');
                 return;
             }
@@ -3006,8 +3017,9 @@
         }
 
         function quickEditProduct(id) {
-            if (!currentUser || currentUser.role !== 'admin') {
-                alert('Debe iniciar sesión como Administrador para usar esta función.');
+            // REGLA 2: Validar permiso CRUD para edición rápida
+            if (currentUser && currentUser.role === 'colaborador' && !currentUser.canAddDelete) {
+                alert('No tiene privilegios para editar productos. Solicite el permiso al Administrador.');
                 return;
             }
             openAdminPanel();
@@ -3169,6 +3181,12 @@
         }
 
         async function saveProduct() {
+            // REGLA 2: Validar permiso CRUD antes de guardar o editar producto
+            if (currentUser && currentUser.role === 'colaborador' && !currentUser.canAddDelete) {
+                alert('No tiene privilegios para agregar o editar productos. Solicite el permiso al Administrador.');
+                return;
+            }
+
             const editId = document.getElementById('editProductId').value;
             const name = document.getElementById('newProdName').value.trim();
             const price = parseFloat(document.getElementById('newProdPrice').value);
@@ -3242,6 +3260,12 @@
         }
 
         function editProduct(id) {
+            // REGLA 2: Validar permiso CRUD antes de abrir edición
+            if (currentUser && currentUser.role === 'colaborador' && !currentUser.canAddDelete) {
+                alert('No tiene privilegios para editar productos. Solicite el permiso al Administrador.');
+                return;
+            }
+
             const p = products.find(prod => prod.id === id);
             if (!p) return;
 
@@ -3296,6 +3320,7 @@
         }
 
         async function deleteProduct(id) {
+            // REGLA 2: Validar permiso CRUD antes de eliminar
             if(currentUser && currentUser.role === 'admin2') {
                 alert('El Administrador 2 no tiene privilegios para eliminar productos.');
                 return;
@@ -3339,8 +3364,11 @@
             filteredProducts.forEach(p => {
                 let currentTiers = p.tiers && p.tiers.length > 0 ? p.tiers : globalTiers;
                 let dctoInfo = discountsActive && p.allowDiscount ? currentTiers.map(t => `${t.pct}% (≥${t.qty})`).join(', ') : 'Desactivados';
-                let canDelete = !(currentUser.role === 'admin2' || (currentUser.role === 'colaborador' && !currentUser.canAddDelete));
-                let delBtnHtml = canDelete ? `<button class="admin-btn-danger" onclick="deleteProduct('${p.id}')">Eliminar</button>` : '';
+                
+                // REGLA 2: Ocultar o bloquear botones de editar/eliminar si el colaborador no tiene permiso CRUD
+                let canEditDelete = !(currentUser && currentUser.role === 'colaborador' && !currentUser.canAddDelete);
+                let editBtnHtml = canEditDelete ? `<button class="admin-btn-action" onclick="editProduct('${p.id}')">Editar</button>` : `<span style="color:#64748b; font-size:0.7rem;">Sin Permiso</span>`;
+                let delBtnHtml = canEditDelete && currentUser.role !== 'admin2' ? `<button class="admin-btn-danger" onclick="deleteProduct('${p.id}')">Eliminar</button>` : '';
 
                 html += `
                     <div class="admin-product-row">
@@ -3350,7 +3378,7 @@
                             <span style="color:#22c55e; font-size:0.7rem;">Niveles: ${dctoInfo}</span>
                         </div>
                         <div>
-                            <button class="admin-btn-action" onclick="editProduct('${p.id}')">Editar</button>
+                            ${editBtnHtml}
                             ${delBtnHtml}
                         </div>
                     </div>
