@@ -34,9 +34,7 @@
                     cloudProds.push({ id: docSnap.id, ...docSnap.data() });
                 });
                 if (cloudProds.length > 0) {
-                    if (typeof window.products !== "undefined") {
-                        window.products = cloudProds;
-                    }
+                    products = cloudProds;
                     if (typeof window.renderCatalog === "function") {
                         window.renderCatalog();
                         window.updateProducts();
@@ -65,6 +63,10 @@
                 if (data.supportLimaAgents && typeof window.supportLimaAgents !== "undefined") window.supportLimaAgents = data.supportLimaAgents;
                 if (data.supportTrujilloAgents && typeof window.supportTrujilloAgents !== "undefined") window.supportTrujilloAgents = data.supportTrujilloAgents;
                 if (data.collabDiscountPct !== undefined && typeof window.collabDiscountPct !== "undefined") window.collabDiscountPct = data.collabDiscountPct;
+                if (data.activityLogs && typeof window.activityLogs !== "undefined") {
+                    window.activityLogs = data.activityLogs;
+                    if (typeof window.renderActivityLogs === "function") window.renderActivityLogs();
+                }
 
                 if (typeof window.updateDynamicBanner === "function") {
                     window.updateDynamicBanner();
@@ -1838,9 +1840,10 @@
 
                 <div class="admin-dropdown-menu" id="adminDropdownMenu">
                     <button class="admin-tab-btn active" onclick="switchAdminTab('tabDescuentos', this)" id="tabBtnDescuentos">🌐 1. Descuentos y Configuración</button>
-                    <button class="admin-tab-btn" onclick="switchAdminTab('tabSoporteConfig', this)" id="tabBtnSoporteConfig">📱 2. Números de WhatsApp - Soporte Técnico</button>
+                    <button class="admin-tab-btn" onclick="switchAdminTab('tabSoporteConfig', this)" id="tabBtnSoporteConfig">📱 2. Números de WhatsApp - Soporte</button>
                     <button class="admin-tab-btn" onclick="switchAdminTab('tabUsuarios', this)" id="tabBtnUsuarios">👥 3. Gestión de Usuarios</button>
                     <button class="admin-tab-btn" onclick="switchAdminTab('tabProductos', this)" id="tabBtnProductos">📦 4. Gestión de Productos</button>
+                    <button class="admin-tab-btn" onclick="switchAdminTab('tabLogs', this)" id="tabBtnLogs">📊 5. Registro de Cambios</button>
                 </div>
             </div>
 
@@ -1924,7 +1927,7 @@
                             </div>
                         </div>
                     </div>
-                    <button class="admin-btn-action" onclick="saveGlobalSettings(); notifyAdminAction('Configuración Global / Descuentos Actualizada');" style="width:100%; height:32px; font-size:0.78rem; margin-top:6px;">💾 Guardar y Aplicar Cambios de Configuración</button>
+                    <button class="admin-btn-action" onclick="saveGlobalSettings()" style="width:100%; height:32px; font-size:0.78rem; margin-top:6px;">💾 Guardar y Aplicar Cambios de Configuración</button>
                 </div>
             </div>
 
@@ -1965,7 +1968,7 @@
                             <button class="admin-btn-action" onclick="addSupportAgent('trujillo')" style="font-size:0.7rem; padding: 5px 10px;">Agregar</button>
                         </div>
                     </div>
-                    <button class="admin-btn-action" onclick="saveGlobalSettings(); notifyAdminAction('Configuración de Soporte Técnico Actualizada');" style="width:100%; height:32px; font-size:0.78rem; margin-top:8px;">💾 Guardar y Aplicar Cambios de Soporte</button>
+                    <button class="admin-btn-action" onclick="saveGlobalSettings()" style="width:100%; height:32px; font-size:0.78rem; margin-top:8px;">💾 Guardar y Aplicar Cambios de Soporte</button>
                 </div>
             </div>
 
@@ -1978,7 +1981,7 @@
                         <label style="font-size: 0.72rem; color: #38bdf8; font-weight: bold; display: block; margin-bottom: 3px;">Porcentaje de Descuento Fijo para Colaboradores (%):</label>
                         <div style="display:flex; gap:6px;">
                             <input type="number" id="globalCollabDiscountInput" style="flex:1; padding:5px; background:#070a12; border:1px solid #00b4d8; border-radius:6px; color:#fff; font-size:0.8rem;" value="10">
-                            <button class="admin-btn-action" onclick="saveCollabDiscountSetting(); notifyAdminAction('Descuento de Colaboradores Actualizado');" style="font-size:0.7rem;">Guardar Colaborador</button>
+                            <button class="admin-btn-action" onclick="saveCollabDiscountSetting()" style="font-size:0.7rem;">Guardar Colaborador</button>
                         </div>
                     </div>
 
@@ -2128,6 +2131,18 @@
 
                 <h4 style="color:#38bdf8; font-size:0.88rem; margin-bottom:8px; text-align:left;">📋 Lista de Productos Actuales</h4>
                 <div class="cart-items-list" id="adminProductListContainer" style="max-height: 300px; overflow-y: auto;"></div>
+            </div>
+
+            <!-- SUBPANEL 5: REGISTRO DE CAMBIOS -->
+            <div class="admin-tab-pane" id="tabLogs">
+                <div style="background: rgba(0, 180, 216, 0.06); padding: 14px; border-radius: 12px; border: 1px solid rgba(0, 180, 216, 0.3); text-align: left;">
+                    <h4 style="color: #38bdf8; font-size: 0.92rem; margin-bottom: 6px;">📊 Historial de Auditoría y Modificaciones</h4>
+                    <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 12px;">Aquí puedes ver qué usuario realizó cambios, la fecha/hora exacta y qué se modificó.</p>
+                    <div class="cart-items-list" id="activityLogsContainer" style="max-height: 280px; overflow-y: auto;">
+                        <p style="color: #94a3b8; font-size: 0.8rem; padding: 10px;">No hay registros de cambios todavía.</p>
+                    </div>
+                    <button class="admin-btn-danger" onclick="clearActivityLogs()" style="font-size: 0.72rem; padding: 5px 10px;">🗑️ Limpiar Historial</button>
+                </div>
             </div>
 
         </div>
@@ -2355,6 +2370,8 @@
             { name: "Soporte Trujillo Principal", phone: "929770729" }
         ];
 
+        let activityLogs = [];
+
         window.seedInitialProducts = async function() {
             for (let p of products) {
                 if (window.saveProductToCloud) await window.saveProductToCloud(p);
@@ -2384,6 +2401,10 @@
                 sessionStorage.removeItem('lubeltec_current_user');
                 sessionStorage.removeItem('lubeltec_session_time');
             }
+        }
+
+        if(localStorage.getItem('lubeltec_activity_logs')) {
+            try { activityLogs = JSON.parse(localStorage.getItem('lubeltec_activity_logs')); } catch(e) {}
         }
 
         function resetInactivityTimer() {
@@ -2419,11 +2440,59 @@
         let cart = [];
         let temporaryBase64Img = '';
 
-        function notifyAdminAction(details) {
-            const adminPhone = "933907930";
-            const textMsg = `🚨 *Panel de Control Lubeltec - Modificación Registrada*\n\nSe ha realizado el siguiente cambio:\n- ${details}\n\nRevisar la plataforma web.`;
-            const waUrl = `https://wa.me/51${adminPhone}?text=${encodeURIComponent(textMsg)}`;
-            window.open(waUrl, '_blank');
+        function logAdminAction(actionDescription) {
+            const userName = currentUser ? currentUser.user : 'Sistema / Desconocido';
+            const now = new Date();
+            const timeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+            
+            activityLogs.unshift({
+                user: userName,
+                action: actionDescription,
+                time: timeString
+            });
+
+            if (activityLogs.length > 50) activityLogs.pop();
+
+            localStorage.setItem('lubeltec_activity_logs', JSON.stringify(activityLogs));
+            saveSettingsStorage();
+            renderActivityLogs();
+        }
+
+        function renderActivityLogs() {
+            const container = document.getElementById('activityLogsContainer');
+            if (!container) return;
+
+            if (activityLogs.length === 0) {
+                container.innerHTML = `<p style="color: #94a3b8; font-size: 0.8rem; padding: 10px;">No hay registros de cambios todavía.</p>`;
+                return;
+            }
+
+            let html = '';
+            activityLogs.forEach((log) => {
+                html += `
+                    <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(0,180,216,0.2); padding: 8px 10px; border-radius: 8px; margin-bottom: 6px; font-size: 0.76rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                            <strong style="color: #38bdf8;">👤 ${log.user}</strong>
+                            <span style="color: #94a3b8; font-size: 0.68rem;">🕒 ${log.time}</span>
+                        </div>
+                        <div style="color: #e6edf3;">📝 ${log.action}</div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function clearActivityLogs() {
+            if (currentUser && currentUser.role !== 'admin') {
+                alert('Solo el Administrador Principal puede limpiar el registro.');
+                return;
+            }
+            if (confirm('¿Estás seguro de vaciar el historial de registros?')) {
+                activityLogs = [];
+                localStorage.removeItem('lubeltec_activity_logs');
+                saveSettingsStorage();
+                renderActivityLogs();
+            }
         }
 
         function saveProductsToStorage() {
@@ -2447,7 +2516,8 @@
                     supportTrujilloActive,
                     supportLimaAgents,
                     supportTrujilloAgents,
-                    collabDiscountPct
+                    collabDiscountPct,
+                    activityLogs
                 });
             }
         }
@@ -2639,7 +2709,7 @@
             saveSettingsStorage();
             renderAdminSupportAgents();
             checkSupportAvailability();
-            notifyAdminAction(`Agregado agente de soporte en ${cityType}: ${name} (${phone})`);
+            logAdminAction(`Agregado agente de soporte en ${cityType}: ${name} (${phone})`);
             alert('Usuario/Agente agregado.');
         }
 
@@ -2658,7 +2728,7 @@
                 ag.phone = newPhone.trim();
                 saveSettingsStorage();
                 renderAdminSupportAgents();
-                notifyAdminAction(`Modificado agente de soporte en ${cityType}: ${ag.name}`);
+                logAdminAction(`Modificado agente de soporte en ${cityType}: ${ag.name}`);
                 alert('Datos actualizados.');
             } else {
                 alert('Los campos no pueden estar vacíos.');
@@ -2686,7 +2756,7 @@
             saveSettingsStorage();
             renderAdminSupportAgents();
             checkSupportAvailability();
-            notifyAdminAction(`Eliminado agente de soporte en ${cityType}: ${agentName}`);
+            logAdminAction(`Eliminado agente de soporte en ${cityType}: ${agentName}`);
         }
 
         function renderAdminSupportAgents() {
@@ -2890,12 +2960,14 @@
         function openAdminPanel() {
             resetAdminForm();
             renderAdminProductList();
+            renderActivityLogs();
             
             const sessionInfo = document.getElementById('adminSessionInfo');
             const tabDescuentosBtn = document.getElementById('tabBtnDescuentos');
             const tabSoporteConfigBtn = document.getElementById('tabBtnSoporteConfig');
             const tabUsuariosBtn = document.getElementById('tabBtnUsuarios');
             const tabProductosBtn = document.getElementById('tabBtnProductos');
+            const tabLogsBtn = document.getElementById('tabBtnLogs');
 
             let roleName = currentUser.role === 'admin' ? 'Administrador 1 (Principal)' : (currentUser.role === 'admin2' ? 'Administrador 2' : 'Colaborador');
             sessionInfo.innerText = `Sesión iniciada como: ${currentUser.user} [ Rol: ${roleName} ]`;
@@ -2905,6 +2977,7 @@
                 tabSoporteConfigBtn.style.display = 'block';
                 tabUsuariosBtn.style.display = 'block';
                 tabProductosBtn.style.display = 'block';
+                tabLogsBtn.style.display = 'block';
                 
                 document.getElementById('globalCollabDiscountInput').value = collabDiscountPct;
                 document.getElementById('settingDiscountsSwitch').checked = discountsActive;
@@ -2924,6 +2997,7 @@
                 tabDescuentosBtn.style.display = 'none';
                 tabSoporteConfigBtn.style.display = 'none';
                 tabUsuariosBtn.style.display = 'none';
+                tabLogsBtn.style.display = 'block';
                 tabProductosBtn.style.display = 'block';
                 switchAdminTab('tabProductos', tabProductosBtn);
             }
@@ -2975,6 +3049,7 @@
             updateDynamicBanner();
             renderCatalog();
             updateProducts();
+            logAdminAction('Configuración Global y Descuentos actualizados.');
             alert('¡Configuración guardada y aplicada en la nube con éxito!');
         }
 
@@ -2988,6 +3063,7 @@
             collabDiscountPct = val;
             saveCollabDctoStorage();
             saveSettingsStorage();
+            logAdminAction(`Descuento fijo de colaboradores actualizado a ${collabDiscountPct}%`);
             alert(`¡Descuento para colaboradores actualizado a ${collabDiscountPct}% y guardado en la nube!`);
             renderCatalog();
             updateProducts();
@@ -3014,7 +3090,7 @@
             document.getElementById('newLoginUser').value = '';
             document.getElementById('newLoginPass').value = '';
             renderUsersList();
-            notifyAdminAction(`Nuevo usuario creado: ${u} (Rol: ${r})`);
+            logAdminAction(`Nuevo usuario creado: ${u} (Rol: ${r})`);
             alert('Usuario creado con éxito.');
         }
 
@@ -3027,7 +3103,7 @@
                 usersDB = usersDB.filter(usr => usr.user !== username);
                 saveUsersToStorage();
                 renderUsersList();
-                notifyAdminAction(`Usuario eliminado: ${username}`);
+                logAdminAction(`Usuario eliminado: ${username}`);
             }
         }
 
@@ -3039,7 +3115,7 @@
                 usr.pass = newPass.trim();
                 saveUsersToStorage();
                 renderUsersList();
-                notifyAdminAction(`Contraseña actualizada para el usuario: ${username}`);
+                logAdminAction(`Contraseña actualizada para el usuario: ${username}`);
                 alert('Contraseña actualizada con éxito.');
             }
         }
@@ -3050,7 +3126,7 @@
                 usr.canAddDelete = !usr.canAddDelete;
                 saveUsersToStorage();
                 renderUsersList();
-                notifyAdminAction(`Privilegios CRUD modificados para el usuario: ${username} (${usr.canAddDelete ? 'Otorgados' : 'Revocados'})`);
+                logAdminAction(`Privilegios CRUD modificados para el usuario: ${username} (${usr.canAddDelete ? 'Otorgados' : 'Revocados'})`);
             }
         }
 
@@ -3145,11 +3221,11 @@
                     p.img = imgFinal;
                     p.desc = desc;
                 }
-                notifyAdminAction(`Producto Actualizado: ${name} (Precio: S/. ${price.toFixed(2)})`);
+                logAdminAction(`Producto Actualizado: ${name} (S/. ${price.toFixed(2)})`);
                 alert('¡Producto actualizado y guardado en la nube con éxito!');
             } else {
                 products.push(productData);
-                notifyAdminAction(`Nuevo Producto Agregado: ${name} (Precio: S/. ${price.toFixed(2)})`);
+                logAdminAction(`Nuevo Producto Agregado: ${name} (S/. ${price.toFixed(2)})`);
                 alert('¡Producto agregado y publicado en la nube con éxito!');
             }
 
@@ -3203,7 +3279,7 @@
             
             if(globalTiers[0]) { document.getElementById('tier1Qty').value = globalTiers[0].qty; document.getElementById('tier1Pct').value = globalTiers[0].pct; }
             if(globalTiers[1]) { document.getElementById('tier2Qty').value = globalTiers[1].qty; document.getElementById('tier2Pct').value = globalTiers[1].pct; }
-            if(globalTiers[2]) { document.getElementById('tier3Qty').value = globalTiers[3]?.qty || 10; document.getElementById('tier3Pct').value = globalTiers[2].pct; }
+            if(globalTiers[2]) { document.getElementById('tier3Qty').value = globalTiers[2].qty; document.getElementById('tier3Pct').value = globalTiers[2].pct; }
 
             document.getElementById('newProdBadge').value = '';
             document.getElementById('newProdImg').value = '';
@@ -3240,7 +3316,7 @@
                 updateDynamicBanner();
                 renderCatalog();
                 updateProducts();
-                notifyAdminAction(`Producto Eliminado: ${pTarget ? pTarget.name : id}`);
+                logAdminAction(`Producto Eliminado: ${pTarget ? pTarget.name : id}`);
                 alert('Producto eliminado de la base de datos con éxito.');
             }
         }
