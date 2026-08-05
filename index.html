@@ -26,7 +26,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Sincronización en tiempo real con Firestore de Google
         const productsCol = collection(db, "products");
         onSnapshot(productsCol, (snapshot) => {
             if (snapshot.empty) {
@@ -2063,6 +2062,7 @@
             { name: "Soporte Trujillo Principal", phone: "929770729" }
         ];
 
+        // Catálogo completo original de 19 productos
         let products = [
             { id: 'win-pro', name: 'Windows 10/11 Pro (Siempre)', price: 50.00, category: 'win', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'windows11.png', desc: 'Licencia digital permanente (OEM). Reactivación de por vida.' },
             { id: 'off-365', name: 'Office 365 (1 año)', price: 45.00, category: 'ia', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'office365.png', desc: 'Instálalo en hasta 5 dispositivos. Word, Excel, PowerPoint, Outlook y Teams.' },
@@ -2084,6 +2084,12 @@
             { id: 'crunch-3', name: 'Crunchyroll 1 Perfil (3 meses)', price: 35.00, category: 'iptv', stock: true, allowDiscount: true, badge: '', img: 'crunchyroll.png', desc: 'Suscripción Mega Fan de 3 meses sin publicidad.' },
             { id: 'crunch-6', name: 'Crunchyroll Cuenta Completa (6 meses)', price: 89.00, category: 'iptv', stock: true, allowDiscount: true, badge: '', img: 'crunchyroll.png', desc: 'Cuenta completa para múltiples dispositivos en simultáneo.' }
         ];
+
+        window.seedInitialProducts = async function() {
+            for (let p of products) {
+                if (window.saveProductToCloud) await window.saveProductToCloud(p);
+            }
+        };
 
         let usersDB = [
             { user: 'luislmvg88', pass: '5610023', role: 'admin', canAddDelete: true },
@@ -2121,7 +2127,7 @@
         setInterval(() => {
             if (currentUser) {
                 const elapsed = Date.now() - lastActivityTime;
-                if (elapsed >= 60 * 60 * 1000) { // 1 hora exacta de inactividad
+                if (elapsed >= 60 * 60 * 1000) { // 1 hora de inactividad
                     currentUser = null;
                     sessionStorage.removeItem('lubeltec_current_user');
                     sessionStorage.removeItem('lubeltec_session_time');
@@ -2480,7 +2486,6 @@
                 if (loginAttempts[u]) delete loginAttempts[u];
                 currentUser = foundUser;
                 
-                // Guardar la sesión para que persista al actualizar (F5)
                 sessionStorage.setItem('lubeltec_current_user', JSON.stringify(currentUser));
                 sessionStorage.setItem('lubeltec_session_time', Date.now().toString());
 
@@ -2669,6 +2674,7 @@
             products.forEach(p => {
                 if(p.allowDiscount) {
                     p.tiers = JSON.parse(JSON.stringify(globalTiers));
+                    if (window.saveProductToCloud) window.saveProductToCloud(p);
                 }
             });
             saveProductsToStorage();
@@ -2770,7 +2776,7 @@
             }
         }
 
-        function saveProduct() {
+        async function saveProduct() {
             const editId = document.getElementById('editProductId').value;
             const name = document.getElementById('newProdName').value.trim();
             const price = parseFloat(document.getElementById('newProdPrice').value);
@@ -2793,6 +2799,23 @@
                 return;
             }
 
+            const productId = editId || ('prod-' + Date.now());
+            const existingProd = products.find(prod => prod.id === productId);
+            const imgFinal = temporaryBase64Img || typedImg || (existingProd ? existingProd.img : 'default.png');
+
+            const productData = {
+                id: productId,
+                name,
+                price,
+                category,
+                stock,
+                allowDiscount,
+                tiers,
+                badge,
+                img: imgFinal,
+                desc
+            };
+
             if (editId) {
                 const p = products.find(prod => prod.id === editId);
                 if (p) {
@@ -2803,16 +2826,17 @@
                     p.allowDiscount = allowDiscount;
                     p.tiers = tiers;
                     p.badge = badge;
-                    if (temporaryBase64Img) p.img = temporaryBase64Img;
-                    else if (typedImg) p.img = typedImg;
+                    p.img = imgFinal;
                     p.desc = desc;
                 }
                 alert('¡Producto actualizado con éxito!');
             } else {
-                const newId = 'prod-' + Date.now();
-                const imgFinal = temporaryBase64Img || typedImg || 'default.png';
-                products.push({ id: newId, name, price, category, stock, allowDiscount, tiers, badge, img: imgFinal, desc });
+                products.push(productData);
                 alert('¡Producto agregado exitosamente!');
+            }
+
+            if (window.saveProductToCloud) {
+                await window.saveProductToCloud(productData);
             }
 
             saveProductsToStorage();
@@ -2869,7 +2893,7 @@
             document.getElementById('cancelEditBtn').style.display = 'none';
         }
 
-        function deleteProduct(id) {
+        async function deleteProduct(id) {
             if(currentUser && currentUser.role === 'admin2') {
                 alert('El Administrador 2 no tiene privilegios para eliminar productos.');
                 return;
@@ -2881,6 +2905,9 @@
 
             if(confirm('¿Estás seguro de eliminar este producto?')) {
                 products = products.filter(p => p.id !== id);
+                if (window.deleteProductFromCloud) {
+                    await window.deleteProductFromCloud(id);
+                }
                 saveProductsToStorage();
                 renderAdminProductList();
                 updateDynamicBanner();
