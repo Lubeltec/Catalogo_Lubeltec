@@ -8,7 +8,7 @@
     <!-- Ícono de la URL (Favicon) -->
     <link rel="icon" href="lubeltec.png" type="image/png">
 
-    <!-- INTEGRACIÓN DE FIREBASE PARA SINCRONIZACIÓN EN LA NUBE -->
+    <!-- INTEGRACIÓN TOTAL DE FIREBASE PARA PRODUCTOS Y CONFIGURACIONES -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -26,13 +26,10 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // Sincronización de Productos
         const productsCol = collection(db, "products");
         onSnapshot(productsCol, (snapshot) => {
-            if (snapshot.empty) {
-                if (typeof window.seedInitialProducts === "function") {
-                    window.seedInitialProducts();
-                }
-            } else {
+            if (!snapshot.empty) {
                 let cloudProds = [];
                 snapshot.forEach((docSnap) => {
                     cloudProds.push({ id: docSnap.id, ...docSnap.data() });
@@ -47,6 +44,33 @@
                         }
                     }
                 }
+            } else {
+                if (typeof window.seedInitialProducts === "function") {
+                    window.seedInitialProducts();
+                }
+            }
+        });
+
+        // Sincronización de Configuración Global (Descuentos, Agentes y Ajustes)
+        const settingsDocRef = doc(db, "settings", "global_config");
+        onSnapshot(settingsDocRef, (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                if (data.globalTiers) globalTiers = data.globalTiers;
+                if (data.discountsActive !== undefined) discountsActive = data.discountsActive;
+                if (data.toastsActive !== undefined) toastsActive = data.toastsActive;
+                if (data.holidayTheme) holidayTheme = data.holidayTheme;
+                if (data.supportLimaActive !== undefined) supportLimaActive = data.supportLimaActive;
+                if (data.supportTrujilloActive !== undefined) supportTrujilloActive = data.supportTrujilloActive;
+                if (data.supportLimaAgents) supportLimaAgents = data.supportLimaAgents;
+                if (data.supportTrujilloAgents) supportTrujilloAgents = data.supportTrujilloAgents;
+                if (data.collabDiscountPct !== undefined) collabDiscountPct = data.collabDiscountPct;
+
+                if (typeof window.updateDynamicBanner === "function") {
+                    window.updateDynamicBanner();
+                    window.checkSupportAvailability();
+                    if (typeof window.renderAdminSupportAgents === "function") window.renderAdminSupportAgents();
+                }
             }
         });
 
@@ -58,6 +82,10 @@
         window.deleteProductFromCloud = async function(productId) {
             const prodRef = doc(db, "products", productId);
             await deleteDoc(prodRef);
+        };
+
+        window.saveSettingsToCloud = async function(settingsData) {
+            await setDoc(settingsDocRef, settingsData, { merge: true });
         };
     </script>
 
@@ -2062,7 +2090,6 @@
             { name: "Soporte Trujillo Principal", phone: "929770729" }
         ];
 
-        // Catálogo base de seguridad. Si Firebase está vacío, esto se subirá automáticamente a la nube.
         let products = [
             { id: 'win-pro', name: 'Windows 10/11 Pro (Siempre)', price: 50.00, category: 'win', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'windows11.png', desc: 'Licencia digital permanente (OEM). Reactivación de por vida.' },
             { id: 'off-365', name: 'Office 365 (1 año)', price: 45.00, category: 'ia', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'office365.png', desc: 'Instálalo en hasta 5 dispositivos. Word, Excel, PowerPoint, Outlook y Teams.' },
@@ -2144,30 +2171,6 @@
         if(localStorage.getItem('lubeltec_collab_dcto')) {
             collabDiscountPct = parseFloat(localStorage.getItem('lubeltec_collab_dcto')) || 10;
         }
-        if(localStorage.getItem('lubeltec_global_tiers')) {
-            try { globalTiers = JSON.parse(localStorage.getItem('lubeltec_global_tiers')); } catch(e) {}
-        }
-        if(localStorage.getItem('lubeltec_discounts_active') !== null) {
-            discountsActive = localStorage.getItem('lubeltec_discounts_active') === 'true';
-        }
-        if(localStorage.getItem('lubeltec_toasts_active') !== null) {
-            toastsActive = localStorage.getItem('lubeltec_toasts_active') === 'true';
-        }
-        if(localStorage.getItem('lubeltec_holiday_theme')) {
-            holidayTheme = localStorage.getItem('lubeltec_holiday_theme');
-        }
-        if(localStorage.getItem('lubeltec_support_lima_active') !== null) {
-            supportLimaActive = localStorage.getItem('lubeltec_support_lima_active') === 'true';
-        }
-        if(localStorage.getItem('lubeltec_support_trujillo_active') !== null) {
-            supportTrujilloActive = localStorage.getItem('lubeltec_support_trujillo_active') === 'true';
-        }
-        if(localStorage.getItem('lubeltec_support_lima_agents')) {
-            try { supportLimaAgents = JSON.parse(localStorage.getItem('lubeltec_support_lima_agents')); } catch(e) {}
-        }
-        if(localStorage.getItem('lubeltec_support_trujillo_agents')) {
-            try { supportTrujilloAgents = JSON.parse(localStorage.getItem('lubeltec_support_trujillo_agents')); } catch(e) {}
-        }
 
         let currentFilter = 'principal';
         let cart = [];
@@ -2182,17 +2185,21 @@
         function saveCollabDctoStorage() {
             localStorage.setItem('lubeltec_collab_dcto', collabDiscountPct);
         }
-        function saveGlobalTiersStorage() {
-            localStorage.setItem('lubeltec_global_tiers', JSON.stringify(globalTiers));
-        }
+
         function saveSettingsStorage() {
-            localStorage.setItem('lubeltec_discounts_active', discountsActive);
-            localStorage.setItem('lubeltec_toasts_active', toastsActive);
-            localStorage.setItem('lubeltec_holiday_theme', holidayTheme);
-            localStorage.setItem('lubeltec_support_lima_active', supportLimaActive);
-            localStorage.setItem('lubeltec_support_trujillo_active', supportTrujilloActive);
-            localStorage.setItem('lubeltec_support_lima_agents', JSON.stringify(supportLimaAgents));
-            localStorage.setItem('lubeltec_support_trujillo_agents', JSON.stringify(supportTrujilloAgents));
+            if (window.saveSettingsToCloud) {
+                window.saveSettingsToCloud({
+                    globalTiers,
+                    discountsActive,
+                    toastsActive,
+                    holidayTheme,
+                    supportLimaActive,
+                    supportTrujilloActive,
+                    supportLimaAgents,
+                    supportTrujilloAgents,
+                    collabDiscountPct
+                });
+            }
         }
 
         function toggleMenu() {
@@ -2382,7 +2389,8 @@
                     </div>
                 `;
             });
-            document.getElementById('adminLimaAgentsList').innerHTML = limaHtml;
+            const limaContainer = document.getElementById('adminLimaAgentsList');
+            if(limaContainer) limaContainer.innerHTML = limaHtml;
 
             let trujilloHtml = '';
             supportTrujilloAgents.forEach((ag, idx) => {
@@ -2396,7 +2404,8 @@
                     </div>
                 `;
             });
-            document.getElementById('adminTrujilloAgentsList').innerHTML = trujilloHtml;
+            const trujilloContainer = document.getElementById('adminTrujilloAgentsList');
+            if(trujilloContainer) trujilloContainer.innerHTML = trujilloHtml;
         }
 
         function filterCategory(category, event) {
@@ -2646,6 +2655,7 @@
             }
             collabDiscountPct = val;
             saveCollabDctoStorage();
+            saveSettingsStorage();
             alert(`¡Descuento para colaboradores actualizado a ${collabDiscountPct}% con éxito!`);
             renderCatalog();
             updateProducts();
@@ -2666,6 +2676,7 @@
                 { qty: t3q, pct: t3p }
             ];
             saveGlobalTiersStorage();
+            saveSettingsStorage();
 
             products.forEach(p => {
                 if(p.allowDiscount) {
@@ -2673,7 +2684,6 @@
                     if (window.saveProductToCloud) window.saveProductToCloud(p);
                 }
             });
-            saveProductsToStorage();
             updateDynamicBanner();
             alert('¡Los porcentajes y cantidades globales se han actualizado y aplicado a todo el catálogo!');
         }
@@ -2737,6 +2747,7 @@
 
         function renderUsersList() {
             const container = document.getElementById('usersListContainer');
+            if(!container) return;
             let html = '';
             usersDB.forEach(usr => {
                 let badgePriv = usr.role === 'colaborador' ? `<button class="admin-btn-action" style="font-size:0.65rem;" onclick="toggleUserPrivilege('${usr.user}')">${usr.canAddDelete ? 'Quitar Privilegio' : 'Dar Privilegio CRUD'}</button>` : '';
