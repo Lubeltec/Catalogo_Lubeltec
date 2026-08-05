@@ -431,6 +431,28 @@
             display: flex;
         }
 
+        @media (max-width: 768px) {
+            .submenu-software.open {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                justify-content: flex-start;
+                padding: 6px 8px;
+                scrollbar-width: thin;
+                scrollbar-color: #00b4d8 transparent;
+            }
+            .submenu-software::-webkit-scrollbar {
+                height: 3px;
+            }
+            .submenu-software::-webkit-scrollbar-thumb {
+                background: #00b4d8;
+                border-radius: 4px;
+            }
+            .sub-chip {
+                flex: 0 0 auto;
+                white-space: nowrap;
+            }
+        }
+
         .cat-chip {
             background: rgba(20, 32, 48, 0.95);
             color: #94a3b8;
@@ -1768,9 +1790,16 @@
                 </div>
             </div>
 
-            <!-- SUBPANEL 4: GESTIÓN DE PRODUCTOS -->
+            <!-- SUBPANEL 4: GESTIÓN DE PRODUCTOS (CON FORMULARIO DESPLEGABLE / COLAPSABLE) -->
             <div class="admin-tab-pane" id="tabProductos">
-                <div style="background: rgba(0,180,216,0.06); padding: 12px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(0,180,216,0.3); text-align:left;" id="productFormContainer">
+                
+                <!-- BOTÓN PARA DESPLEGAR / OCULTAR EL FORMULARIO DE NUEVO PRODUCTO -->
+                <button type="button" onclick="toggleProductForm()" id="toggleFormBtn" style="background: rgba(0, 180, 216, 0.2); border: 1px solid #00b4d8; color: #38bdf8; width: 100%; padding: 8px; border-radius: 10px; font-weight: bold; font-size: 0.8rem; cursor: pointer; margin-bottom: 12px; transition: all 0.2s ease;">
+                    📂 Desplegar Formulario de Nuevo Producto ▼
+                </button>
+
+                <!-- CONTENEDOR DEL FORMULARIO (OCULTO POR DEFECTO PARA DAR ESPACIO AL SCROLL DE LA LISTA) -->
+                <div style="background: rgba(0,180,216,0.06); padding: 12px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(0,180,216,0.3); text-align:left; display: none;" id="productFormContainer">
                     <h4 style="color:#38bdf8; font-size:0.88rem; margin-bottom:8px;" id="formActionTitle">➕ Agregar Nuevo Producto</h4>
                     
                     <input type="hidden" id="editProductId" value="">
@@ -1879,8 +1908,9 @@
                     </div>
                 </div>
 
-                <h4 style="color:#38bdf8; font-size:0.88rem; margin-bottom:8px; text-align:left;">📋 Lista de Productos Actuales</h4>
-                <div class="cart-items-list" id="adminProductListContainer" style="max-height: 180px;"></div>
+                <h4 style="color:#38bdf8; font-size:0.88rem; margin-bottom:8px; text-align:left;">📋 Lista de Productos Actuales (Con desplazamiento cómodo)</h4>
+                <!-- LISTADO AMPLIO Y CÓMODO PARA HACER SCROLL -->
+                <div class="cart-items-list" id="adminProductListContainer" style="max-height: 320px; overflow-y: auto;"></div>
             </div>
 
         </div>
@@ -1940,7 +1970,6 @@
                 <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMenu()" title="Menú de Categorías">☰</button>
                 <button class="login-shortcut-btn" onclick="openAdminLogin()" title="Iniciar Sesión">🔐 Iniciar Sesión</button>
                 
-                <!-- CORREGIDO: SE HA VINCULADO CLIC AL BADGE Y AL TEXTO PARA ABRIR EL PANEL DE CONTROL -->
                 <div class="active-user-badge" id="activeUserBadge" onclick="openAdminPanel()" title="Hacer clic para abrir Panel de Control">
                     <span class="active-username-text">👤 <span id="activeUserNameText">Usuario</span></span>
                     
@@ -2196,6 +2225,19 @@
             event.stopPropagation();
             const submenu = document.getElementById(submenuId);
             submenu.classList.toggle('open');
+        }
+
+        // Función para desplegar u ocultar el formulario de productos en el admin
+        function toggleProductForm() {
+            const formContainer = document.getElementById('productFormContainer');
+            const toggleBtn = document.getElementById('toggleFormBtn');
+            if (formContainer.style.display === 'none' || formContainer.style.display === '') {
+                formContainer.style.display = 'block';
+                toggleBtn.innerText = '📂 Ocultar Formulario de Nuevo Producto ▲';
+            } else {
+                formContainer.style.display = 'none';
+                toggleBtn.innerText = '📂 Desplegar Formulario de Nuevo Producto ▼';
+            }
         }
 
         function checkSupportAvailability() {
@@ -2856,6 +2898,12 @@
             const p = products.find(prod => prod.id === id);
             if (!p) return;
 
+            // Al hacer clic en editar, desplegamos automáticamente el formulario para que sea visible
+            const formContainer = document.getElementById('productFormContainer');
+            const toggleBtn = document.getElementById('toggleFormBtn');
+            formContainer.style.display = 'block';
+            toggleBtn.innerText = '📂 Ocultar Formulario de Nuevo Producto ▲';
+
             document.getElementById('editProductId').value = p.id;
             document.getElementById('newProdName').value = p.name;
             document.getElementById('newProdPrice').value = p.price;
@@ -2896,6 +2944,10 @@
             document.getElementById('formActionTitle').innerText = '➕ Agregar Nuevo Producto';
             document.getElementById('saveProdBtn').innerText = '💾 Guardar y Publicar Producto';
             document.getElementById('cancelEditBtn').style.display = 'none';
+
+            // Volver a colapsar el formulario para dejar espacio a la lista
+            document.getElementById('productFormContainer').style.display = 'none';
+            document.getElementById('toggleFormBtn').innerText = '📂 Desplegar Formulario de Nuevo Producto ▼';
         }
 
         async function deleteProduct(id) {
