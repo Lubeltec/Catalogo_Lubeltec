@@ -484,7 +484,7 @@
             border-radius: 4px;
         }
 
-        /* MODIFICACIÓN 2: Menú Desplegable Lateral Estilo Sidebar (Sidebar Drawer) */
+        /* Menú Desplegable Lateral Estilo Sidebar (Sidebar Drawer) */
         .sidebar-overlay {
             position: fixed;
             top: 0;
@@ -1063,29 +1063,48 @@
 
         .btn-cart:hover { box-shadow: 0 0 10px rgba(0, 180, 216, 0.5); }
 
+        /* NUEVA ANIMACIÓN DIVERTIDA Y ELEGANTE AL CLIC Y COLOR VERDE PARA YAPE/PLIN */
+        @keyframes clickPulseFun {
+            0% { transform: scale(1) rotate(0deg); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.8); }
+            30% { transform: scale(0.93) rotate(-2deg); box-shadow: 0 0 0 10px rgba(34, 197, 94, 0.3); }
+            60% { transform: scale(1.08) rotate(2deg); box-shadow: 0 0 20px 15px rgba(34, 197, 94, 0); }
+            100% { transform: scale(1) rotate(0deg); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+
         .btn-yape {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
-            background: linear-gradient(135deg, #742284, #00b2a9);
+            background: linear-gradient(135deg, #16a34a, #15803d);
             color: #ffffff;
-            border: none;
+            border: 1px solid #4ade80;
             padding: 8px;
             border-radius: 8px;
             font-weight: bold;
             font-size: 0.8rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .btn-yape:hover { box-shadow: 0 0 12px rgba(116, 34, 132, 0.6); }
+        .btn-yape:hover { 
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.7); 
+            transform: translateY(-2px);
+        }
+
+        .btn-yape:active, .btn-yape.clicked {
+            animation: clickPulseFun 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
 
         .btn-disabled {
             background: #334155;
             color: #64748b;
             cursor: not-allowed;
             pointer-events: none;
+            border-color: transparent;
         }
 
         /* Animación de Implosión y Estallido al cerrar modales */
@@ -1471,7 +1490,7 @@
             text-align: left;
         }
 
-        /* MODIFICACIÓN 1: Estilos para el contenedor del número de celular y el botón de copiar */
+        /* Estilos para el contenedor del número de celular y el botón de copiar */
         .copy-phone-box {
             display: inline-flex;
             align-items: center;
@@ -1729,7 +1748,7 @@
                 </a>
             </div>
 
-            <a href="#" id="supportWhatsappBtn" target="_blank" class="btn-yape" style="text-decoration: none; padding: 10px; font-size: 0.85rem; justify-content: center; margin-top: 14px;">
+            <a href="#" id="supportWhatsappBtn" target="_blank" class="btn-yape" onclick="triggerBtnAnimation(this)" style="text-decoration: none; padding: 10px; font-size: 0.85rem; justify-content: center; margin-top: 14px;">
                 📲 Contactar al Técnico por WhatsApp
             </a>
         </div>
@@ -1780,7 +1799,7 @@
                     <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('adminPass', this)">👁️</button>
                 </div>
             </div>
-            <button class="btn-yape" onclick="verifyAdminLogin()" style="width:100%; padding: 10px; justify-content:center;">Ingresar al Panel</button>
+            <button class="btn-yape" onclick="verifyAdminLogin(); triggerBtnAnimation(this);" style="width:100%; padding: 10px; justify-content:center;">Ingresar al Panel</button>
         </div>
     </div>
 
@@ -2111,7 +2130,7 @@
                 </div>
             </div>
 
-            <button class="btn-yape" onclick="proceedToCheckout()" id="checkoutBtn" style="width: 100%; padding: 10px; font-size: 0.9rem;">
+            <button class="btn-yape" onclick="proceedToCheckout(); triggerBtnAnimation(this);" id="checkoutBtn" style="width: 100%; padding: 10px; font-size: 0.9rem;">
                 💜 Pagar con Yape o Plin
             </button>
         </div>
@@ -2126,7 +2145,6 @@
             
             <img src="qr-pago.png" alt="QR Yape / Plin" class="qr-img">
             
-            <!-- MODIFICACIÓN 1: Botón de copiar número integrado -->
             <div class="payment-info">
                 <strong>Número:</strong> 
                 <span class="copy-phone-box">
@@ -2137,7 +2155,7 @@
                 <strong>Monto a pagar:</strong> <span id="modalProductPrice" style="color: #38bdf8; font-weight: bold;">S/. 0.00</span>
             </div>
 
-            <a href="#" id="modalConfirmBtn" target="_blank" class="btn-yape" style="text-decoration: none; padding: 10px; font-size: 0.9rem; justify-content: center;">
+            <a href="#" id="modalConfirmBtn" target="_blank" class="btn-yape" onclick="triggerBtnAnimation(this)" style="text-decoration: none; padding: 10px; font-size: 0.9rem; justify-content: center;">
                 📲 Enviar comprobante por WhatsApp
             </a>
 
@@ -2147,7 +2165,7 @@
         </div>
     </div>
 
-    <!-- MODIFICACIÓN 2: Estructura del Menú Lateral (Sidebar Drawer) -->
+    <!-- Menú Lateral (Sidebar Drawer) -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMenu()"></div>
     <div class="sidebar-drawer" id="sidebarDrawer">
         <div class="sidebar-header">
@@ -2406,7 +2424,15 @@
             }
         }
 
-        /* MODIFICACIÓN 1: Función JavaScript para copiar el número de celular al portapapeles */
+        /* Función para activar la animación divertida en los botones de pago */
+        function triggerBtnAnimation(btn) {
+            btn.classList.add('clicked');
+            setTimeout(() => {
+                btn.classList.remove('clicked');
+            }, 450);
+        }
+
+        /* Función para copiar el número de celular al portapapeles */
         function copyPhoneNumber() {
             const phoneText = document.getElementById('targetPhoneNumber').innerText.replace(/\s+/g, '');
             navigator.clipboard.writeText(phoneText).then(() => {
@@ -2427,7 +2453,7 @@
             }, 2000);
         }
 
-        /* MODIFICACIÓN 2: Funciones para alternar el menú lateral (Sidebar Drawer) */
+        /* Funciones para alternar el menú lateral (Sidebar Drawer) */
         function toggleMenu() {
             const drawer = document.getElementById('sidebarDrawer');
             const overlay = document.getElementById('sidebarOverlay');
@@ -3328,7 +3354,7 @@
                                 </div>
                                 <div class="card-actions">
                                     <button class="btn-cart ${!p.stock?'btn-disabled':''}" onclick="addToCart(this, '${p.name}', ${effectivePrice}, '${p.id}')">🛒 Agregar al Carrito</button>
-                                    <button class="btn-yape ${!p.stock?'btn-disabled':''}" onclick="openDirectPayment(this, '${p.name}', ${effectivePrice}, '${p.id}')">💜 Pagar con Yape o Plin</button>
+                                    <button class="btn-yape ${!p.stock?'btn-disabled':''}" onclick="openDirectPayment(this, '${p.name}', ${effectivePrice}, '${p.id}'); triggerBtnAnimation(this);">💜 Pagar con Yape o Plin</button>
                                 </div>
                             </div>
                         </div>
