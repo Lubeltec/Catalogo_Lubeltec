@@ -8,6 +8,60 @@
     <!-- Ícono de la URL (Favicon) -->
     <link rel="icon" href="lubeltec.png" type="image/png">
 
+    <!-- INTEGRACIÓN DE FIREBASE PARA SINCRONIZACIÓN EN LA NUBE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB2vERcbTTP8W5y_6r0rCjOfKztWRH4BJY",
+            authDomain: "lubeltec.firebaseapp.com",
+            projectId: "lubeltec",
+            storageBucket: "lubeltec.firebasestorage.app",
+            messagingSenderId: "739680228651",
+            appId: "1:739680228651:web:1a1b9d0bc1bb018e96216e",
+            measurementId: "G-KXSG58P6BV"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Sincronización en tiempo real con Firestore de Google
+        const productsCol = collection(db, "products");
+        onSnapshot(productsCol, (snapshot) => {
+            if (snapshot.empty) {
+                if (typeof window.seedInitialProducts === "function") {
+                    window.seedInitialProducts();
+                }
+            } else {
+                let cloudProds = [];
+                snapshot.forEach((docSnap) => {
+                    cloudProds.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                if (cloudProds.length > 0) {
+                    products = cloudProds;
+                    if (typeof window.renderCatalog === "function") {
+                        window.renderCatalog();
+                        window.updateProducts();
+                        if (typeof window.renderAdminProductList === "function") {
+                            window.renderAdminProductList();
+                        }
+                    }
+                }
+            }
+        });
+
+        window.saveProductToCloud = async function(productData) {
+            const prodRef = doc(db, "products", productData.id);
+            await setDoc(prodRef, productData, { merge: true });
+        };
+
+        window.deleteProductFromCloud = async function(productId) {
+            const prodRef = doc(db, "products", productId);
+            await deleteDoc(prodRef);
+        };
+    </script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -2042,7 +2096,7 @@
         let currentUser = null; 
         let lastActivityTime = Date.now();
 
-        // Recuperar sesión persistente al actualizar la página (F5)
+        // Recuperar sesión persistente al presionar F5 o actualizar
         const savedSession = sessionStorage.getItem('lubeltec_current_user');
         const savedSessionTime = sessionStorage.getItem('lubeltec_session_time');
         
@@ -2067,7 +2121,7 @@
         setInterval(() => {
             if (currentUser) {
                 const elapsed = Date.now() - lastActivityTime;
-                if (elapsed >= 60 * 60 * 1000) { // 1 hora de inactividad
+                if (elapsed >= 60 * 60 * 1000) { // 1 hora exacta de inactividad
                     currentUser = null;
                     sessionStorage.removeItem('lubeltec_current_user');
                     sessionStorage.removeItem('lubeltec_session_time');
@@ -2426,7 +2480,7 @@
                 if (loginAttempts[u]) delete loginAttempts[u];
                 currentUser = foundUser;
                 
-                // Guardar en sessionStorage para persistir al actualizar (F5)
+                // Guardar la sesión para que persista al actualizar (F5)
                 sessionStorage.setItem('lubeltec_current_user', JSON.stringify(currentUser));
                 sessionStorage.setItem('lubeltec_session_time', Date.now().toString());
 
