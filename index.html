@@ -31,6 +31,40 @@
             100% { background-position: 0% 50%; }
         }
 
+        /* Cronómetro Flotante No Intrusivo */
+        .promo-timer-float {
+            position: fixed;
+            top: 75px;
+            right: 15px;
+            background: rgba(16, 23, 38, 0.92);
+            backdrop-filter: blur(8px);
+            border: 1px solid #00b4d8;
+            color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 12px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5), 0 0 10px rgba(0, 180, 216, 0.3);
+            z-index: 1500;
+            font-size: 0.75rem;
+            animation: pulseGlow 3s infinite ease-in-out;
+        }
+
+        .promo-timer-float.show {
+            display: flex;
+        }
+
+        .timer-digits {
+            font-weight: bold;
+            color: #22c55e;
+            background: rgba(0,0,0,0.4);
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+
         /* Notificación Flotante con Check Animado */
         .toast-notification {
             position: fixed;
@@ -130,7 +164,6 @@
             gap: 6px;
         }
 
-        /* Botón de Acceso Rápido / Inicio de Sesión al lado de la hamburguesa */
         .login-shortcut-btn {
             background: rgba(0, 180, 216, 0.15);
             border: 1px solid #00b4d8;
@@ -150,7 +183,6 @@
             color: #080c14;
         }
 
-        /* Contenedor del usuario activo al lado de la hamburguesa */
         .active-user-badge {
             background: rgba(0, 180, 216, 0.12);
             border: 1px solid rgba(0, 180, 216, 0.4);
@@ -175,8 +207,8 @@
             color: #ffffff;
         }
 
-        /* Botón de cierre con icono de tachito 🗑️ */
-        .logout-trash-btn {
+        /* Botón de cierre de sesión con icono de salida 🚪 */
+        .logout-exit-btn {
             background: rgba(230, 57, 70, 0.2);
             border: 1px solid #e63946;
             color: #ff6b6b;
@@ -190,7 +222,7 @@
             font-size: 0.8rem;
             transition: all 0.2s ease;
         }
-        .logout-trash-btn:hover {
+        .logout-exit-btn:hover {
             background: #e63946;
             color: #ffffff;
             transform: scale(1.1);
@@ -315,7 +347,7 @@
             border-radius: 4px;
         }
 
-        /* Menú Desplegable */
+        /* Menú Desplegable Principal */
         .menu-dropdown {
             max-height: 0;
             overflow-y: auto;
@@ -390,6 +422,125 @@
             border-color: #38bdf8;
             box-shadow: 0 0 8px rgba(0, 180, 216, 0.5);
             font-weight: bold;
+        }
+
+        /* Menú Hamburguesa Interno para el Panel de Control */
+        .admin-nav-header {
+            position: relative;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .admin-hamburger-btn {
+            background: rgba(0, 180, 216, 0.15);
+            color: #38bdf8;
+            border: 1px solid #00b4d8;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        .admin-hamburger-btn:hover {
+            background: #00b4d8;
+            color: #080c14;
+        }
+
+        .admin-dropdown-menu {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: rgba(13, 22, 35, 0.95);
+            border: 1px solid rgba(0, 180, 216, 0.4);
+            padding: 8px;
+            border-radius: 10px;
+            margin-top: 6px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .admin-dropdown-menu.open {
+            display: flex;
+        }
+
+        .admin-tab-btn {
+            background: rgba(20, 32, 48, 0.8);
+            border: 1px solid rgba(0, 180, 216, 0.3);
+            color: #94a3b8;
+            padding: 7px 10px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+        .admin-tab-btn:hover {
+            color: #fff;
+            border-color: #00b4d8;
+        }
+        .admin-tab-btn.active {
+            background: linear-gradient(135deg, #00b4d8, #0083a0);
+            color: #080c14;
+            border-color: #38bdf8;
+            font-weight: bold;
+        }
+
+        .admin-tab-pane {
+            display: none;
+        }
+        .admin-tab-pane.active {
+            display: block;
+        }
+
+        /* Estilo para el Switch deslizante */
+        .switch-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.25);
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 180, 216, 0.2);
+            margin-bottom: 10px;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 22px;
+        }
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #334155;
+            transition: .3s;
+            border-radius: 22px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #22c55e;
+        }
+        input:checked + .slider:before {
+            transform: translateX(22px);
         }
 
         /* Barra de Filtros */
@@ -774,7 +925,7 @@
             border: 2px solid rgba(0, 180, 216, 0.6);
             border-radius: 20px;
             padding: 24px;
-            max-width: 580px;
+            max-width: 620px;
             width: 100%;
             text-align: center;
             position: relative;
@@ -1189,6 +1340,12 @@
 </head>
 <body>
 
+    <!-- CRONÓMETRO FLOTANTE DE OFERTAS EN PANTALLA PRINCIPAL -->
+    <div class="promo-timer-float" id="promoTimerFloat">
+        <span>⚡ Oferta Relámpago:</span>
+        <span class="timer-digits" id="timerDigitsDisplay">00:00:00</span>
+    </div>
+
     <a href="https://wa.me/51933907930?text=Hola,%20quisiera%20consultar%20sobre%20sus%20licencias%20digitales" class="float-whatsapp" target="_blank" title="Contactar por WhatsApp">💬</a>
 
     <!-- Notificación Flotante de Check Animado -->
@@ -1202,6 +1359,18 @@
         <span style="font-size: 1.2rem;">🛒</span>
         <div>
             <strong id="purchaseUserText" style="color: #38bdf8;">Un usuario</strong> acaba de adquirir <span id="purchaseItemText" style="color: #22c55e;">Gemini Pro</span>.
+        </div>
+    </div>
+
+    <!-- Modal de Advertencia de Cierre de Sesión -->
+    <div class="modal-overlay" id="logoutConfirmModal">
+        <div class="modal-card" style="max-width: 380px;">
+            <h3 class="modal-title" style="color: #ff6b6b; margin-bottom: 10px;">⚠️ Cerrar Sesión</h3>
+            <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 20px;">¿Estás seguro de que deseas salir de la sesión actual?</p>
+            <div style="display: flex; gap: 10px;">
+                <button class="admin-btn-action" onclick="confirmLogout(true)" style="flex:1; padding: 8px;">Sí, salir</button>
+                <button class="admin-btn-danger" onclick="confirmLogout(false)" style="flex:1; padding: 8px;">Cancelar</button>
+            </div>
         </div>
     </div>
 
@@ -1225,242 +1394,313 @@
         </div>
     </div>
 
-    <!-- Panel de Administración -->
+    <!-- Panel de Administración con Menú Hamburguesa para Subpaneles -->
     <div class="modal-overlay" id="adminPanelModal">
-        <div class="modal-card" style="max-width: 620px;">
+        <div class="modal-card">
             <button class="close-modal" onclick="closeModalWithExplosion('adminPanelModal')">✕</button>
             <h3 class="modal-title" id="adminPanelTitle">⚙️ Panel de Control y Gestión</h3>
             
-            <div id="adminSessionInfo" style="font-size: 0.8rem; color: #22c55e; margin-bottom: 12px; font-weight: bold; text-align: left;"></div>
+            <div id="adminSessionInfo" style="font-size: 0.8rem; color: #22c55e; margin-bottom: 8px; font-weight: bold; text-align: left;"></div>
 
-            <!-- SECCIÓN GLOBAL: CONFIGURACIÓN DE DESCUENTOS Y FESTIVIDADES -->
-            <div id="globalDiscountConfigSection" class="global-config-box" style="display:none;">
-                <h4>🌐 Configuración Global de Descuentos y Festividades</h4>
-                <p>Modifica umbrales, activa/desactiva características y selecciona temporada de festividades.</p>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
-                    <div class="admin-form-group" style="margin-bottom:0;">
-                        <label>Estado de Descuentos:</label>
-                        <select id="settingDiscountsActive" onchange="saveGlobalSettings()">
-                            <option value="true">Activados</option>
-                            <option value="false">Desactivados</option>
-                        </select>
-                    </div>
-                    <div class="admin-form-group" style="margin-bottom:0;">
-                        <label>Alertas Toast Recientes:</label>
-                        <select id="settingToastsActive" onchange="saveGlobalSettings()">
-                            <option value="true">Activadas</option>
-                            <option value="false">Desactivadas</option>
-                        </select>
-                    </div>
-                </div>
+            <!-- MENÚ HAMBURGUESA INTERNO DEL PANEL DE CONTROL -->
+            <div class="admin-nav-header">
+                <button class="admin-hamburger-btn" onclick="toggleAdminMenu()" id="adminHamburgerBtn">
+                    ☰ Menú de Opciones
+                </button>
 
-                <div class="admin-form-group" style="margin-bottom: 8px;">
-                    <label>Fiesta / Temporada Especial:</label>
-                    <select id="settingHolidayTheme" onchange="saveGlobalSettings()">
-                        <option value="normal">Ninguna (Estándar)</option>
-                        <option value="navidad">🎄 Navidad y Año Nuevo</option>
-                        <option value="patrias">🇵🇪 Fiestas Patrias Perú</option>
-                        <option value="halloween">🎃 Halloween / Black Friday</option>
-                        <option value="inocentes">🤡 Día de los Inocentes</option>
-                    </select>
+                <div class="admin-dropdown-menu" id="adminDropdownMenu">
+                    <button class="admin-tab-btn active" onclick="switchAdminTab('tabDescuentos', this)" id="tabBtnDescuentos">🌐 1. Descuentos y Festividades</button>
+                    <button class="admin-tab-btn" onclick="switchAdminTab('tabCronometro', this)" id="tabBtnCronometro">⏱️ 2. Configuración del Cronómetro</button>
+                    <button class="admin-tab-btn" onclick="switchAdminTab('tabUsuarios', this)" id="tabBtnUsuarios">👥 3. Gestión de Usuarios</button>
+                    <button class="admin-tab-btn" onclick="switchAdminTab('tabProductos', this)" id="tabBtnProductos">📦 4. Gestión de Productos</button>
                 </div>
-
-                <div class="tier-vertical-list" style="margin-top: 6px;">
-                    <!-- Nivel 1 -->
-                    <div class="tier-vertical-item">
-                        <span>Nivel 1</span>
-                        <div class="tier-vertical-inputs">
-                            <div class="tier-sub-group">
-                                <span>Cant. Mín</span>
-                                <input type="number" id="gTier1Qty" value="3">
-                            </div>
-                            <div class="tier-sub-group">
-                                <span>% Dcto</span>
-                                <input type="number" id="gTier1Pct" value="10">
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Nivel 2 -->
-                    <div class="tier-vertical-item">
-                        <span>Nivel 2</span>
-                        <div class="tier-vertical-inputs">
-                            <div class="tier-sub-group">
-                                <span>Cant. Mín</span>
-                                <input type="number" id="gTier2Qty" value="5">
-                            </div>
-                            <div class="tier-sub-group">
-                                <span>% Dcto</span>
-                                <input type="number" id="gTier2Pct" value="13">
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Nivel 3 -->
-                    <div class="tier-vertical-item">
-                        <span>Nivel 3</span>
-                        <div class="tier-vertical-inputs">
-                            <div class="tier-sub-group">
-                                <span>Cant. Mín</span>
-                                <input type="number" id="gTier3Qty" value="8">
-                            </div>
-                            <div class="tier-sub-group">
-                                <span>% Dcto</span>
-                                <input type="number" id="gTier3Pct" value="20">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <button class="admin-btn-action" onclick="applyGlobalDiscountsToAll()" style="width:100%; height:30px; font-size:0.75rem;">Aplicar Globalmente a Todo el Catálogo</button>
             </div>
 
-            <!-- SECCIÓN: GESTIÓN DE USUARIOS Y DESCUENTO DE COLABORADOR -->
-            <div id="userManagementSection" style="background: rgba(230,57,70,0.06); padding: 12px; border-radius: 12px; margin-bottom: 15px; border: 1px dashed rgba(230,57,70,0.4); text-align:left; display:none;">
-                <h4 style="color:#ff6b6b; font-size:0.88rem; margin-bottom:6px;">👥 Gestionar Usuarios, Claves y Beneficios</h4>
-                
-                <div style="background: rgba(0,0,0,0.25); padding: 8px; border-radius: 8px; margin-bottom: 10px;">
-                    <label style="font-size: 0.72rem; color: #38bdf8; font-weight: bold; display: block; margin-bottom: 3px;">Porcentaje de Descuento Fijo para Colaboradores (%):</label>
-                    <div style="display:flex; gap:6px;">
-                        <input type="number" id="globalCollabDiscountInput" style="flex:1; padding:5px; background:#070a12; border:1px solid #00b4d8; border-radius:6px; color:#fff; font-size:0.8rem;" value="10">
-                        <button class="admin-btn-action" onclick="saveCollabDiscountSetting()" style="font-size:0.7rem;">Actualizar Colaborador</button>
-                    </div>
-                </div>
-
-                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:6px; align-items:end;">
-                    <div class="admin-form-group" style="margin-bottom:0;">
-                        <label>Nuevo Usuario:</label>
-                        <input type="text" id="newLoginUser" placeholder="Usuario">
-                    </div>
-                    <div class="admin-form-group" style="margin-bottom:0;">
-                        <label>Contraseña:</label>
-                        <input type="text" id="newLoginPass" placeholder="Clave">
-                    </div>
-                    <div class="admin-form-group" style="margin-bottom:0;">
-                        <label>Rol / Poder:</label>
-                        <select id="newLoginRole">
-                            <option value="colaborador">Colaborador</option>
-                            <option value="admin2">Administrador 2</option>
-                            <option value="admin">Administrador 1</option>
-                        </select>
-                    </div>
-                    <button class="admin-btn-action" onclick="addNewUser()" style="height:31px;">Crear</button>
-                </div>
-                <div id="usersListContainer" style="margin-top: 10px; max-height: 120px; overflow-y:auto;"></div>
-            </div>
-
-            <!-- SECCIÓN: GESTIÓN DE PRODUCTOS -->
-            <div style="background: rgba(0,180,216,0.06); padding: 12px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(0,180,216,0.3); text-align:left;" id="productFormContainer">
-                <h4 style="color:#38bdf8; font-size:0.88rem; margin-bottom:8px;" id="formActionTitle">➕ Agregar Nuevo Producto</h4>
-                
-                <input type="hidden" id="editProductId" value="">
-
-                <div class="admin-form-group">
-                    <label>Nombre del Producto:</label>
-                    <input type="text" id="newProdName" placeholder="Ej. Photoshop Pro (1 año)">
-                </div>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-                    <div class="admin-form-group">
-                        <label>Precio Base (S/.):</label>
-                        <input type="number" id="newProdPrice" placeholder="50.00">
-                    </div>
-                    <div class="admin-form-group">
-                        <label>Categoría:</label>
-                        <select id="newProdCat">
-                            <option value="win">Windows</option>
-                            <option value="diseno">Diseño</option>
-                            <option value="ia">IA</option>
-                            <option value="iptv">IPTV</option>
-                            <option value="musica">Música</option>
-                            <option value="edu">Educación</option>
-                        </select>
-                    </div>
-                </div>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-                    <div class="admin-form-group">
-                        <label>Stock Disponible:</label>
-                        <select id="newProdStock">
-                            <option value="true">Sí (Disponible)</option>
-                            <option value="false">No (Agotado)</option>
-                        </select>
-                    </div>
-                    <div class="admin-form-group">
-                        <label>¿Aplicar Descuento por Volumen?</label>
-                        <select id="newProdAllowDiscount">
-                            <option value="true">Sí (Permite descuento)</option>
-                            <option value="false">No (Precio fijo)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div style="margin-top: 6px; margin-bottom: 8px;">
-                    <label style="font-size:0.75rem; color:#38bdf8; font-weight:600; margin-bottom:3px; display:block;">Opciones de Descuentos por Volumen (Hasta 3 Niveles):</label>
+            <!-- SUBPANEL 1: CONFIGURACIÓN DE DESCUENTOS Y FESTIVIDADES -->
+            <div class="admin-tab-pane active" id="tabDescuentos">
+                <div class="global-config-box">
+                    <h4>🌐 Configuración Global de Descuentos y Festividades</h4>
+                    <p>Modifica umbrales, activa/desactiva características y selecciona temporada de festividades.</p>
                     
-                    <div class="tier-box">
-                        <label class="tier-box-label">Nivel 1</label>
-                        <div class="tier-box-inputs">
-                            <div class="tier-box-col">
-                                <span>Cant. Mínima</span>
-                                <input type="number" id="tier1Qty" value="3">
-                            </div>
-                            <div class="tier-box-col">
-                                <span>Porcentaje %</span>
-                                <input type="number" id="tier1Pct" value="10">
-                            </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                        <div class="admin-form-group" style="margin-bottom:0;">
+                            <label>Estado de Descuentos:</label>
+                            <select id="settingDiscountsActive" onchange="saveGlobalSettings()">
+                                <option value="true">Activados</option>
+                                <option value="false">Desactivados</option>
+                            </select>
+                        </div>
+                        <div class="admin-form-group" style="margin-bottom:0;">
+                            <label>Alertas Toast Recientes:</label>
+                            <select id="settingToastsActive" onchange="saveGlobalSettings()">
+                                <option value="true">Activadas</option>
+                                <option value="false">Desactivadas</option>
+                            </select>
                         </div>
                     </div>
-                    
-                    <div class="tier-box">
-                        <label class="tier-box-label">Nivel 2 (Opcional)</label>
-                        <div class="tier-box-inputs">
-                            <div class="tier-box-col">
-                                <span>Cant. Mínima</span>
-                                <input type="number" id="tier2Qty" value="5">
-                            </div>
-                            <div class="tier-box-col">
-                                <span>Porcentaje %</span>
-                                <input type="number" id="tier2Pct" value="13">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="tier-box">
-                        <label class="tier-box-label">Nivel 3 (Opcional)</label>
-                        <div class="tier-box-inputs">
-                            <div class="tier-box-col">
-                                <span>Cant. Mínima</span>
-                                <input type="number" id="tier3Qty" value="8">
-                            </div>
-                            <div class="tier-box-col">
-                                <span>Porcentaje %</span>
-                                <input type="number" id="tier3Pct" value="20">
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="admin-form-group">
-                    <label>Etiqueta / Destacado:</label>
-                    <input type="text" id="newProdBadge" placeholder="Ej. ⭐ Destacado o Popular (opcional)">
-                </div>
-                <div class="admin-form-group">
-                    <label>Adjuntar Imagen (Archivo local o URL):</label>
-                    <input type="file" id="newProdFile" accept="image/*" style="margin-bottom: 4px;" onchange="previewImage(event)">
-                    <input type="text" id="newProdImg" placeholder="o escribe canva.png / URL">
-                </div>
-                <div class="admin-form-group">
-                    <label>Descripción corta:</label>
-                    <textarea id="newProdDesc" rows="2" placeholder="Detalles de la licencia..."></textarea>
-                </div>
-                
-                <div style="display:flex; gap:6px; margin-top: 8px;">
-                    <button class="btn-cart" onclick="saveProduct()" style="flex:2; justify-content:center; padding:8px;" id="saveProdBtn">Guardar y Publicar Producto</button>
-                    <button class="btn-clear-cart" onclick="resetAdminForm()" style="flex:1; display:none; padding:8px;" id="cancelEditBtn">Cancelar</button>
+                    <div class="admin-form-group" style="margin-bottom: 8px;">
+                        <label>Fiesta / Temporada Especial:</label>
+                        <select id="settingHolidayTheme" onchange="saveGlobalSettings()">
+                            <option value="normal">Ninguna (Estándar)</option>
+                            <option value="navidad">🎄 Navidad y Año Nuevo</option>
+                            <option value="patrias">🇵🇪 Fiestas Patrias Perú</option>
+                            <option value="halloween">🎃 Halloween / Black Friday</option>
+                            <option value="inocentes">🤡 Día de los Inocentes</option>
+                        </select>
+                    </div>
+
+                    <div class="tier-vertical-list" style="margin-top: 6px;">
+                        <div class="tier-vertical-item">
+                            <span>Nivel 1</span>
+                            <div class="tier-vertical-inputs">
+                                <div class="tier-sub-group">
+                                    <span>Cant. Mín</span>
+                                    <input type="number" id="gTier1Qty" value="3">
+                                </div>
+                                <div class="tier-sub-group">
+                                    <span>% Dcto</span>
+                                    <input type="number" id="gTier1Pct" value="10">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tier-vertical-item">
+                            <span>Nivel 2</span>
+                            <div class="tier-vertical-inputs">
+                                <div class="tier-sub-group">
+                                    <span>Cant. Mín</span>
+                                    <input type="number" id="gTier2Qty" value="5">
+                                </div>
+                                <div class="tier-sub-group">
+                                    <span>% Dcto</span>
+                                    <input type="number" id="gTier2Pct" value="13">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tier-vertical-item">
+                            <span>Nivel 3</span>
+                            <div class="tier-vertical-inputs">
+                                <div class="tier-sub-group">
+                                    <span>Cant. Mín</span>
+                                    <input type="number" id="gTier3Qty" value="8">
+                                </div>
+                                <div class="tier-sub-group">
+                                    <span>% Dcto</span>
+                                    <input type="number" id="gTier3Pct" value="20">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="admin-btn-action" onclick="applyGlobalDiscountsToAll()" style="width:100%; height:30px; font-size:0.75rem;">Aplicar Globalmente a Todo el Catálogo</button>
                 </div>
             </div>
 
-            <h4 style="color:#38bdf8; font-size:0.88rem; margin-bottom:8px; text-align:left;">📋 Lista de Productos Actuales</h4>
-            <div class="cart-items-list" id="adminProductListContainer" style="max-height: 180px;">
-                <!-- Listado dinámico -->
+            <!-- SUBPANEL 2: CONFIGURACIÓN DEL CRONÓMETRO DE OFERTAS (OPCIÓN SEPARADA) -->
+            <div class="admin-tab-pane" id="tabCronometro">
+                <div style="background: rgba(0, 180, 216, 0.08); border: 1px solid rgba(0, 180, 216, 0.3); padding: 14px; border-radius: 12px; text-align: left;">
+                    <h4 style="color: #38bdf8; font-size: 0.92rem; margin-bottom: 4px;">⏱️ Configuración del Cronómetro de Ofertas</h4>
+                    <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 12px;">Elige el modo de funcionamiento del cronómetro flotante en la página principal.</p>
+                    
+                    <!-- Opción 1: Activar/Desactivar por Switch/Botón -->
+                    <div class="switch-container">
+                        <div>
+                            <strong style="font-size: 0.8rem; color: #fff; display:block;">Activar / Desactivar Cronómetro</strong>
+                            <span style="font-size: 0.68rem; color: #94a3b8;">Muestra u oculta la ventanita flotante</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="settingTimerSwitch" onchange="saveTimerSettings()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label>Modo de Funcionamiento:</label>
+                        <select id="settingTimerMode" onchange="toggleTimerModeInputs()">
+                            <option value="duration">Duración en Horas</option>
+                            <option value="range">Rango Horario del Día</option>
+                            <option value="calendar">Fecha y Hora Específica (Calendario)</option>
+                        </select>
+                    </div>
+
+                    <!-- Sub-opción A: Duración -->
+                    <div class="admin-form-group" id="modeDurationGroup">
+                        <label>Cantidad de Horas de Oferta:</label>
+                        <input type="number" id="settingTimerHours" value="12" min="1" max="168" onchange="saveTimerSettings()">
+                    </div>
+
+                    <!-- Sub-opción B: Rango Horario -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; display: none;" id="modeRangeGroup">
+                        <div class="admin-form-group">
+                            <label>Hora Inicio:</label>
+                            <input type="time" id="settingTimeStart" value="08:00" onchange="saveTimerSettings()">
+                        </div>
+                        <div class="admin-form-group">
+                            <label>Hora Fin:</label>
+                            <input type="time" id="settingTimeEnd" value="22:00" onchange="saveTimerSettings()">
+                        </div>
+                    </div>
+
+                    <!-- Sub-opción C: Calendario -->
+                    <div class="admin-form-group" style="display: none;" id="modeCalendarGroup">
+                        <label>Fecha y Hora Límite (Calendario):</label>
+                        <input type="datetime-local" id="settingCalendarDateTime" onchange="saveTimerSettings()">
+                    </div>
+                </div>
             </div>
+
+            <!-- SUBPANEL 3: GESTIÓN DE USUARIOS Y DESCUENTO DE COLABORADOR -->
+            <div class="admin-tab-pane" id="tabUsuarios">
+                <div style="background: rgba(230,57,70,0.06); padding: 12px; border-radius: 12px; margin-bottom: 15px; border: 1px dashed rgba(230,57,70,0.4); text-align:left;">
+                    <h4 style="color:#ff6b6b; font-size:0.88rem; margin-bottom:6px;">👥 Gestionar Usuarios, Claves y Beneficios</h4>
+                    
+                    <div style="background: rgba(0,0,0,0.25); padding: 8px; border-radius: 8px; margin-bottom: 10px;">
+                        <label style="font-size: 0.72rem; color: #38bdf8; font-weight: bold; display: block; margin-bottom: 3px;">Porcentaje de Descuento Fijo para Colaboradores (%):</label>
+                        <div style="display:flex; gap:6px;">
+                            <input type="number" id="globalCollabDiscountInput" style="flex:1; padding:5px; background:#070a12; border:1px solid #00b4d8; border-radius:6px; color:#fff; font-size:0.8rem;" value="10">
+                            <button class="admin-btn-action" onclick="saveCollabDiscountSetting()" style="font-size:0.7rem;">Actualizar Colaborador</button>
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:6px; align-items:end;">
+                        <div class="admin-form-group" style="margin-bottom:0;">
+                            <label>Nuevo Usuario:</label>
+                            <input type="text" id="newLoginUser" placeholder="Usuario">
+                        </div>
+                        <div class="admin-form-group" style="margin-bottom:0;">
+                            <label>Contraseña:</label>
+                            <input type="text" id="newLoginPass" placeholder="Clave">
+                        </div>
+                        <div class="admin-form-group" style="margin-bottom:0;">
+                            <label>Rol / Poder:</label>
+                            <select id="newLoginRole">
+                                <option value="colaborador">Colaborador</option>
+                                <option value="admin2">Administrador 2</option>
+                                <option value="admin">Administrador 1</option>
+                            </select>
+                        </div>
+                        <button class="admin-btn-action" onclick="addNewUser()" style="height:31px;">Crear</button>
+                    </div>
+                    <div id="usersListContainer" style="margin-top: 10px; max-height: 160px; overflow-y:auto;"></div>
+                </div>
+            </div>
+
+            <!-- SUBPANEL 4: GESTIÓN DE PRODUCTOS -->
+            <div class="admin-tab-pane" id="tabProductos">
+                <div style="background: rgba(0,180,216,0.06); padding: 12px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(0,180,216,0.3); text-align:left;" id="productFormContainer">
+                    <h4 style="color:#38bdf8; font-size:0.88rem; margin-bottom:8px;" id="formActionTitle">➕ Agregar Nuevo Producto</h4>
+                    
+                    <input type="hidden" id="editProductId" value="">
+
+                    <div class="admin-form-group">
+                        <label>Nombre del Producto:</label>
+                        <input type="text" id="newProdName" placeholder="Ej. Photoshop Pro (1 año)">
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+                        <div class="admin-form-group">
+                            <label>Precio Base (S/.):</label>
+                            <input type="number" id="newProdPrice" placeholder="50.00">
+                        </div>
+                        <div class="admin-form-group">
+                            <label>Categoría:</label>
+                            <select id="newProdCat">
+                                <option value="win">Windows</option>
+                                <option value="diseno">Diseño</option>
+                                <option value="ia">IA</option>
+                                <option value="iptv">IPTV</option>
+                                <option value="musica">Música</option>
+                                <option value="edu">Educación</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+                        <div class="admin-form-group">
+                            <label>Stock Disponible:</label>
+                            <select id="newProdStock">
+                                <option value="true">Sí (Disponible)</option>
+                                <option value="false">No (Agotado)</option>
+                            </select>
+                        </div>
+                        <div class="admin-form-group">
+                            <label>¿Aplicar Descuento por Volumen?</label>
+                            <select id="newProdAllowDiscount">
+                                <option value="true">Sí (Permite descuento)</option>
+                                <option value="false">No (Precio fijo)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 6px; margin-bottom: 8px;">
+                        <label style="font-size:0.75rem; color:#38bdf8; font-weight:600; margin-bottom:3px; display:block;">Opciones de Descuentos por Volumen (Hasta 3 Niveles):</label>
+                        
+                        <div class="tier-box">
+                            <label class="tier-box-label">Nivel 1</label>
+                            <div class="tier-box-inputs">
+                                <div class="tier-box-col">
+                                    <span>Cant. Mínima</span>
+                                    <input type="number" id="tier1Qty" value="3">
+                                </div>
+                                <div class="tier-box-col">
+                                    <span>Porcentaje %</span>
+                                    <input type="number" id="tier1Pct" value="10">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tier-box">
+                            <label class="tier-box-label">Nivel 2 (Opcional)</label>
+                            <div class="tier-box-inputs">
+                                <div class="tier-box-col">
+                                    <span>Cant. Mínima</span>
+                                    <input type="number" id="tier2Qty" value="5">
+                                </div>
+                                <div class="tier-box-col">
+                                    <span>Porcentaje %</span>
+                                    <input type="number" id="tier2Pct" value="13">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tier-box">
+                            <label class="tier-box-label">Nivel 3 (Opcional)</label>
+                            <div class="tier-box-inputs">
+                                <div class="tier-box-col">
+                                    <span>Cant. Mínima</span>
+                                    <input type="number" id="tier3Qty" value="8">
+                                </div>
+                                <div class="tier-box-col">
+                                    <span>Porcentaje %</span>
+                                    <input type="number" id="tier3Pct" value="20">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label>Etiqueta / Destacado:</label>
+                        <input type="text" id="newProdBadge" placeholder="Ej. ⭐ Destacado o Popular (opcional)">
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Adjuntar Imagen (Archivo local o URL):</label>
+                        <input type="file" id="newProdFile" accept="image/*" style="margin-bottom: 4px;" onchange="previewImage(event)">
+                        <input type="text" id="newProdImg" placeholder="o escribe canva.png / URL">
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Descripción corta:</label>
+                        <textarea id="newProdDesc" rows="2" placeholder="Detalles de la licencia..."></textarea>
+                    </div>
+                    
+                    <div style="display:flex; gap:6px; margin-top: 8px;">
+                        <button class="btn-cart" onclick="saveProduct()" style="flex:2; justify-content:center; padding:8px;" id="saveProdBtn">Guardar y Publicar Producto</button>
+                        <button class="btn-clear-cart" onclick="resetAdminForm()" style="flex:1; display:none; padding:8px;" id="cancelEditBtn">Cancelar</button>
+                    </div>
+                </div>
+
+                <h4 style="color:#38bdf8; font-size:0.88rem; margin-bottom:8px; text-align:left;">📋 Lista de Productos Actuales</h4>
+                <div class="cart-items-list" id="adminProductListContainer" style="max-height: 180px;">
+                    <!-- Listado dinámico -->
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -1520,7 +1760,9 @@
                 
                 <div class="active-user-badge" id="activeUserBadge">
                     <span class="active-username-text" onclick="openAdminPanel()" title="Hacer clic para abrir Panel de Control">👤 <span id="activeUserNameText">Usuario</span></span>
-                    <button class="logout-trash-btn" onclick="logoutAdminSession()" title="Cerrar Sesión">🗑️</button>
+                    
+                    <!-- Botón de cierre de sesión con icono de puerta de salida 🚪 -->
+                    <button class="logout-exit-btn" onclick="promptLogout()" title="Cerrar Sesión">🚪</button>
                 </div>
             </div>
             
@@ -1642,6 +1884,13 @@
         let discountsActive = true;
         let toastsActive = true;
         let holidayTheme = 'normal';
+        
+        let timerActive = true;
+        let timerMode = 'duration'; 
+        let timerHours = 12;
+        let timeStart = '08:00';
+        let timeEnd = '22:00';
+        let calendarDateTime = '';
 
         let products = [
             { id: 'win-pro', name: 'Windows 10/11 Pro (Siempre)', price: 50.00, category: 'win', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'windows11.png', desc: 'Licencia digital permanente (OEM). Reactivación de por vida.' },
@@ -1696,6 +1945,24 @@
         if(localStorage.getItem('lubeltec_holiday_theme')) {
             holidayTheme = localStorage.getItem('lubeltec_holiday_theme');
         }
+        if(localStorage.getItem('lubeltec_timer_active') !== null) {
+            timerActive = localStorage.getItem('lubeltec_timer_active') === 'true';
+        }
+        if(localStorage.getItem('lubeltec_timer_mode')) {
+            timerMode = localStorage.getItem('lubeltec_timer_mode');
+        }
+        if(localStorage.getItem('lubeltec_timer_hours')) {
+            timerHours = parseInt(localStorage.getItem('lubeltec_timer_hours')) || 12;
+        }
+        if(localStorage.getItem('lubeltec_time_start')) {
+            timeStart = localStorage.getItem('lubeltec_time_start');
+        }
+        if(localStorage.getItem('lubeltec_time_end')) {
+            timeEnd = localStorage.getItem('lubeltec_time_end');
+        }
+        if(localStorage.getItem('lubeltec_calendar_datetime')) {
+            calendarDateTime = localStorage.getItem('lubeltec_calendar_datetime');
+        }
 
         let currentFilter = 'principal';
         let cart = [];
@@ -1717,6 +1984,12 @@
             localStorage.setItem('lubeltec_discounts_active', discountsActive);
             localStorage.setItem('lubeltec_toasts_active', toastsActive);
             localStorage.setItem('lubeltec_holiday_theme', holidayTheme);
+            localStorage.setItem('lubeltec_timer_active', timerActive);
+            localStorage.setItem('lubeltec_timer_mode', timerMode);
+            localStorage.setItem('lubeltec_timer_hours', timerHours);
+            localStorage.setItem('lubeltec_time_start', timeStart);
+            localStorage.setItem('lubeltec_time_end', timeEnd);
+            localStorage.setItem('lubeltec_calendar_datetime', calendarDateTime);
         }
 
         function toggleMenu() {
@@ -1863,13 +2136,49 @@
             }
         }
 
-        function logoutAdminSession() {
-            currentUser = null;
-            updateActiveUserHeaderUI();
-            closeModalWithExplosion('adminPanelModal');
-            alert('Has cerrado sesión correctamente.');
-            renderCatalog();
-            updateProducts();
+        function promptLogout() {
+            document.getElementById('logoutConfirmModal').style.display = 'flex';
+        }
+
+        function confirmLogout(proceed) {
+            closeModalWithExplosion('logoutConfirmModal');
+            if (proceed) {
+                currentUser = null;
+                updateActiveUserHeaderUI();
+                closeModalWithExplosion('adminPanelModal');
+                alert('Has cerrado sesión correctamente.');
+                renderCatalog();
+                updateProducts();
+            }
+        }
+
+        function toggleAdminMenu() {
+            const menu = document.getElementById('adminDropdownMenu');
+            const btn = document.getElementById('adminHamburgerBtn');
+            menu.classList.toggle('open');
+            btn.classList.toggle('active');
+        }
+
+        function switchAdminTab(tabId, btnElement) {
+            const panes = document.querySelectorAll('.admin-tab-pane');
+            panes.forEach(pane => pane.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.admin-tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            btnElement.classList.add('active');
+
+            document.getElementById('adminDropdownMenu').classList.remove('open');
+            document.getElementById('adminHamburgerBtn').classList.remove('active');
+        }
+
+        function toggleTimerModeInputs() {
+            const mode = document.getElementById('settingTimerMode').value;
+            document.getElementById('modeDurationGroup').style.display = mode === 'duration' ? 'block' : 'none';
+            document.getElementById('modeRangeGroup').style.display = mode === 'range' ? 'grid' : 'none';
+            document.getElementById('modeCalendarGroup').style.display = mode === 'calendar' ? 'block' : 'none';
+            saveTimerSettings();
         }
 
         function openAdminPanel() {
@@ -1877,40 +2186,45 @@
             renderAdminProductList();
             
             const sessionInfo = document.getElementById('adminSessionInfo');
-            const userSec = document.getElementById('userManagementSection');
-            const globalDctoSec = document.getElementById('globalDiscountConfigSection');
-            const prodForm = document.getElementById('productFormContainer');
+            const tabDescuentosBtn = document.getElementById('tabBtnDescuentos');
+            const tabCronometroBtn = document.getElementById('tabBtnCronometro');
+            const tabUsuariosBtn = document.getElementById('tabBtnUsuarios');
+            const tabProductosBtn = document.getElementById('tabBtnProductos');
 
             let roleName = currentUser.role === 'admin' ? 'Administrador 1 (Principal)' : (currentUser.role === 'admin2' ? 'Administrador 2' : 'Colaborador');
             sessionInfo.innerText = `Sesión iniciada como: ${currentUser.user} [ Rol: ${roleName} ]`;
 
             if (currentUser.role === 'admin') {
-                userSec.style.display = 'block';
-                globalDctoSec.style.display = 'block';
-                prodForm.style.display = 'block';
-                document.getElementById('globalCollabDiscountInput').value = collabDiscountPct;
+                tabDescuentosBtn.style.display = 'block';
+                tabCronometroBtn.style.display = 'block';
+                tabUsuariosBtn.style.display = 'block';
+                tabProductosBtn.style.display = 'block';
                 
+                document.getElementById('globalCollabDiscountInput').value = collabDiscountPct;
                 document.getElementById('settingDiscountsActive').value = discountsActive.toString();
                 document.getElementById('settingToastsActive').value = toastsActive.toString();
                 document.getElementById('settingHolidayTheme').value = holidayTheme;
+
+                document.getElementById('settingTimerSwitch').checked = timerActive;
+                document.getElementById('settingTimerMode').value = timerMode;
+                document.getElementById('settingTimerHours').value = timerHours;
+                document.getElementById('settingTimeStart').value = timeStart;
+                document.getElementById('settingTimeEnd').value = timeEnd;
+                document.getElementById('settingCalendarDateTime').value = calendarDateTime;
+                toggleTimerModeInputs();
 
                 if(globalTiers[0]) { document.getElementById('gTier1Qty').value = globalTiers[0].qty; document.getElementById('gTier1Pct').value = globalTiers[0].pct; }
                 if(globalTiers[1]) { document.getElementById('gTier2Qty').value = globalTiers[1].qty; document.getElementById('gTier2Pct').value = globalTiers[1].pct; }
                 if(globalTiers[2]) { document.getElementById('gTier3Qty').value = globalTiers[2].qty; document.getElementById('gTier3Pct').value = globalTiers[2].pct; }
 
                 renderUsersList();
-            } else if (currentUser.role === 'admin2') {
-                userSec.style.display = 'none';
-                globalDctoSec.style.display = 'none';
-                prodForm.style.display = 'block'; 
-            } else if (currentUser.role === 'colaborador') {
-                userSec.style.display = 'none';
-                globalDctoSec.style.display = 'none';
-                if (currentUser.canAddDelete) {
-                    prodForm.style.display = 'block';
-                } else {
-                    prodForm.style.display = 'none'; 
-                }
+                switchAdminTab('tabDescuentos', tabDescuentosBtn);
+            } else {
+                tabDescuentosBtn.style.display = 'none';
+                tabCronometroBtn.style.display = 'none';
+                tabUsuariosBtn.style.display = 'none';
+                tabProductosBtn.style.display = 'block';
+                switchAdminTab('tabProductos', tabProductosBtn);
             }
 
             document.getElementById('adminPanelModal').style.display = 'flex';
@@ -1933,6 +2247,71 @@
             renderCatalog();
             updateProducts();
         }
+
+        function saveTimerSettings() {
+            if (!currentUser || currentUser.role !== 'admin') return;
+            timerActive = document.getElementById('settingTimerSwitch').checked;
+            timerMode = document.getElementById('settingTimerMode').value;
+            timerHours = parseInt(document.getElementById('settingTimerHours').value) || 12;
+            timeStart = document.getElementById('settingTimeStart').value;
+            timeEnd = document.getElementById('settingTimeEnd').value;
+            calendarDateTime = document.getElementById('settingCalendarDateTime').value;
+
+            saveSettingsStorage();
+            updatePromoTimerDisplay();
+        }
+
+        function updatePromoTimerDisplay() {
+            const timerFloat = document.getElementById('promoTimerFloat');
+            const digits = document.getElementById('timerDigitsDisplay');
+
+            if (!timerActive) {
+                timerFloat.classList.remove('show');
+                return;
+            }
+
+            timerFloat.classList.add('show');
+            const now = new Date();
+            let distance = 0;
+
+            if (timerMode === 'duration') {
+                if (!window.durationEndTime) {
+                    window.durationEndTime = Date.now() + (timerHours * 3600 * 1000);
+                }
+                distance = window.durationEndTime - Date.now();
+                if (distance < 0) {
+                    window.durationEndTime = Date.now() + (timerHours * 3600 * 1000);
+                    distance = window.durationEndTime - Date.now();
+                }
+            } else if (timerMode === 'range') {
+                const [endH, endM] = timeEnd.split(':').map(Number);
+                let endDate = new Date();
+                endDate.setHours(endH, endM, 0, 0);
+
+                distance = endDate.getTime() - now.getTime();
+                if (distance < 0) {
+                    endDate.setDate(endDate.getDate() + 1);
+                    distance = endDate.getTime() - now.getTime();
+                }
+            } else if (timerMode === 'calendar') {
+                if (calendarDateTime) {
+                    const targetDate = new Date(calendarDateTime);
+                    distance = targetDate.getTime() - now.getTime();
+                } else {
+                    distance = 86400000; 
+                }
+            }
+
+            if (distance < 0) distance = 0;
+
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            digits.innerText = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+        setInterval(updatePromoTimerDisplay, 1000);
+        updatePromoTimerDisplay();
 
         function saveCollabDiscountSetting() {
             if (!currentUser || currentUser.role !== 'admin') return;
@@ -2254,7 +2633,6 @@
                     collabNotice = `<div style="font-size:0.65rem; color:#f59e0b; font-weight:bold;">✨ Precio Colaborador (-${collabDiscountPct}%)</div>`;
                 }
                 
-                // NOTA: Se evita el uso de ID único estático por duplicidad en carrusel y grid. Se maneja por clases y atributos data-.
                 const cardHtml = `
                     <article class="card ${isFeatured ? 'destacada' : 'general-card'}" data-category="${p.category}" data-base-price="${effectivePrice}" data-name="${p.name}" data-stock="${p.stock}" data-id="${p.id}">
                         <div class="card-img-container"><img src="${p.img}" alt="${p.name}"></div>
