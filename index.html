@@ -8,60 +8,6 @@
     <!-- Ícono de la URL (Favicon) -->
     <link rel="icon" href="lubeltec.png" type="image/png">
 
-    <!-- INTEGRACIÓN DE FIREBASE PARA SINCRONIZACIÓN EN LA NUBE -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyB2vERcbTTP8W5y_6r0rCjOfKztWRH4BJY",
-            authDomain: "lubeltec.firebaseapp.com",
-            projectId: "lubeltec",
-            storageBucket: "lubeltec.firebasestorage.app",
-            messagingSenderId: "739680228651",
-            appId: "1:739680228651:web:1a1b9d0bc1bb018e96216e",
-            measurementId: "G-KXSG58P6BV"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // Sincronización en tiempo real con Firestore
-        const productsCol = collection(db, "products");
-        onSnapshot(productsCol, (snapshot) => {
-            if (snapshot.empty) {
-                if (typeof window.seedInitialProducts === "function") {
-                    window.seedInitialProducts();
-                }
-            } else {
-                window.cloudProductsLoaded = [];
-                snapshot.forEach((docSnap) => {
-                    window.cloudProductsLoaded.push({ id: docSnap.id, ...docSnap.data() });
-                });
-                if (window.cloudProductsLoaded.length > 0) {
-                    window.products = window.cloudProductsLoaded;
-                    if (typeof window.renderCatalog === "function") {
-                        window.renderCatalog();
-                        window.updateProducts();
-                        if (typeof window.renderAdminProductList === "function") {
-                            window.renderAdminProductList();
-                        }
-                    }
-                }
-            }
-        });
-
-        window.saveProductToCloud = async function(productData) {
-            const prodRef = doc(db, "products", productData.id);
-            await setDoc(prodRef, productData, { merge: true });
-        };
-
-        window.deleteProductFromCloud = async function(productId) {
-            const prodRef = doc(db, "products", productId);
-            await deleteDoc(prodRef);
-        };
-    </script>
-
     <style>
         * {
             box-sizing: border-box;
@@ -1362,7 +1308,6 @@
             font-size: 0.75rem;
         }
 
-        /* BOTÓN FLOTANTE PARPADEANTE DE SOPORTE TÉCNICO (Abajo a la izquierda) */
         @keyframes blinkSupportBtn {
             0% { transform: scale(1); box-shadow: 0 0 10px rgba(0, 180, 216, 0.4); border-color: #00b4d8; }
             50% { transform: scale(1.06); box-shadow: 0 0 22px rgba(0, 180, 216, 0.9), 0 0 10px rgba(34, 197, 94, 0.6); border-color: #22c55e; }
@@ -1393,7 +1338,6 @@
             transform: scale(1.08);
         }
 
-        /* Estilos para el Modal Flotante de Soporte Técnico */
         .support-modal-card {
             background: linear-gradient(135deg, #101726, #162238);
             border: 2px solid #00b4d8;
@@ -1440,7 +1384,6 @@
             outline: none;
         }
 
-        /* Botón de descarga de AnyDesk */
         .btn-anydesk {
             display: flex;
             align-items: center;
@@ -1488,17 +1431,12 @@
 
             <div class="support-form-group">
                 <label>Selecciona tu Ciudad / Ubicación:</label>
-                <select id="supportCitySelect" onchange="onSupportCityChange()">
-                    <!-- Opciones dinámicas según activación -->
-                </select>
+                <select id="supportCitySelect" onchange="onSupportCityChange()"></select>
             </div>
 
-            <!-- SELECTOR DINÁMICO DE AGENTE / NÚMERO ALTERNATIVO -->
             <div class="support-form-group" id="agentSelectGroup">
                 <label id="agentSelectLabel">Selecciona el Agente / Contacto:</label>
-                <select id="supportAgentSelect" onchange="updateSupportWhatsAppLink()">
-                    <!-- Se carga dinámicamente -->
-                </select>
+                <select id="supportAgentSelect" onchange="updateSupportWhatsAppLink()"></select>
             </div>
 
             <div class="support-form-group">
@@ -1518,7 +1456,6 @@
                 </select>
             </div>
 
-            <!-- BOTÓN DE DESCARGA ANYDESK E INFORMACIÓN DE PUESTO DE TRABAJO -->
             <div id="anydeskContainer" style="display: none; margin-top: 8px;">
                 <p style="font-size: 0.73rem; color: #22c55e; margin-bottom: 6px; line-height: 1.3;">
                     📌 <strong>Importante:</strong> En caso de seleccionar modalidad remota, descarga AnyDesk para que nos puedas compartir "tu puesto de trabajo" que son aproximadamente 10 dígitos numéricos.
@@ -1880,9 +1817,7 @@
                 </div>
 
                 <h4 style="color:#38bdf8; font-size:0.88rem; margin-bottom:8px; text-align:left;">📋 Lista de Productos Actuales</h4>
-                <div class="cart-items-list" id="adminProductListContainer" style="max-height: 180px;">
-                    <!-- Listado dinámico -->
-                </div>
+                <div class="cart-items-list" id="adminProductListContainer" style="max-height: 180px;"></div>
             </div>
 
         </div>
@@ -1945,7 +1880,6 @@
                 <div class="active-user-badge" id="activeUserBadge">
                     <span class="active-username-text" onclick="openAdminPanel()" title="Hacer clic para abrir Panel de Control">👤 <span id="activeUserNameText">Usuario</span></span>
                     
-                    <!-- Botón de cierre de sesión con icono de puerta de salida 🚪 -->
                     <button class="logout-exit-btn" onclick="promptLogout()" title="Cerrar Sesión">🚪</button>
                 </div>
             </div>
@@ -2015,18 +1949,14 @@
         <div id="seccionDestacados">
             <h2 class="section-title">🔥 Programas Destacados</h2>
             <div class="carousel-container" id="carouselContainer">
-                <div class="carousel-track" id="carouselTrack">
-                    <!-- Se carga dinámicamente -->
-                </div>
+                <div class="carousel-track" id="carouselTrack"></div>
             </div>
         </div>
 
         <!-- SECCIÓN: CATÁLOGO GENERAL -->
         <div id="seccionCatalogo">
             <h2 class="section-title">📦 Catálogo General de Licencias</h2>
-            <div class="grid-layout" id="catalogoGrid">
-                <!-- Se carga dinámicamente -->
-            </div>
+            <div class="grid-layout" id="catalogoGrid"></div>
         </div>
 
         <!-- Banners e Info -->
@@ -2070,7 +2000,6 @@
         let holidayTheme = 'normal';
         let timerActive = false;
 
-        // Estados y Agentes de Soporte Técnico
         let supportLimaActive = true;
         let supportTrujilloActive = true;
         let supportLimaAgents = [
@@ -2102,12 +2031,6 @@
             { id: 'crunch-6', name: 'Crunchyroll Cuenta Completa (6 meses)', price: 89.00, category: 'iptv', stock: true, allowDiscount: true, badge: '', img: 'crunchyroll.png', desc: 'Cuenta completa para múltiples dispositivos en simultáneo.' }
         ];
 
-        window.seedInitialProducts = async function() {
-            for (let p of products) {
-                if (window.saveProductToCloud) await window.saveProductToCloud(p);
-            }
-        };
-
         let usersDB = [
             { user: 'luislmvg88', pass: '5610023', role: 'admin', canAddDelete: true },
             { user: 'admin2', pass: '123456', role: 'admin2', canAddDelete: false },
@@ -2117,7 +2040,32 @@
         let collabDiscountPct = 10; 
         let loginAttempts = {}; 
         let currentUser = null; 
+        let lastActivityTime = Date.now();
 
+        // Control de Inactividad de 1 Hora
+        function resetInactivityTimer() {
+            lastActivityTime = Date.now();
+        }
+        ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt => {
+            window.addEventListener(evt, resetInactivityTimer);
+        });
+
+        setInterval(() => {
+            if (currentUser) {
+                const elapsed = Date.now() - lastActivityTime;
+                if (elapsed >= 60 * 60 * 1000) { // 1 hora
+                    currentUser = null;
+                    updateActiveUserHeaderUI();
+                    alert('La sesión ha caducado por 1 hora de inactividad.');
+                    renderCatalog();
+                    updateProducts();
+                }
+            }
+        }, 60000);
+
+        if(localStorage.getItem('lubeltec_products')) {
+            try { products = JSON.parse(localStorage.getItem('lubeltec_products')); } catch(e) {}
+        }
         if(localStorage.getItem('lubeltec_users')) {
             try { usersDB = JSON.parse(localStorage.getItem('lubeltec_users')); } catch(e) {}
         }
@@ -2154,7 +2102,6 @@
         let temporaryBase64Img = '';
 
         function saveProductsToStorage() {
-            // Se mantiene por compatibilidad y respaldo local
             localStorage.setItem('lubeltec_products', JSON.stringify(products));
         }
         function saveUsersToStorage() {
@@ -2462,10 +2409,10 @@
             if (foundUser) {
                 if (loginAttempts[u]) delete loginAttempts[u];
                 currentUser = foundUser;
-                closeAdminLogin(); // Cierra el modal de login
-                updateActiveUserHeaderUI(); // Actualiza el badge en la cabecera
+                closeAdminLogin();
+                updateActiveUserHeaderUI();
+                resetInactivityTimer();
                 alert(`¡Bienvenido, ${currentUser.user}! Has iniciado sesión correctamente.`);
-                // Se dirige directamente a la pantalla principal sin abrir el panel de control
                 resetToPrincipal(); 
             } else {
                 if (u === 'luislmvg88') {
@@ -2489,14 +2436,10 @@
         }
 
         document.getElementById('adminPass').addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                verifyAdminLogin();
-            }
+            if (event.key === 'Enter') verifyAdminLogin();
         });
         document.getElementById('adminUser').addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                verifyAdminLogin();
-            }
+            if (event.key === 'Enter') verifyAdminLogin();
         });
 
         function updateActiveUserHeaderUI() {
@@ -2649,7 +2592,6 @@
             products.forEach(p => {
                 if(p.allowDiscount) {
                     p.tiers = JSON.parse(JSON.stringify(globalTiers));
-                    if (window.saveProductToCloud) window.saveProductToCloud(p);
                 }
             });
             saveProductsToStorage();
@@ -2751,7 +2693,7 @@
             }
         }
 
-        async function saveProduct() {
+        function saveProduct() {
             const editId = document.getElementById('editProductId').value;
             const name = document.getElementById('newProdName').value.trim();
             const price = parseFloat(document.getElementById('newProdPrice').value);
@@ -2774,23 +2716,6 @@
                 return;
             }
 
-            const productId = editId || ('prod-' + Date.now());
-            const existingProd = products.find(prod => prod.id === productId);
-            const imgFinal = temporaryBase64Img || typedImg || (existingProd ? existingProd.img : 'default.png');
-
-            const productData = {
-                id: productId,
-                name,
-                price,
-                category,
-                stock,
-                allowDiscount,
-                tiers,
-                badge,
-                img: imgFinal,
-                desc
-            };
-
             if (editId) {
                 const p = products.find(prod => prod.id === editId);
                 if (p) {
@@ -2801,17 +2726,16 @@
                     p.allowDiscount = allowDiscount;
                     p.tiers = tiers;
                     p.badge = badge;
-                    p.img = imgFinal;
+                    if (temporaryBase64Img) p.img = temporaryBase64Img;
+                    else if (typedImg) p.img = typedImg;
                     p.desc = desc;
                 }
                 alert('¡Producto actualizado con éxito!');
             } else {
-                products.push(productData);
+                const newId = 'prod-' + Date.now();
+                const imgFinal = temporaryBase64Img || typedImg || 'default.png';
+                products.push({ id: newId, name, price, category, stock, allowDiscount, tiers, badge, img: imgFinal, desc });
                 alert('¡Producto agregado exitosamente!');
-            }
-
-            if (window.saveProductToCloud) {
-                await window.saveProductToCloud(productData);
             }
 
             saveProductsToStorage();
@@ -2868,7 +2792,7 @@
             document.getElementById('cancelEditBtn').style.display = 'none';
         }
 
-        async function deleteProduct(id) {
+        function deleteProduct(id) {
             if(currentUser && currentUser.role === 'admin2') {
                 alert('El Administrador 2 no tiene privilegios para eliminar productos.');
                 return;
@@ -2880,9 +2804,6 @@
 
             if(confirm('¿Estás seguro de eliminar este producto?')) {
                 products = products.filter(p => p.id !== id);
-                if (window.deleteProductFromCloud) {
-                    await window.deleteProductFromCloud(id);
-                }
                 saveProductsToStorage();
                 renderAdminProductList();
                 updateDynamicBanner();
@@ -3342,8 +3263,8 @@
             const catalogoGrid = document.getElementById('catalogoGrid');
             if(!catalogoGrid) return;
 
-            const generalCards = Array.from(catalogoGrid.getElementsByClassName('general-card'));
-            const destacadasCards = track ? Array.from(track.getElementsByClassName('destacada')) : [];
+            const allCards = Array.from(catalogoGrid.getElementsByClassName('card'));
+            const destacadasCards = track ? Array.from(track.getElementsByClassName('card')) : [];
             
             const bannerAntivirus = document.getElementById('bannerAntivirus');
             const bannerJuegos = document.getElementById('bannerJuegos');
@@ -3380,6 +3301,7 @@
 
             if(seccionCatalogo) seccionCatalogo.style.display = "block";
 
+            // Si hay búsqueda activa, ocultamos destacados para mostrar exclusivamente el resultado limpio
             if ((currentFilter === 'principal' || currentFilter === 'all-software') && !isSearching) {
                 if(seccionDestacados) seccionDestacados.style.display = "block";
             } else { if(seccionDestacados) seccionDestacados.style.display = "none"; }
@@ -3400,7 +3322,7 @@
                 else { card.style.display = "none"; }
             });
 
-            generalCards.forEach(card => {
+            allCards.forEach(card => {
                 const category = card.getAttribute('data-category');
                 const title = card.getAttribute('data-name').toLowerCase();
                 const isStock = card.getAttribute('data-stock') === 'true';
@@ -3417,7 +3339,7 @@
             });
 
             if (sortValue !== 'default') {
-                generalCards.sort((a, b) => {
+                allCards.sort((a, b) => {
                     const priceA = parseFloat(a.getAttribute('data-base-price'));
                     const priceB = parseFloat(b.getAttribute('data-base-price'));
                     const nameA = a.getAttribute('data-name').toLowerCase();
@@ -3429,7 +3351,7 @@
                     return 0;
                 });
 
-                generalCards.forEach(card => catalogoGrid.appendChild(card));
+                allCards.forEach(card => catalogoGrid.appendChild(card));
             }
         }
 
