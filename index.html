@@ -890,7 +890,7 @@
 
         <!-- Alerta Parpadeante de Descuentos -->
         <div class="payment-methods-badge">
-            ¡Descuentos automáticos: <span>10% (3+ unids)</span> | <span>15% (5+ unids)</span>!
+            ¡Descuentos automáticos: <span>10% (3 a 6 unids)</span> | <span>15% (más de 6 unids)</span>!
         </div>
 
         <!-- Menú Desplegable -->
@@ -1940,8 +1940,8 @@
             let unitPrice = basePrice;
             const originalTotal = basePrice * qty;
 
-            if (qty >= 5) {
-                unitPrice = basePrice * 0.85;
+            if (qty > 6) {
+                unitPrice = basePrice * 0.85; // 15% descuento
                 discNotice.innerText = '¡15% dcto aplicado!';
                 discNotice.style.display = 'block';
                 if(origPriceDisplay) {
@@ -1949,7 +1949,7 @@
                     origPriceDisplay.style.display = 'inline';
                 }
             } else if (qty >= 3) {
-                unitPrice = basePrice * 0.90;
+                unitPrice = basePrice * 0.90; // 10% descuento
                 discNotice.innerText = '¡10% dcto aplicado!';
                 discNotice.style.display = 'block';
                 if(origPriceDisplay) {
@@ -1972,7 +1972,7 @@
             let unitPrice = basePrice;
             let discountPercent = 0;
 
-            if (qty >= 5) {
+            if (qty > 6) {
                 unitPrice = basePrice * 0.85;
                 discountPercent = 15;
             } else if (qty >= 3) {
@@ -1987,7 +1987,7 @@
                 existing.qty += qty;
                 let uP = basePrice;
                 let dP = 0;
-                if (existing.qty >= 5) {
+                if (existing.qty > 6) {
                     uP = basePrice * 0.85;
                     dP = 15;
                 } else if (existing.qty >= 3) {
@@ -2013,7 +2013,7 @@
                 let bp = cart[index].basePrice;
                 let uP = bp;
                 let dP = 0;
-                if (cart[index].qty >= 5) {
+                if (cart[index].qty > 6) {
                     uP = bp * 0.85;
                     dP = 15;
                 } else if (cart[index].qty >= 3) {
@@ -2112,7 +2112,7 @@
         function openDirectPayment(productName, basePrice, qtyInputId) {
             const qty = parseInt(document.getElementById(qtyInputId).value);
             let unitPrice = basePrice;
-            if (qty >= 5) unitPrice = basePrice * 0.85;
+            if (qty > 6) unitPrice = basePrice * 0.85;
             else if (qty >= 3) unitPrice = basePrice * 0.90;
             const totalPrice = unitPrice * qty;
 
@@ -2289,7 +2289,6 @@
                 }
             });
 
-            // Lógica de ordenamiento actualizada
             if (sortValue !== 'default') {
                 generalCards.sort((a, b) => {
                     const priceA = parseFloat(a.getAttribute('data-base-price'));
@@ -2297,9 +2296,9 @@
                     const nameA = a.getAttribute('data-name').toLowerCase();
                     const nameB = b.getAttribute('data-name').toLowerCase();
 
-                    if (sortValue === 'price-desc') return priceB - priceA; // Mayor a menor
-                    if (sortValue === 'price-asc') return priceA - priceB;   // Menor a mayor
-                    if (sortValue === 'alpha-asc') return nameA.localeCompare(nameB); // A - Z
+                    if (sortValue === 'price-desc') return priceB - priceA;
+                    if (sortValue === 'price-asc') return priceA - priceB;
+                    if (sortValue === 'alpha-asc') return nameA.localeCompare(nameB);
                     return 0;
                 });
 
