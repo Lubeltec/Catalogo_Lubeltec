@@ -34,7 +34,9 @@
                     cloudProds.push({ id: docSnap.id, ...docSnap.data() });
                 });
                 if (cloudProds.length > 0) {
-                    products = cloudProds;
+                    if (typeof window.products !== "undefined") {
+                        window.products = cloudProds;
+                    }
                     if (typeof window.renderCatalog === "function") {
                         window.renderCatalog();
                         window.updateProducts();
@@ -54,15 +56,15 @@
         onSnapshot(settingsDocRef, (docSnap) => {
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                if (data.globalTiers) globalTiers = data.globalTiers;
-                if (data.discountsActive !== undefined) discountsActive = data.discountsActive;
-                if (data.toastsActive !== undefined) toastsActive = data.toastsActive;
-                if (data.holidayTheme) holidayTheme = data.holidayTheme;
-                if (data.supportLimaActive !== undefined) supportLimaActive = data.supportLimaActive;
-                if (data.supportTrujilloActive !== undefined) supportTrujilloActive = data.supportTrujilloActive;
-                if (data.supportLimaAgents) supportLimaAgents = data.supportLimaAgents;
-                if (data.supportTrujilloAgents) supportTrujilloAgents = data.supportTrujilloAgents;
-                if (data.collabDiscountPct !== undefined) collabDiscountPct = data.collabDiscountPct;
+                if (data.globalTiers && typeof window.globalTiers !== "undefined") window.globalTiers = data.globalTiers;
+                if (data.discountsActive !== undefined && typeof window.discountsActive !== "undefined") window.discountsActive = data.discountsActive;
+                if (data.toastsActive !== undefined && typeof window.toastsActive !== "undefined") window.toastsActive = data.toastsActive;
+                if (data.holidayTheme && typeof window.holidayTheme !== "undefined") window.holidayTheme = data.holidayTheme;
+                if (data.supportLimaActive !== undefined && typeof window.supportLimaActive !== "undefined") window.supportLimaActive = data.supportLimaActive;
+                if (data.supportTrujilloActive !== undefined && typeof window.supportTrujilloActive !== "undefined") window.supportTrujilloActive = data.supportTrujilloActive;
+                if (data.supportLimaAgents && typeof window.supportLimaAgents !== "undefined") window.supportLimaAgents = data.supportLimaAgents;
+                if (data.supportTrujilloAgents && typeof window.supportTrujilloAgents !== "undefined") window.supportTrujilloAgents = data.supportTrujilloAgents;
+                if (data.collabDiscountPct !== undefined && typeof window.collabDiscountPct !== "undefined") window.collabDiscountPct = data.collabDiscountPct;
 
                 if (typeof window.updateDynamicBanner === "function") {
                     window.updateDynamicBanner();
@@ -1719,15 +1721,2133 @@
     </div>
 
     <!-- MODAL DE SOPORTE TÉCNICO -->
-    <div class="modal-overlay" id="supportEntendido, Luis. He registrado la instrucción de que cualquier modificación realizada en el panel de control —ya sea agregar, quitar o editar productos, así como la modificación de descuentos u otros cambios— deberá ser notificada detalladamente al número de WhatsApp **933 907 930**. 
+    <div class="modal-overlay" id="supportModal">
+        <div class="support-modal-card">
+            <button class="close-modal" onclick="closeModalWithImplosion('supportModal')">✕</button>
+            <h3>🛠️ Soporte Técnico y Mantenimiento de PC y Laptop</h3>
+            <p>Servicios especializados de limpieza física, optimización, formateo y reparación. Elige tu ubicación y modalidad:</p>
+            
+            <ul style="font-size: 0.75rem; color: #cbd5e1; margin-bottom: 12px; padding-left: 15px;">
+                <li id="supportInfoLima"><strong>Lima y Otras Provincias:</strong> Presencial / Domicilio y Remoto.</li>
+                <li id="supportInfoTrujillo"><strong>Trujillo:</strong> Presencial / Domicilio y Remoto.</li>
+            </ul>
 
----
+            <div class="support-form-group">
+                <label>Selecciona tu Ciudad / Ubicación:</label>
+                <select id="supportCitySelect" onchange="onSupportCityChange()"></select>
+            </div>
 
-### **Resumen del Protocolo de Notificaciones**
+            <div class="support-form-group" id="agentSelectGroup">
+                <label id="agentSelectLabel">Selecciona el Agente / Contacto:</label>
+                <select id="supportAgentSelect" onchange="updateSupportWhatsAppLink()"></select>
+            </div>
 
-* **Destino:** WhatsApp **933 907 930**
-* **Gatillo:** Cualquier cambio o gestión en el panel de control.
-* **Detalle requerido:** 
-  * Tipo de modificación (Creación, Edición o Eliminación).
-  * Elemento afectado (Productos, Descuentos, etc.).
-  * Descripción exacta de los cambios realizados en la página.
+            <div class="support-form-group">
+                <label>Modalidad de Servicio:</label>
+                <select id="supportModalitySelect" onchange="updateSupportWhatsAppLink()">
+                    <option value="remoto">💻 Remoto (Conexión a distancia)</option>
+                    <option value="presencial">🏢 Presencial / Domicilio</option>
+                </select>
+            </div>
+
+            <div class="support-form-group">
+                <label>Tipo de Servicio:</label>
+                <select id="supportTypeSelect" onchange="updateSupportWhatsAppLink()">
+                    <option value="mantenimiento">Mantenimiento y Limpieza General</option>
+                    <option value="soporte">Soporte Técnico de Software / Hardware</option>
+                    <option value="ambos">Mantenimiento + Soporte Técnico Completo</option>
+                </select>
+            </div>
+
+            <div id="anydeskContainer" style="display: none; margin-top: 8px;">
+                <p style="font-size: 0.73rem; color: #22c55e; margin-bottom: 6px; line-height: 1.3;">
+                    📌 <strong>Importante:</strong> En modalidad remota, descarga AnyDesk para compartir tu código de acceso.
+                </p>
+                <a href="https://anydesk.com/es/downloads/thank-you?dv=win_exe" target="_blank" class="btn-anydesk">
+                    📥 Descargar AnyDesk para Windows
+                </a>
+            </div>
+
+            <a href="#" id="supportWhatsappBtn" target="_blank" class="btn-yape" onclick="triggerBtnAnimation(this)" style="text-decoration: none; padding: 10px; font-size: 0.85rem; justify-content: center; margin-top: 14px;">
+                📲 Contactar al Técnico por WhatsApp
+            </a>
+        </div>
+    </div>
+
+    <a href="https://wa.me/51933907930?text=Hola,%20quisiera%20consultar%20sobre%20sus%20licencias%20digitales" class="float-whatsapp" target="_blank" title="Contactar por WhatsApp">💬</a>
+
+    <!-- Notificación Flotante Inferior -->
+    <div class="toast-notification" id="toastNotification">
+        <div class="toast-check">✓</div>
+        <span>¡Agregado al carrito con éxito!</span>
+    </div>
+
+    <!-- Notificaciones Dinámicas de Compras Recientes -->
+    <div class="recent-purchase-toast" id="recentPurchaseToast">
+        <span style="font-size: 1.2rem;">🛒</span>
+        <div>
+            <strong id="purchaseUserText" style="color: #38bdf8;">Un usuario</strong> acaba de adquirir <span id="purchaseItemText" style="color: #22c55e;">Gemini Pro</span>.
+        </div>
+    </div>
+
+    <!-- Modal de Advertencia de Cierre de Sesión -->
+    <div class="modal-overlay" id="logoutConfirmModal">
+        <div class="support-modal-card" style="max-width: 380px;">
+            <button class="close-modal" onclick="closeModalWithImplosion('logoutConfirmModal')">✕</button>
+            <h3 style="color: #ff6b6b; margin-bottom: 10px;">⚠️ Cerrar Sesión</h3>
+            <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 20px;">¿Estás seguro de que deseas salir de la sesión actual?</p>
+            <div style="display: flex; gap: 10px;">
+                <button class="admin-btn-action" onclick="confirmLogout(true)" style="flex:1; padding: 8px;">Sí, salir</button>
+                <button class="admin-btn-danger" onclick="confirmLogout(false)" style="flex:1; padding: 8px;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Login Administrador / Colaborador -->
+    <div class="modal-overlay" id="adminLoginModal">
+        <div class="modal-card">
+            <button class="close-modal" onclick="closeModalWithImplosion('adminLoginModal')">✕</button>
+            <h3 class="modal-title">🔐 Ingrese su usuario</h3>
+            <div class="admin-form-group">
+                <label>Usuario:</label>
+                <input type="text" id="adminUser" placeholder="Ingrese su usuario">
+            </div>
+            <div class="admin-form-group">
+                <label>Contraseña:</label>
+                <div class="password-wrapper">
+                    <input type="password" id="adminPass" placeholder="••••••••">
+                    <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('adminPass', this)">👁️</button>
+                </div>
+            </div>
+            <button class="btn-yape" onclick="verifyAdminLogin(); triggerBtnAnimation(this);" style="width:100%; padding: 10px; justify-content:center;">Ingresar al Panel</button>
+        </div>
+    </div>
+
+    <!-- Panel de Administración -->
+    <div class="modal-overlay" id="adminPanelModal">
+        <div class="modal-card">
+            <button class="close-modal" onclick="closeModalWithImplosion('adminPanelModal')">✕</button>
+            <h3 class="modal-title" id="adminPanelTitle">⚙️ Panel de Control y Gestión</h3>
+            
+            <div id="adminSessionInfo" style="font-size: 0.8rem; color: #22c55e; margin-bottom: 8px; font-weight: bold; text-align: left;"></div>
+
+            <div class="admin-nav-header">
+                <button class="admin-hamburger-btn" onclick="toggleAdminMenu()" id="adminHamburgerBtn">
+                    ☰ Menú de Opciones
+                </button>
+
+                <div class="admin-dropdown-menu" id="adminDropdownMenu">
+                    <button class="admin-tab-btn active" onclick="switchAdminTab('tabDescuentos', this)" id="tabBtnDescuentos">🌐 1. Descuentos y Configuración</button>
+                    <button class="admin-tab-btn" onclick="switchAdminTab('tabSoporteConfig', this)" id="tabBtnSoporteConfig">📱 2. Números de WhatsApp - Soporte Técnico</button>
+                    <button class="admin-tab-btn" onclick="switchAdminTab('tabUsuarios', this)" id="tabBtnUsuarios">👥 3. Gestión de Usuarios</button>
+                    <button class="admin-tab-btn" onclick="switchAdminTab('tabProductos', this)" id="tabBtnProductos">📦 4. Gestión de Productos</button>
+                </div>
+            </div>
+
+            <!-- SUBPANEL 1 -->
+            <div class="admin-tab-pane active" id="tabDescuentos">
+                <div class="global-config-box">
+                    <h4>🌐 Configuración Global y Características</h4>
+                    <p>Activa o desactiva las características principales del sitio mediante interruptores y configura umbrales de descuento.</p>
+                    
+                    <div class="switch-container">
+                        <div>
+                            <strong style="font-size: 0.8rem; color: #fff; display:block;">Estado de Descuentos</strong>
+                            <span style="font-size: 0.68rem; color: #94a3b8;">Activa o desactiva los descuentos por volumen</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="settingDiscountsSwitch">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="switch-container">
+                        <div>
+                            <strong style="font-size: 0.8rem; color: #fff; display:block;">Alertas Toast Recientes</strong>
+                            <span style="font-size: 0.68rem; color: #94a3b8;">Muestra u oculta las compras flotantes recientes</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="settingToastsSwitch">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="admin-form-group" style="margin-bottom: 8px;">
+                        <label>Fiesta / Temporada Especial:</label>
+                        <select id="settingHolidayTheme">
+                            <option value="normal">Ninguna (Estándar)</option>
+                            <option value="navidad">🎄 Navidad y Año Nuevo</option>
+                            <option value="patrias">🇵🇪 Fiestas Patrias Perú</option>
+                            <option value="halloween">🎃 Halloween / Black Friday</option>
+                            <option value="inocentes">🤡 Día de los Inocentes</option>
+                        </select>
+                    </div>
+
+                    <div class="tier-vertical-list" style="margin-top: 6px;">
+                        <div class="tier-vertical-item">
+                            <span>Nivel 1</span>
+                            <div class="tier-vertical-inputs">
+                                <div class="tier-sub-group">
+                                    <span>Cant. Mín</span>
+                                    <input type="number" id="gTier1Qty" value="3">
+                                </div>
+                                <div class="tier-sub-group">
+                                    <span>% Dcto</span>
+                                    <input type="number" id="gTier1Pct" value="5">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tier-vertical-item">
+                            <span>Nivel 2</span>
+                            <div class="tier-vertical-inputs">
+                                <div class="tier-sub-group">
+                                    <span>Cant. Mín</span>
+                                    <input type="number" id="gTier2Qty" value="6">
+                                </div>
+                                <div class="tier-sub-group">
+                                    <span>% Dcto</span>
+                                    <input type="number" id="gTier2Pct" value="10">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tier-vertical-item">
+                            <span>Nivel 3</span>
+                            <div class="tier-vertical-inputs">
+                                <div class="tier-sub-group">
+                                    <span>Cant. Mín</span>
+                                    <input type="number" id="gTier3Qty" value="10">
+                                </div>
+                                <div class="tier-sub-group">
+                                    <span>% Dcto</span>
+                                    <input type="number" id="gTier3Pct" value="15">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="admin-btn-action" onclick="saveGlobalSettings(); notifyAdminAction('Configuración Global / Descuentos Actualizada');" style="width:100%; height:32px; font-size:0.78rem; margin-top:6px;">💾 Guardar y Aplicar Cambios de Configuración</button>
+                </div>
+            </div>
+
+            <!-- SUBPANEL 2 -->
+            <div class="admin-tab-pane" id="tabSoporteConfig">
+                <div style="background: rgba(0, 180, 216, 0.08); border: 1px solid rgba(0, 180, 216, 0.3); padding: 14px; border-radius: 12px; text-align: left;">
+                    <h4 style="color: #38bdf8; font-size: 0.92rem; margin-bottom: 6px;">📱 Números de WhatsApp - Soporte Técnico</h4>
+                    <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 12px;">Activa/desactiva ubicaciones y gestiona agentes o números alternativos de manera independiente.</p>
+                    
+                    <div style="background: rgba(0,0,0,0.25); padding: 10px; border-radius: 8px; margin-bottom: 12px; border: 1px solid rgba(0, 180, 216, 0.2);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <strong style="font-size: 0.8rem; color: #38bdf8;">📍 Lima y Otras Provincias</strong>
+                            <label class="switch" style="transform: scale(0.8);">
+                                <input type="checkbox" id="settingLimaActive">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div id="adminLimaAgentsList" style="margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px;"></div>
+                        <div style="display: flex; gap: 6px;">
+                            <input type="text" id="newLimaAgentName" placeholder="Nombre Usuario" style="flex:1; padding:5px; background:#070a12; border:1px solid #00b4d8; border-radius:6px; color:#fff; font-size:0.78rem;">
+                            <input type="text" id="newLimaAgentPhone" placeholder="WhatsApp" style="flex:1; padding:5px; background:#070a12; border:1px solid #00b4d8; border-radius:6px; color:#fff; font-size:0.78rem;">
+                            <button class="admin-btn-action" onclick="addSupportAgent('lima')" style="font-size:0.7rem; padding: 5px 10px;">Agregar</button>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(0,0,0,0.25); padding: 10px; border-radius: 8px; margin-bottom: 4px; border: 1px solid rgba(0, 180, 216, 0.2);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <strong style="font-size: 0.8rem; color: #38bdf8;">📍 Trujillo</strong>
+                            <label class="switch" style="transform: scale(0.8);">
+                                <input type="checkbox" id="settingTrujilloActive">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div id="adminTrujilloAgentsList" style="margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px;"></div>
+                        <div style="display: flex; gap: 6px;">
+                            <input type="text" id="newTrujilloAgentName" placeholder="Nombre Usuario" style="flex:1; padding:5px; background:#070a12; border:1px solid #00b4d8; border-radius:6px; color:#fff; font-size:0.78rem;">
+                            <input type="text" id="newTrujilloAgentPhone" placeholder="WhatsApp" style="flex:1; padding:5px; background:#070a12; border:1px solid #00b4d8; border-radius:6px; color:#fff; font-size:0.78rem;">
+                            <button class="admin-btn-action" onclick="addSupportAgent('trujillo')" style="font-size:0.7rem; padding: 5px 10px;">Agregar</button>
+                        </div>
+                    </div>
+                    <button class="admin-btn-action" onclick="saveGlobalSettings(); notifyAdminAction('Configuración de Soporte Técnico Actualizada');" style="width:100%; height:32px; font-size:0.78rem; margin-top:8px;">💾 Guardar y Aplicar Cambios de Soporte</button>
+                </div>
+            </div>
+
+            <!-- SUBPANEL 3 -->
+            <div class="admin-tab-pane" id="tabUsuarios">
+                <div style="background: rgba(230,57,70,0.06); padding: 12px; border-radius: 12px; margin-bottom: 15px; border: 1px dashed rgba(230,57,70,0.4); text-align:left;">
+                    <h4 style="color:#ff6b6b; font-size:0.88rem; margin-bottom:6px;">👥 Gestionar Usuarios, Claves y Beneficios</h4>
+                    
+                    <div style="background: rgba(0,0,0,0.25); padding: 8px; border-radius: 8px; margin-bottom: 10px;">
+                        <label style="font-size: 0.72rem; color: #38bdf8; font-weight: bold; display: block; margin-bottom: 3px;">Porcentaje de Descuento Fijo para Colaboradores (%):</label>
+                        <div style="display:flex; gap:6px;">
+                            <input type="number" id="globalCollabDiscountInput" style="flex:1; padding:5px; background:#070a12; border:1px solid #00b4d8; border-radius:6px; color:#fff; font-size:0.8rem;" value="10">
+                            <button class="admin-btn-action" onclick="saveCollabDiscountSetting(); notifyAdminAction('Descuento de Colaboradores Actualizado');" style="font-size:0.7rem;">Guardar Colaborador</button>
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:6px; align-items:end;">
+                        <div class="admin-form-group" style="margin-bottom:0;">
+                            <label>Nuevo Usuario:</label>
+                            <input type="text" id="newLoginUser" placeholder="Usuario">
+                        </div>
+                        <div class="admin-form-group" style="margin-bottom:0;">
+                            <label>Contraseña:</label>
+                            <input type="text" id="newLoginPass" placeholder="Clave">
+                        </div>
+                        <div class="admin-form-group" style="margin-bottom:0;">
+                            <label>Rol / Poder:</label>
+                            <select id="newLoginRole">
+                                <option value="colaborador">Colaborador</option>
+                                <option value="admin2">Administrador 2</option>
+                                <option value="admin">Administrador 1</option>
+                            </select>
+                        </div>
+                        <button class="admin-btn-action" onclick="addNewUser()" style="height:31px;">Crear</button>
+                    </div>
+                    <div id="usersListContainer" style="margin-top: 10px; max-height: 160px; overflow-y:auto;"></div>
+                </div>
+            </div>
+
+            <!-- SUBPANEL 4 -->
+            <div class="admin-tab-pane" id="tabProductos">
+                
+                <button type="button" onclick="toggleProductForm()" id="toggleFormBtn" style="background: rgba(0, 180, 216, 0.2); border: 1px solid #00b4d8; color: #38bdf8; width: 100%; padding: 8px; border-radius: 10px; font-weight: bold; font-size: 0.8rem; cursor: pointer; margin-bottom: 12px; transition: all 0.2s ease;">
+                    📂 Desplegar Formulario de Nuevo Producto ▼
+                </button>
+
+                <div style="background: rgba(0,180,216,0.06); padding: 12px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(0,180,216,0.3); text-align:left; display: none;" id="productFormContainer">
+                    <h4 style="color:#38bdf8; font-size:0.88rem; margin-bottom:8px;" id="formActionTitle">➕ Agregar Nuevo Producto</h4>
+                    
+                    <input type="hidden" id="editProductId" value="">
+
+                    <div class="admin-form-group">
+                        <label>Nombre del Producto:</label>
+                        <input type="text" id="newProdName" placeholder="Ej. Photoshop Pro (1 año)">
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+                        <div class="admin-form-group">
+                            <label>Precio Base (S/.):</label>
+                            <input type="number" id="newProdPrice" placeholder="50.00">
+                        </div>
+                        <div class="admin-form-group">
+                            <label>Categoría:</label>
+                            <select id="newProdCat">
+                                <option value="win">Windows</option>
+                                <option value="diseno">Diseño</option>
+                                <option value="ia">IA</option>
+                                <option value="iptv">IPTV</option>
+                                <option value="musica">Música</option>
+                                <option value="edu">Educación</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+                        <div class="admin-form-group">
+                            <label>Stock Disponible:</label>
+                            <select id="newProdStock">
+                                <option value="true">Sí (Disponible)</option>
+                                <option value="false">No (Agotado)</option>
+                            </select>
+                        </div>
+                        <div class="admin-form-group">
+                            <label>¿Aplicar Descuento por Volumen?</label>
+                            <select id="newProdAllowDiscount">
+                                <option value="true">Sí (Permite descuento)</option>
+                                <option value="false">No (Precio fijo)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 6px; margin-bottom: 8px;">
+                        <label style="font-size:0.75rem; color:#38bdf8; font-weight:600; margin-bottom:3px; display:block;">Opciones de Descuentos por Volumen (Hasta 3 Niveles):</label>
+                        
+                        <div class="tier-box">
+                            <label class="tier-box-label">Nivel 1</label>
+                            <div class="tier-box-inputs">
+                                <div class="tier-box-col">
+                                    <span>Cant. Mínima</span>
+                                    <input type="number" id="tier1Qty" value="3">
+                                </div>
+                                <div class="tier-box-col">
+                                    <span>Porcentaje %</span>
+                                    <input type="number" id="tier1Pct" value="5">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tier-box">
+                            <label class="tier-box-label">Nivel 2 (Opcional)</label>
+                            <div class="tier-box-inputs">
+                                <div class="tier-box-col">
+                                    <span>Cant. Mínima</span>
+                                    <input type="number" id="tier2Qty" value="6">
+                                </div>
+                                <div class="tier-box-col">
+                                    <span>Porcentaje %</span>
+                                    <input type="number" id="tier2Pct" value="10">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tier-box">
+                            <label class="tier-box-label">Nivel 3 (Opcional)</label>
+                            <div class="tier-box-inputs">
+                                <div class="tier-box-col">
+                                    <span>Cant. Mínima</span>
+                                    <input type="number" id="tier3Qty" value="10">
+                                </div>
+                                <div class="tier-box-col">
+                                    <span>Porcentaje %</span>
+                                    <input type="number" id="tier3Pct" value="15">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label>Etiqueta / Destacado:</label>
+                        <input type="text" id="newProdBadge" placeholder="Ej. ⭐ Destacado o Popular (opcional)">
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Adjuntar Imagen (Archivo local o URL):</label>
+                        <input type="file" id="newProdFile" accept="image/*" style="margin-bottom: 4px;" onchange="previewImage(event)">
+                        <input type="text" id="newProdImg" placeholder="o escribe canva.png / URL">
+                    </div>
+                    <div class="admin-form-group">
+                        <label>Descripción corta:</label>
+                        <textarea id="newProdDesc" rows="2" placeholder="Detalles de la licencia..."></textarea>
+                    </div>
+                    
+                    <div style="display:flex; gap:6px; margin-top: 8px;">
+                        <button class="btn-cart" onclick="saveProduct()" style="flex:2; justify-content:center; padding:8px;" id="saveProdBtn">💾 Guardar y Publicar Producto</button>
+                        <button class="btn-clear-cart" onclick="resetAdminForm()" style="flex:1; display:none; padding:8px;" id="cancelEditBtn">Cancelar</button>
+                    </div>
+                </div>
+
+                <!-- BUSCADOR PARA LA LISTA DE PRODUCTOS ACTUALES -->
+                <div style="margin-bottom: 8px;">
+                    <input type="text" id="adminProductSearchInput" placeholder="🔍 Buscar producto en la lista..." oninput="filterAdminProductList()" style="width: 100%; padding: 7px 10px; background: #070a12; border: 1px solid #00b4d8; border-radius: 8px; color: #fff; font-size: 0.78rem; outline: none;">
+                </div>
+
+                <h4 style="color:#38bdf8; font-size:0.88rem; margin-bottom:8px; text-align:left;">📋 Lista de Productos Actuales</h4>
+                <div class="cart-items-list" id="adminProductListContainer" style="max-height: 300px; overflow-y: auto;"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal de Carrito -->
+    <div class="modal-overlay" id="cartModal">
+        <div class="modal-card">
+            <button class="close-modal" onclick="closeModalWithImplosion('cartModal')">✕</button>
+            <h3 class="modal-title">🛒 Carrito de Compras</h3>
+            
+            <div class="cart-items-list" id="cartItemsContainer">
+                <p style="color: #94a3b8; font-size: 0.8rem; padding: 10px;">Tu carrito está vacío</p>
+            </div>
+
+            <div class="cart-actions-bar">
+                <button class="btn-clear-cart" onclick="clearCart()">🗑️ Vaciar Todo</button>
+                <div style="font-size: 0.9rem; font-weight: bold;">
+                    Total: <span id="cartTotalPrice" style="color: #38bdf8;">S/. 0.00</span>
+                </div>
+            </div>
+
+            <button class="btn-yape" onclick="proceedToCheckout(); triggerBtnAnimation(this);" id="checkoutBtn" style="width: 100%; padding: 10px; font-size: 0.9rem;">
+                💜 Pagar con Yape o Plin
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal Pago Yape / Plin -->
+    <div class="modal-overlay" id="paymentModal">
+        <div class="modal-card">
+            <button class="close-modal" onclick="closeModalWithImplosion('paymentModal')">✕</button>
+            <h3 class="modal-title">Pagar con Yape o Plin</h3>
+            <div class="modal-product" id="modalProductName">Producto</div>
+            
+            <img src="qr-pago.png" alt="QR Yape / Plin" class="qr-img">
+            
+            <div class="payment-info">
+                <strong>Número:</strong> 
+                <span class="copy-phone-box">
+                    <span id="targetPhoneNumber">933 907 930</span>
+                    <button class="btn-copy-code" onclick="copyPhoneNumber()">📋 Copiar</button>
+                </span><br><br>
+                <strong>Titular:</strong> Luis Valdivieso<br>
+                <strong>Monto a pagar:</strong> <span id="modalProductPrice" style="color: #38bdf8; font-weight: bold;">S/. 0.00</span>
+            </div>
+
+            <a href="#" id="modalConfirmBtn" target="_blank" class="btn-yape" onclick="triggerBtnAnimation(this)" style="text-decoration: none; padding: 10px; font-size: 0.9rem; justify-content: center;">
+                📲 Enviar comprobante por WhatsApp
+            </a>
+
+            <div class="payment-notice">
+                Gracias por comprar, por favor compártanos su comprobante para poder proceder con la verificación de pago y posteriormente con la entrega de la licencia y/o cuenta. La compra es inmediata, podemos demorar hasta 20 min en entregar la cuenta.
+            </div>
+        </div>
+    </div>
+
+    <!-- Menú Lateral (Sidebar Drawer) -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMenu()"></div>
+    <div class="sidebar-drawer" id="sidebarDrawer">
+        <div class="sidebar-header">
+            <h3>☰ Menú</h3>
+            <button class="sidebar-close-btn" onclick="toggleMenu()">✕</button>
+        </div>
+        <div class="sidebar-content">
+            <button class="sidebar-item active" id="sidebar-chip-principal" onclick="filterCategory('principal', event); toggleMenu();">🏠 Principal</button>
+            
+            <button class="sidebar-item" onclick="toggleSidebarSubmenu('sidebarSoftwareSubmenu', event)">📂 Software ▾</button>
+            <div class="sidebar-submenu" id="sidebarSoftwareSubmenu">
+                <button class="sidebar-sub-item active" onclick="filterCategory('all-software', event); toggleMenu();">Todos los Software</button>
+                <button class="sidebar-sub-item" onclick="filterCategory('win', event); toggleMenu();">💻 Windows 10/11</button>
+                <button class="sidebar-sub-item" onclick="filterCategory('diseno', event); toggleMenu();">🎨 Diseño</button>
+                <button class="sidebar-sub-item" onclick="filterCategory('ia', event); toggleMenu();">🤖 IA</button>
+                <button class="sidebar-sub-item" onclick="filterCategory('iptv', event); toggleMenu();">📺 IPTV</button>
+                <button class="sidebar-sub-item" onclick="filterCategory('musica', event); toggleMenu();">🎵 Música</button>
+                <button class="sidebar-sub-item" onclick="filterCategory('edu', event); toggleMenu();">📚 Educación</button>
+                <button class="sidebar-sub-item" onclick="filterCategory('antivirus', event); toggleMenu();">🛡️ Antivirus</button>
+            </div>
+
+            <button class="sidebar-item" onclick="filterCategory('juegos', event); toggleMenu();">🎮 Juegos</button>
+            <button class="sidebar-item" onclick="filterCategory('nosotros', event); toggleMenu();">📌 Visión y Misión</button>
+        </div>
+    </div>
+
+    <header>
+        <!-- ORDEN ESTRICTO: 1. Hamburguesa, 2. Logo y Nombre, 3. Iniciar Sesión / Usuario, 4. Carrito -->
+        <div class="header-top">
+            <div class="header-left-cluster">
+                <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMenu()" title="Menú de Categorías">☰</button>
+                
+                <div class="header-brand" onclick="resetToPrincipal()" title="Ir al menú principal">
+                    <img src="lubeltec.png" alt="Logo Lubeltec" class="header-logo">
+                    <h1>Lubeltec</h1>
+                </div>
+            </div>
+
+            <div class="header-auth-group">
+                <button class="login-shortcut-btn" onclick="openAdminLogin()" title="Iniciar Sesión">🔐 Iniciar Sesión</button>
+                <div class="active-user-badge" id="activeUserBadge" onclick="openAdminPanel()" title="Hacer clic para abrir Panel de Control">
+                    <span class="active-username-text">👤 <span id="activeUserNameText">Usuario</span></span>
+                    <button class="logout-exit-btn" onclick="event.stopPropagation(); promptLogout();" title="Cerrar Sesión">🚪</button>
+                </div>
+            </div>
+
+            <button class="cart-btn" onclick="openCartModal()" title="Ver Carrito">
+                🛒 (<span id="cartCount">0</span>)
+            </button>
+        </div>
+
+        <div class="hours-badge">🕒 Horario de Atención: 8:00 AM a 10:00 PM</div>
+        <div class="slogan-text">✨ Software Original y Licencias Digitales a tu Alcance ✨</div>
+
+        <div class="payment-methods-badge" id="dynamicPromoBadge">
+            ¡Descuentos automáticos: <span>3+ unids (5%)</span> | <span>6+ unids (10%)</span> | <span>10+ unids (15%)</span>!
+        </div>
+
+        <!-- Filtros -->
+        <div class="controls-container">
+            <div class="search-wrapper">
+                <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar licencia..." oninput="handleSearchInput()">
+                <button class="clear-search-btn" id="clearSearchBtn" onclick="clearSearch()" title="Limpiar búsqueda">✕</button>
+            </div>
+            
+            <select id="sortSelect" class="select-control" onchange="updateProducts()">
+                <option value="default">Restablecer</option>
+                <option value="price-desc">Mayor a menor</option>
+                <option value="price-asc">Menor a mayor</option>
+                <option value="alpha-asc">A - Z</option>
+            </select>
+
+            <select id="stockSelect" class="select-control" onchange="updateProducts()">
+                <option value="all">Todo el stock</option>
+                <option value="instock">Disponible</option>
+                <option value="outofstock">Sin stock</option>
+            </select>
+        </div>
+    </header>
+
+    <main class="container" id="productContainer">
+
+        <!-- SECCIÓN: CARRUSEL DE DESTACADOS -->
+        <div id="seccionDestacados">
+            <h2 class="section-title">🔥 Programas Destacados</h2>
+            <div class="carousel-container" id="carouselContainer">
+                <div class="carousel-track" id="carouselTrack"></div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN: CATÁLOGO GENERAL -->
+        <div id="seccionCatalogo">
+            <h2 class="section-title">📦 Catálogo General de Licencias</h2>
+            <div class="grid-layout" id="catalogoGrid"></div>
+        </div>
+
+        <!-- Banners e Info -->
+        <div class="banner-upcoming" id="bannerAntivirus" style="display: none;">
+            <h2>🛡️ Próximamente Licencias de Antivirus</h2>
+            <p>Estamos incorporando las mejores licencias originales para la protección de tus dispositivos.</p>
+        </div>
+
+        <div class="banner-upcoming" id="bannerJuegos" style="display: none;">
+            <h2>🎮 Próximamente Juegos Económicos</h2>
+            <p>Estamos preparando un catálogo especial de licencias y juegos para PC y consolas.</p>
+        </div>
+
+        <div class="info-panel" id="panelNosotros" style="display: none;">
+            <h2>Nuestra Misión y Visión</h2>
+            <div class="info-box">
+                <h3>🚀 Misión</h3>
+                <p>En Lubeltec, facilitamos el acceso a software original y servicios digitales garantizados para estudiantes, profesionales y empresas en Perú. Nos comprometemos a brindar soluciones tecnológicas transparentes, accesibles y con soporte postventa inmediato, garantizando que cada cliente potencie sus herramientas de trabajo sin complicaciones.</p>
+            </div>
+            <div class="info-box">
+                <h3>👁️ Visión</h3>
+                <p>Ser reconocidos como el catálogo digital líder y más confiable en el mercado peruano para la adquisición de licencias de software, soluciones de inteligencia artificial y entretenimiento digital, destacando por nuestra honestidad, rapidez de entrega y atención personalizada constante.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>&copy; Catálogo Digital Lubeltec. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        // Declaración global de variables requeridas por Firebase
+        let products = [
+            { id: 'win-pro', name: 'Windows 10/11 Pro (Siempre)', price: 50.00, category: 'win', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'windows11.png', desc: 'Licencia digital permanente (OEM). Reactivación de por vida.' },
+            { id: 'off-365', name: 'Office 365 (1 año)', price: 45.00, category: 'ia', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'office365.png', desc: 'Instálalo en hasta 5 dispositivos. Word, Excel, PowerPoint, Outlook y Teams.' },
+            { id: 'gem-18', name: 'Gemini Pro 3.6 (18 meses)', price: 70.00, category: 'ia', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'gemini18.png', desc: 'Incluye IA avanzada Gemini Pro, video Veo 3 y 5TB Google Drive.' },
+            { id: 'canva-3', name: 'Canva Pro (3 años)', price: 55.00, category: 'diseno', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'canva.png', desc: 'Suscripción por 3 años con herramientas de diseño e IA.' },
+            { id: 'auto-1', name: 'Autodesk All Apps (1 año)', price: 75.00, category: 'diseno', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'autodesk.png', desc: 'AutoCAD, Revit, Inventor, Maya, Fusion 360, etc.' },
+            { id: 'crunch-1', name: 'Crunchyroll 1 Perfil (1 año)', price: 99.00, category: 'iptv', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'crunchyroll.png', desc: 'Cuenta Mega Fan individual. Sin anuncios y alta velocidad.' },
+            { id: 'win-home', name: 'Windows 10/11 Home (Siempre)', price: 50.00, category: 'win', stock: true, allowDiscount: true, badge: '', img: 'windows11.png', desc: 'Activación permanente y original para uso doméstico.' },
+            { id: 'canva-1', name: 'Canva Pro (1 año)', price: 35.00, category: 'diseno', stock: true, allowDiscount: true, badge: 'Popular', img: 'canva.png', desc: 'Acceso al contenido premium y plantillas de diseño.' },
+            { id: 'canva-2', name: 'Canva Pro (2 años)', price: 45.00, category: 'diseno', stock: true, allowDiscount: true, badge: '', img: 'canva.png', desc: 'Acceso Pro extendido para plantillas exclusivas y kit de marca.' },
+            { id: 'canva-inf', name: 'Canva Pro (para siempre)', price: 99.00, category: 'diseno', stock: false, allowDiscount: false, badge: '', img: 'canva.png', desc: 'Licencia vitalicia con acceso completo a funciones de diseño.' },
+            { id: 'gem-12', name: 'Gemini Pro 3.6 (12 meses)', price: 50.00, category: 'ia', stock: true, allowDiscount: true, badge: '', img: 'gemini12.png', desc: 'IA de Google One por 1 año y almacenamiento de 5TB.' },
+            { id: 'duo-12', name: 'Duolingo Super (12 meses)', price: 144.00, category: 'edu', stock: true, allowDiscount: true, badge: '', img: 'duolingo.png', desc: 'Vidas ilimitadas y 100% libre de anuncios por 1 año.' },
+            { id: 'capcut-1', name: 'Capcut Pro (1 mes)', price: 23.00, category: 'diseno', stock: true, allowDiscount: true, badge: '', img: 'capcut.png', desc: 'Efectos, plantillas exclusivas y subtítulos sin marca de agua.' },
+            { id: 'auto-6', name: 'Autodesk All Apps (6 meses)', price: 49.00, category: 'diseno', stock: true, allowDiscount: true, badge: '', img: 'autodesk.png', desc: 'Todas las aplicaciones profesionales por medio año.' },
+            { id: 'auto-3', name: 'Autodesk All Apps (3 meses)', price: 29.00, category: 'diseno', stock: true, allowDiscount: true, badge: '', img: 'autodesk.png', desc: 'Acceso trimestral a AutoCAD, Revit y más.' },
+            { id: 'spot-1', name: 'Spotify Premium (1 mes)', price: 15.00, category: 'musica', stock: true, allowDiscount: true, badge: '', img: 'spotify.png', desc: 'Música en alta calidad sin interrupciones de publicidad.' },
+            { id: 'flujo-1', name: 'Flujo TV (1 mes)', price: 20.00, category: 'iptv', stock: true, allowDiscount: true, badge: '', img: 'flujotv.png', desc: 'Para 3 dispositivos. Más de 1000 canales en vivo.' },
+            { id: 'crunch-3', name: 'Crunchyroll 1 Perfil (3 meses)', price: 35.00, category: 'iptv', stock: true, allowDiscount: true, badge: '', img: 'crunchyroll.png', desc: 'Suscripción Mega Fan de 3 meses sin publicidad.' },
+            { id: 'crunch-6', name: 'Crunchyroll Cuenta Completa (6 meses)', price: 89.00, category: 'iptv', stock: true, allowDiscount: true, badge: '', img: 'crunchyroll.png', desc: 'Cuenta completa para múltiples dispositivos en simultáneo.' }
+        ];
+
+        let globalTiers = [
+            { qty: 3, pct: 5 },
+            { qty: 6, pct: 10 },
+            { qty: 10, pct: 15 }
+        ];
+
+        let discountsActive = true;
+        let toastsActive = true;
+        let holidayTheme = 'normal';
+        let timerActive = false;
+
+        let supportLimaActive = true;
+        let supportTrujilloActive = true;
+        let supportLimaAgents = [
+            { name: "Soporte Lima Principal", phone: "933907930" }
+        ];
+        let supportTrujilloAgents = [
+            { name: "Soporte Trujillo Principal", phone: "929770729" }
+        ];
+
+        window.seedInitialProducts = async function() {
+            for (let p of products) {
+                if (window.saveProductToCloud) await window.saveProductToCloud(p);
+            }
+        };
+
+        let usersDB = [
+            { user: 'luislmvg88', pass: '5610023', role: 'admin', canAddDelete: true },
+            { user: 'admin2', pass: '123456', role: 'admin2', canAddDelete: false },
+            { user: 'colab1', pass: '123456', role: 'colaborador', canAddDelete: false }
+        ];
+
+        let collabDiscountPct = 10; 
+        let loginAttempts = {}; 
+        let currentUser = null; 
+        let lastActivityTime = Date.now();
+
+        const savedSession = sessionStorage.getItem('lubeltec_current_user');
+        const savedSessionTime = sessionStorage.getItem('lubeltec_session_time');
+        
+        if (savedSession && savedSessionTime) {
+            const elapsedSinceLogin = Date.now() - parseInt(savedSessionTime);
+            if (elapsedSinceLogin < 60 * 60 * 1000) {
+                currentUser = JSON.parse(savedSession);
+                lastActivityTime = Date.now();
+            } else {
+                sessionStorage.removeItem('lubeltec_current_user');
+                sessionStorage.removeItem('lubeltec_session_time');
+            }
+        }
+
+        function resetInactivityTimer() {
+            lastActivityTime = Date.now();
+        }
+        ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt => {
+            window.addEventListener(evt, resetInactivityTimer);
+        });
+
+        setInterval(() => {
+            if (currentUser) {
+                const elapsed = Date.now() - lastActivityTime;
+                if (elapsed >= 60 * 60 * 1000) {
+                    currentUser = null;
+                    sessionStorage.removeItem('lubeltec_current_user');
+                    sessionStorage.removeItem('lubeltec_session_time');
+                    updateActiveUserHeaderUI();
+                    alert('La sesión ha caducado por 1 hora de inactividad.');
+                    renderCatalog();
+                    updateProducts();
+                }
+            }
+        }, 60000);
+
+        if(localStorage.getItem('lubeltec_users')) {
+            try { usersDB = JSON.parse(localStorage.getItem('lubeltec_users')); } catch(e) {}
+        }
+        if(localStorage.getItem('lubeltec_collab_dcto')) {
+            collabDiscountPct = parseFloat(localStorage.getItem('lubeltec_collab_dcto')) || 10;
+        }
+
+        let currentFilter = 'principal';
+        let cart = [];
+        let temporaryBase64Img = '';
+
+        function notifyAdminAction(details) {
+            const adminPhone = "933907930";
+            const textMsg = `🚨 *Panel de Control Lubeltec - Modificación Registrada*\n\nSe ha realizado el siguiente cambio:\n- ${details}\n\nRevisar la plataforma web.`;
+            const waUrl = `https://wa.me/51${adminPhone}?text=${encodeURIComponent(textMsg)}`;
+            window.open(waUrl, '_blank');
+        }
+
+        function saveProductsToStorage() {
+            localStorage.setItem('lubeltec_products', JSON.stringify(products));
+        }
+        function saveUsersToStorage() {
+            localStorage.setItem('lubeltec_users', JSON.stringify(usersDB));
+        }
+        function saveCollabDctoStorage() {
+            localStorage.setItem('lubeltec_collab_dcto', collabDiscountPct);
+        }
+
+        function saveSettingsStorage() {
+            if (window.saveSettingsToCloud) {
+                window.saveSettingsToCloud({
+                    globalTiers,
+                    discountsActive,
+                    toastsActive,
+                    holidayTheme,
+                    supportLimaActive,
+                    supportTrujilloActive,
+                    supportLimaAgents,
+                    supportTrujilloAgents,
+                    collabDiscountPct
+                });
+            }
+        }
+
+        function triggerBtnAnimation(btn) {
+            btn.classList.add('clicked');
+            setTimeout(() => {
+                btn.classList.remove('clicked');
+            }, 450);
+        }
+
+        function copyPhoneNumber() {
+            const phoneText = document.getElementById('targetPhoneNumber').innerText.replace(/\s+/g, '');
+            navigator.clipboard.writeText(phoneText).then(() => {
+                showToastCustom('¡Número copiado al portapapeles!');
+            }).catch(err => {
+                console.error('Error al copiar: ', err);
+            });
+        }
+
+        function showToastCustom(msg) {
+            const toast = document.getElementById('toastNotification');
+            if(!toast) return;
+            toast.querySelector('span').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => { 
+                toast.classList.remove('show'); 
+                setTimeout(() => { toast.querySelector('span').innerText = '¡Agregado al carrito con éxito!'; }, 300);
+            }, 2000);
+        }
+
+        function toggleMenu() {
+            const drawer = document.getElementById('sidebarDrawer');
+            const overlay = document.getElementById('sidebarOverlay');
+            const btn = document.getElementById('hamburgerBtn');
+            
+            drawer.classList.toggle('open');
+            overlay.classList.toggle('open');
+            btn.classList.toggle('active');
+        }
+
+        function toggleSidebarSubmenu(submenuId, event) {
+            event.stopPropagation();
+            const submenu = document.getElementById(submenuId);
+            submenu.classList.toggle('open');
+        }
+
+        function closeModalWithImplosion(modalId) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            modal.classList.add('imploding');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                modal.classList.remove('imploding');
+            }, 350);
+        }
+
+        function toggleProductForm() {
+            const formContainer = document.getElementById('productFormContainer');
+            const toggleBtn = document.getElementById('toggleFormBtn');
+            if (formContainer.style.display === 'none' || formContainer.style.display === '') {
+                formContainer.style.display = 'block';
+                toggleBtn.innerText = '📂 Ocultar Formulario de Nuevo Producto ▲';
+            } else {
+                formContainer.style.display = 'none';
+                toggleBtn.innerText = '📂 Desplegar Formulario de Nuevo Producto ▼';
+            }
+        }
+
+        function filterAdminProductList() {
+            const query = document.getElementById('adminProductSearchInput').value.toLowerCase().trim();
+            renderAdminProductList(query);
+        }
+
+        function checkSupportAvailability() {
+            const floatBtn = document.getElementById('floatSupportBtn');
+            if (!supportLimaActive && !supportTrujilloActive) {
+                floatBtn.style.display = 'none';
+            } else {
+                floatBtn.style.display = 'flex';
+            }
+        }
+        checkSupportAvailability();
+
+        function openSupportModal() {
+            document.getElementById('supportModal').style.display = 'flex';
+            populateSupportCityDropdown();
+            populateSupportAgentDropdown();
+            updateSupportWhatsAppLink();
+        }
+
+        function populateSupportCityDropdown() {
+            const citySelect = document.getElementById('supportCitySelect');
+            let html = '';
+            let infoLima = document.getElementById('supportInfoLima');
+            let infoTrujillo = document.getElementById('supportInfoTrujillo');
+
+            if (supportLimaActive) {
+                html += `<option value="lima">Lima (Presencial / Domicilio / Remoto)</option>`;
+                html += `<option value="otras">Otras Provincias (Solo Remoto)</option>`;
+                if(infoLima) infoLima.style.display = 'list-item';
+            } else {
+                if(infoLima) infoLima.style.display = 'none';
+            }
+
+            if (supportTrujilloActive) {
+                html += `<option value="trujillo">Trujillo (Presencial / Domicilio / Remoto)</option>`;
+                if(infoTrujillo) infoTrujillo.style.display = 'list-item';
+            } else {
+                if(infoTrujillo) infoTrujillo.style.display = 'none';
+            }
+
+            citySelect.innerHTML = html;
+        }
+
+        function populateSupportAgentDropdown() {
+            const citySelect = document.getElementById('supportCitySelect');
+            if (!citySelect || citySelect.options.length === 0) return;
+            const city = citySelect.value;
+            const agentSelect = document.getElementById('supportAgentSelect');
+            let agentsList = (city === 'trujillo') ? supportTrujilloAgents : supportLimaAgents;
+
+            let html = '';
+            agentsList.forEach((ag, idx) => {
+                html += `<option value="${ag.phone}">${ag.name} (${ag.phone})</option>`;
+            });
+            agentSelect.innerHTML = html;
+        }
+
+        function onSupportCityChange() {
+            populateSupportAgentDropdown();
+            updateSupportWhatsAppLink();
+        }
+
+        function updateSupportWhatsAppLink() {
+            const citySelect = document.getElementById('supportCitySelect');
+            if (!citySelect || citySelect.options.length === 0) return;
+            const city = citySelect.value;
+            const agentSelect = document.getElementById('supportAgentSelect');
+            const type = document.getElementById('supportTypeSelect').value;
+            const btn = document.getElementById('supportWhatsappBtn');
+            const anydeskDiv = document.getElementById('anydeskContainer');
+
+            let agentsList = (city === 'trujillo') ? supportTrujilloAgents : supportLimaAgents;
+            let phone = agentSelect.value || (agentsList[0] ? agentsList[0].phone : '933907930');
+            let cityNameText = city === 'trujillo' ? 'Trujillo' : (city === 'otras' ? 'Otras Provincias' : 'Lima');
+            let modalityText = 'Remoto';
+
+            if (city === 'otras') {
+                document.getElementById('supportModalitySelect').value = 'remoto';
+            }
+
+            const currentModality = document.getElementById('supportModalitySelect').value;
+            if (currentModality === 'remoto' || city === 'otras') {
+                modalityText = 'Remoto';
+                anydeskDiv.style.display = 'block';
+            } else {
+                modalityText = 'Presencial / Domicilio';
+                anydeskDiv.style.display = 'none';
+            }
+
+            let typeNameText = type === 'mantenimiento' ? 'Mantenimiento y Limpieza General' : (type === 'soporte' ? 'Soporte Técnico' : 'Mantenimiento y Soporte Técnico');
+
+            const msg = `Hola,%20deseo%20solicitar%20el%20servicio%20de%20${encodeURIComponent(typeNameText)}%20en%20la%20ciudad%20de%20${encodeURIComponent(cityNameText)}%20(Modalidad:%20${encodeURIComponent(modalityText)}).`;
+            btn.href = `https://wa.me/51${phone}?text=${msg}`;
+        }
+
+        function addSupportAgent(cityType) {
+            if (!currentUser || currentUser.role !== 'admin') return;
+            let nameInput = document.getElementById(cityType === 'trujillo' ? 'newTrujilloAgentName' : 'newLimaAgentName');
+            let phoneInput = document.getElementById(cityType === 'trujillo' ? 'newTrujilloAgentPhone' : 'newLimaAgentPhone');
+
+            let name = nameInput.value.trim();
+            let phone = phoneInput.value.trim();
+
+            if (!name || !phone) {
+                alert('Por favor ingrese el nombre del usuario y su número de WhatsApp.');
+                return;
+            }
+
+            if (cityType === 'trujillo') {
+                supportTrujilloAgents.push({ name, phone });
+            } else {
+                supportLimaAgents.push({ name, phone });
+            }
+
+            nameInput.value = '';
+            phoneInput.value = '';
+            saveSettingsStorage();
+            renderAdminSupportAgents();
+            checkSupportAvailability();
+            notifyAdminAction(`Agregado agente de soporte en ${cityType}: ${name} (${phone})`);
+            alert('Usuario/Agente agregado.');
+        }
+
+        function editSupportAgent(cityType, index) {
+            if (!currentUser || currentUser.role !== 'admin') return;
+            let agentsList = (cityType === 'trujillo') ? supportTrujilloAgents : supportLimaAgents;
+            let ag = agentsList[index];
+
+            let newName = prompt("Editar nombre del usuario / agente:", ag.name);
+            if (newName === null) return;
+            let newPhone = prompt("Editar número de WhatsApp:", ag.phone);
+            if (newPhone === null) return;
+
+            if (newName.trim() !== '' && newPhone.trim() !== '') {
+                ag.name = newName.trim();
+                ag.phone = newPhone.trim();
+                saveSettingsStorage();
+                renderAdminSupportAgents();
+                notifyAdminAction(`Modificado agente de soporte en ${cityType}: ${ag.name}`);
+                alert('Datos actualizados.');
+            } else {
+                alert('Los campos no pueden estar vacíos.');
+            }
+        }
+
+        function deleteSupportAgent(cityType, index) {
+            if (!currentUser || currentUser.role !== 'admin') return;
+            let agentName = "";
+            if (cityType === 'trujillo') {
+                if (supportTrujilloAgents.length <= 1) {
+                    alert('Debe mantener al menos un contacto en Trujillo.');
+                    return;
+                }
+                agentName = supportTrujilloAgents[index].name;
+                supportTrujilloAgents.splice(index, 1);
+            } else {
+                if (supportLimaAgents.length <= 1) {
+                    alert('Debe mantener al menos un contacto en Lima.');
+                    return;
+                }
+                agentName = supportLimaAgents[index].name;
+                supportLimaAgents.splice(index, 1);
+            }
+            saveSettingsStorage();
+            renderAdminSupportAgents();
+            checkSupportAvailability();
+            notifyAdminAction(`Eliminado agente de soporte en ${cityType}: ${agentName}`);
+        }
+
+        function renderAdminSupportAgents() {
+            let limaHtml = '';
+            supportLimaAgents.forEach((ag, idx) => {
+                limaHtml += `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.3); padding:5px 8px; border-radius:6px; font-size:0.75rem; margin-bottom:4px;">
+                        <span>👤 <strong>${ag.name}</strong> - 📱 ${ag.phone}</span>
+                        <div>
+                            <button class="admin-btn-action" style="font-size:0.6rem; padding:2px 6px;" onclick="editSupportAgent('lima', ${idx})">Editar</button>
+                            ${supportLimaAgents.length > 1 ? `<button class="admin-btn-danger" style="font-size:0.6rem; padding:2px 6px;" onclick="deleteSupportAgent('lima', ${idx})">Eliminar</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            const limaContainer = document.getElementById('adminLimaAgentsList');
+            if(limaContainer) limaContainer.innerHTML = limaHtml;
+
+            let trujilloHtml = '';
+            supportTrujilloAgents.forEach((ag, idx) => {
+                trujilloHtml += `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.3); padding:5px 8px; border-radius:6px; font-size:0.75rem; margin-bottom:4px;">
+                        <span>👤 <strong>${ag.name}</strong> - 📱 ${ag.phone}</span>
+                        <div>
+                            <button class="admin-btn-action" style="font-size:0.6rem; padding:2px 6px;" onclick="editSupportAgent('trujillo', ${idx})">Editar</button>
+                            ${supportTrujilloAgents.length > 1 ? `<button class="admin-btn-danger" style="font-size:0.6rem; padding:2px 6px;" onclick="deleteSupportAgent('trujillo', ${idx})">Eliminar</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            const trujilloContainer = document.getElementById('adminTrujilloAgentsList');
+            if(trujilloContainer) trujilloContainer.innerHTML = trujilloHtml;
+        }
+
+        function filterCategory(category, event) {
+            currentFilter = category;
+            const chips = document.querySelectorAll('.sidebar-item, .sidebar-sub-item');
+            chips.forEach(chip => chip.classList.remove('active'));
+            if(event && event.target) event.target.classList.add('active');
+
+            document.getElementById('searchInput').value = '';
+            document.getElementById('clearSearchBtn').style.display = 'none';
+
+            renderCatalog();
+            updateProducts();
+        }
+
+        function resetToPrincipal() {
+            currentFilter = 'principal';
+            const chips = document.querySelectorAll('.sidebar-item, .sidebar-sub-item');
+            chips.forEach(chip => chip.classList.remove('active'));
+            const pChip = document.getElementById('sidebar-chip-principal');
+            if(pChip) pChip.classList.add('active');
+            
+            const sub = document.getElementById('sidebarSoftwareSubmenu');
+            if(sub) sub.classList.remove('open');
+            
+            document.getElementById('searchInput').value = '';
+            document.getElementById('clearSearchBtn').style.display = 'none';
+            document.getElementById('sortSelect').value = 'default';
+            document.getElementById('stockSelect').value = 'all';
+
+            renderCatalog();
+            updateProducts();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function togglePasswordVisibility(inputId, btnElement) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                btnElement.innerText = "🔒";
+            } else {
+                input.type = "password";
+                btnElement.innerText = "👁️";
+            }
+        }
+
+        function openAdminLogin() {
+            document.getElementById('adminUser').value = '';
+            document.getElementById('adminPass').value = '';
+            document.getElementById('adminPass').type = 'password';
+            document.getElementById('adminLoginModal').style.display = 'flex';
+        }
+        function closeAdminLogin() {
+            closeModalWithImplosion('adminLoginModal');
+        }
+
+        function verifyAdminLogin() {
+            const u = document.getElementById('adminUser').value.trim();
+            const p = document.getElementById('adminPass').value.trim();
+            
+            if(!u) {
+                alert('Por favor ingrese su usuario.');
+                return;
+            }
+
+            const now = Date.now();
+
+            if (u !== 'luislmvg88' && loginAttempts[u] && loginAttempts[u].lockUntil > now) {
+                alert(`Demasiados intentos fallidos para el usuario ${u}. Cuenta bloqueada temporalmente por 15 minutos.`);
+                return;
+            }
+
+            const foundUser = usersDB.find(usr => usr.user === u && usr.pass === p);
+            
+            if (foundUser) {
+                if (loginAttempts[u]) delete loginAttempts[u];
+                currentUser = foundUser;
+                
+                sessionStorage.setItem('lubeltec_current_user', JSON.stringify(currentUser));
+                sessionStorage.setItem('lubeltec_session_time', Date.now().toString());
+
+                closeAdminLogin();
+                updateActiveUserHeaderUI();
+                resetInactivityTimer();
+                alert(`¡Bienvenido, ${currentUser.user}! Has iniciado sesión correctamente.`);
+                resetToPrincipal(); 
+            } else {
+                if (u === 'luislmvg88') {
+                    alert('Contraseña incorrecta para el Administrador Principal.');
+                    return;
+                }
+
+                if (!loginAttempts[u]) {
+                    loginAttempts[u] = { count: 0, lockUntil: 0 };
+                }
+                loginAttempts[u].count += 1;
+
+                if (loginAttempts[u].count >= 3) {
+                    loginAttempts[u].lockUntil = now + (15 * 60 * 1000); 
+                    loginAttempts[u].count = 0;
+                    alert('Has superado los 3 intentos permitidos. Este usuario ha sido bloqueado por 15 minutos.');
+                } else {
+                    alert(`Contraseña incorrecta. Intentos restantes para ${u}: ${3 - loginAttempts[u].count}`);
+                }
+            }
+        }
+
+        document.getElementById('adminPass').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') verifyAdminLogin();
+        });
+        document.getElementById('adminUser').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') verifyAdminLogin();
+        });
+
+        function updateActiveUserHeaderUI() {
+            const loginBtn = document.querySelector('.login-shortcut-btn');
+            const badge = document.getElementById('activeUserBadge');
+            const nameText = document.getElementById('activeUserNameText');
+            if (currentUser) {
+                if(loginBtn) loginBtn.style.display = 'none';
+                nameText.innerText = currentUser.user;
+                badge.style.display = 'flex';
+            } else {
+                if(loginBtn) loginBtn.style.display = 'flex';
+                badge.style.display = 'none';
+            }
+            renderCatalog();
+        }
+
+        function promptLogout() {
+            document.getElementById('logoutConfirmModal').style.display = 'flex';
+        }
+
+        function confirmLogout(proceed) {
+            closeModalWithImplosion('logoutConfirmModal');
+            if (proceed) {
+                currentUser = null;
+                sessionStorage.removeItem('lubeltec_current_user');
+                sessionStorage.removeItem('lubeltec_session_time');
+                updateActiveUserHeaderUI();
+                closeModalWithImplosion('adminPanelModal');
+                alert('Has cerrado sesión correctamente.');
+                renderCatalog();
+                updateProducts();
+            }
+        }
+
+        function toggleAdminMenu() {
+            const menu = document.getElementById('adminDropdownMenu');
+            const btn = document.getElementById('adminHamburgerBtn');
+            menu.classList.toggle('open');
+            btn.classList.toggle('active');
+        }
+
+        function switchAdminTab(tabId, btnElement) {
+            const panes = document.querySelectorAll('.admin-tab-pane');
+            panes.forEach(pane => pane.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.admin-tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            btnElement.classList.add('active');
+
+            document.getElementById('adminDropdownMenu').classList.remove('open');
+            document.getElementById('adminHamburgerBtn').classList.remove('active');
+        }
+
+        function openAdminPanel() {
+            resetAdminForm();
+            renderAdminProductList();
+            
+            const sessionInfo = document.getElementById('adminSessionInfo');
+            const tabDescuentosBtn = document.getElementById('tabBtnDescuentos');
+            const tabSoporteConfigBtn = document.getElementById('tabBtnSoporteConfig');
+            const tabUsuariosBtn = document.getElementById('tabBtnUsuarios');
+            const tabProductosBtn = document.getElementById('tabBtnProductos');
+
+            let roleName = currentUser.role === 'admin' ? 'Administrador 1 (Principal)' : (currentUser.role === 'admin2' ? 'Administrador 2' : 'Colaborador');
+            sessionInfo.innerText = `Sesión iniciada como: ${currentUser.user} [ Rol: ${roleName} ]`;
+
+            if (currentUser.role === 'admin') {
+                tabDescuentosBtn.style.display = 'block';
+                tabSoporteConfigBtn.style.display = 'block';
+                tabUsuariosBtn.style.display = 'block';
+                tabProductosBtn.style.display = 'block';
+                
+                document.getElementById('globalCollabDiscountInput').value = collabDiscountPct;
+                document.getElementById('settingDiscountsSwitch').checked = discountsActive;
+                document.getElementById('settingToastsSwitch').checked = toastsActive;
+                document.getElementById('settingHolidayTheme').value = holidayTheme;
+                document.getElementById('settingLimaActive').checked = supportLimaActive;
+                document.getElementById('settingTrujilloActive').checked = supportTrujilloActive;
+                renderAdminSupportAgents();
+
+                if(globalTiers[0]) { document.getElementById('gTier1Qty').value = globalTiers[0].qty; document.getElementById('gTier1Pct').value = globalTiers[0].pct; }
+                if(globalTiers[1]) { document.getElementById('gTier2Qty').value = globalTiers[1].qty; document.getElementById('gTier2Pct').value = globalTiers[1].pct; }
+                if(globalTiers[2]) { document.getElementById('gTier3Qty').value = globalTiers[2].qty; document.getElementById('gTier3Pct').value = globalTiers[2].pct; }
+
+                renderUsersList();
+                switchAdminTab('tabDescuentos', tabDescuentosBtn);
+            } else {
+                tabDescuentosBtn.style.display = 'none';
+                tabSoporteConfigBtn.style.display = 'none';
+                tabUsuariosBtn.style.display = 'none';
+                tabProductosBtn.style.display = 'block';
+                switchAdminTab('tabProductos', tabProductosBtn);
+            }
+
+            document.getElementById('adminPanelModal').style.display = 'flex';
+        }
+
+        function quickEditProduct(id) {
+            if (!currentUser || currentUser.role !== 'admin') {
+                alert('Debe iniciar sesión como Administrador para usar esta función.');
+                return;
+            }
+            openAdminPanel();
+            const tabProductosBtn = document.getElementById('tabBtnProductos');
+            switchAdminTab('tabProductos', tabProductosBtn);
+            editProduct(id);
+        }
+
+        function closeAdminPanel() {
+            closeModalWithImplosion('adminPanelModal');
+            renderCatalog();
+            updateProducts();
+            updateDynamicBanner();
+        }
+
+        function saveGlobalSettings() {
+            if (!currentUser || currentUser.role !== 'admin') return;
+            discountsActive = document.getElementById('settingDiscountsSwitch').checked;
+            toastsActive = document.getElementById('settingToastsSwitch').checked;
+            holidayTheme = document.getElementById('settingHolidayTheme').value;
+            supportLimaActive = document.getElementById('settingLimaActive').checked;
+            supportTrujilloActive = document.getElementById('settingTrujilloActive').checked;
+
+            const t1q = parseInt(document.getElementById('gTier1Qty').value) || 3;
+            const t1p = parseFloat(document.getElementById('gTier1Pct').value) || 5;
+            const t2q = parseInt(document.getElementById('gTier2Qty').value) || 6;
+            const t2p = parseFloat(document.getElementById('gTier2Pct').value) || 10;
+            const t3q = parseInt(document.getElementById('gTier3Qty').value) || 10;
+            const t3p = parseFloat(document.getElementById('gTier3Pct').value) || 15;
+
+            globalTiers = [
+                { qty: t1q, pct: t1p },
+                { qty: t2q, pct: t2p },
+                { qty: t3q, pct: t3p }
+            ];
+
+            saveSettingsStorage();
+            checkSupportAvailability();
+            updateDynamicBanner();
+            renderCatalog();
+            updateProducts();
+            alert('¡Configuración guardada y aplicada en la nube con éxito!');
+        }
+
+        function saveCollabDiscountSetting() {
+            if (!currentUser || currentUser.role !== 'admin') return;
+            const val = parseFloat(document.getElementById('globalCollabDiscountInput').value);
+            if(isNaN(val) || val < 0 || val > 100) {
+                alert('Ingrese un porcentaje válido entre 0 y 100.');
+                return;
+            }
+            collabDiscountPct = val;
+            saveCollabDctoStorage();
+            saveSettingsStorage();
+            alert(`¡Descuento para colaboradores actualizado a ${collabDiscountPct}% y guardado en la nube!`);
+            renderCatalog();
+            updateProducts();
+        }
+
+        function addNewUser() {
+            if (!currentUser || currentUser.role !== 'admin') return;
+            const u = document.getElementById('newLoginUser').value.trim();
+            const p = document.getElementById('newLoginPass').value.trim();
+            const r = document.getElementById('newLoginRole').value;
+
+            if(!u || !p) {
+                alert('Complete el usuario y la contraseña.');
+                return;
+            }
+
+            if(usersDB.some(usr => usr.user === u)) {
+                alert('El usuario ya existe.');
+                return;
+            }
+
+            usersDB.push({ user: u, pass: p, role: r, canAddDelete: false });
+            saveUsersToStorage();
+            document.getElementById('newLoginUser').value = '';
+            document.getElementById('newLoginPass').value = '';
+            renderUsersList();
+            notifyAdminAction(`Nuevo usuario creado: ${u} (Rol: ${r})`);
+            alert('Usuario creado con éxito.');
+        }
+
+        function deleteUser(username) {
+            if(username === 'luislmvg88') {
+                alert('No se puede eliminar al administrador principal.');
+                return;
+            }
+            if(confirm(`¿Eliminar usuario ${username}?`)) {
+                usersDB = usersDB.filter(usr => usr.user !== username);
+                saveUsersToStorage();
+                renderUsersList();
+                notifyAdminAction(`Usuario eliminado: ${username}`);
+            }
+        }
+
+        function editUserPassword(username) {
+            const usr = usersDB.find(u => u.user === username);
+            if(!usr) return;
+            const newPass = prompt(`Ingrese la nueva contraseña para el usuario ${username}:`, usr.pass);
+            if(newPass !== null && newPass.trim() !== '') {
+                usr.pass = newPass.trim();
+                saveUsersToStorage();
+                renderUsersList();
+                notifyAdminAction(`Contraseña actualizada para el usuario: ${username}`);
+                alert('Contraseña actualizada con éxito.');
+            }
+        }
+
+        function toggleUserPrivilege(username) {
+            const usr = usersDB.find(u => u.user === username);
+            if(usr) {
+                usr.canAddDelete = !usr.canAddDelete;
+                saveUsersToStorage();
+                renderUsersList();
+                notifyAdminAction(`Privilegios CRUD modificados para el usuario: ${username} (${usr.canAddDelete ? 'Otorgados' : 'Revocados'})`);
+            }
+        }
+
+        function renderUsersList() {
+            const container = document.getElementById('usersListContainer');
+            if(!container) return;
+            let html = '';
+            usersDB.forEach(usr => {
+                let badgePriv = usr.role === 'colaborador' ? `<button class="admin-btn-action" style="font-size:0.65rem;" onclick="toggleUserPrivilege('${usr.user}')">${usr.canAddDelete ? 'Quitar Privilegio' : 'Dar Privilegio CRUD'}</button>` : '';
+                let delBtn = usr.user !== 'luislmvg88' ? `<button class="admin-btn-danger" style="font-size:0.65rem;" onclick="deleteUser('${usr.user}')">Eliminar</button>` : '';
+                
+                html += `
+                    <div class="admin-user-row">
+                        <div>
+                            <strong>${usr.user}</strong> (${usr.role})<br>
+                            <span style="color:#f59e0b; font-size:0.75rem;">Contraseña: ${usr.pass}</span><br>
+                            <span style="font-size:0.7rem; color:#38bdf8;">CRUD extra: ${usr.canAddDelete ? 'Sí' : 'No'}</span>
+                        </div>
+                        <div>
+                            <button class="admin-btn-action" style="font-size:0.65rem;" onclick="editUserPassword('${usr.user}')">Cambiar Clave</button>
+                            ${badgePriv}
+                            ${delBtn}
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    temporaryBase64Img = e.target.result;
+                    document.getElementById('newProdImg').value = file.name;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function saveProduct() {
+            const editId = document.getElementById('editProductId').value;
+            const name = document.getElementById('newProdName').value.trim();
+            const price = parseFloat(document.getElementById('newProdPrice').value);
+            const category = document.getElementById('newProdCat').value;
+            const stock = document.getElementById('newProdStock').value === 'true';
+            const allowDiscount = document.getElementById('newProdAllowDiscount').value === 'true';
+            
+            const tiers = [
+                { qty: parseInt(document.getElementById('tier1Qty').value) || 3, pct: parseFloat(document.getElementById('tier1Pct').value) || 5 },
+                { qty: parseInt(document.getElementById('tier2Qty').value) || 6, pct: parseFloat(document.getElementById('tier2Pct').value) || 10 },
+                { qty: parseInt(document.getElementById('tier3Qty').value) || 10, pct: parseFloat(document.getElementById('tier3Pct').value) || 15 }
+            ].filter(t => !isNaN(t.qty) && !isNaN(t.pct));
+
+            const badge = document.getElementById('newProdBadge').value.trim();
+            const typedImg = document.getElementById('newProdImg').value.trim();
+            const desc = document.getElementById('newProdDesc').value.trim();
+
+            if (!name || isNaN(price)) {
+                alert('Por favor complete el nombre y un precio válido.');
+                return;
+            }
+
+            const productId = editId || ('prod-' + Date.now());
+            const existingProd = products.find(prod => prod.id === productId);
+            const imgFinal = temporaryBase64Img || typedImg || (existingProd ? existingProd.img : 'default.png');
+
+            const productData = {
+                id: productId,
+                name,
+                price,
+                category,
+                stock,
+                allowDiscount,
+                tiers,
+                badge,
+                img: imgFinal,
+                desc
+            };
+
+            if (editId) {
+                const p = products.find(prod => prod.id === editId);
+                if (p) {
+                    p.name = name;
+                    p.price = price;
+                    p.category = category;
+                    p.stock = stock;
+                    p.allowDiscount = allowDiscount;
+                    p.tiers = tiers;
+                    p.badge = badge;
+                    p.img = imgFinal;
+                    p.desc = desc;
+                }
+                notifyAdminAction(`Producto Actualizado: ${name} (Precio: S/. ${price.toFixed(2)})`);
+                alert('¡Producto actualizado y guardado en la nube con éxito!');
+            } else {
+                products.push(productData);
+                notifyAdminAction(`Nuevo Producto Agregado: ${name} (Precio: S/. ${price.toFixed(2)})`);
+                alert('¡Producto agregado y publicado en la nube con éxito!');
+            }
+
+            if (window.saveProductToCloud) {
+                await window.saveProductToCloud(productData);
+            }
+
+            saveProductsToStorage();
+            resetAdminForm();
+            renderAdminProductList();
+            updateDynamicBanner();
+            renderCatalog();
+            updateProducts();
+        }
+
+        function editProduct(id) {
+            const p = products.find(prod => prod.id === id);
+            if (!p) return;
+
+            const formContainer = document.getElementById('productFormContainer');
+            const toggleBtn = document.getElementById('toggleFormBtn');
+            formContainer.style.display = 'block';
+            toggleBtn.innerText = '📂 Ocultar Formulario de Nuevo Producto ▲';
+
+            document.getElementById('editProductId').value = p.id;
+            document.getElementById('newProdName').value = p.name;
+            document.getElementById('newProdPrice').value = p.price;
+            document.getElementById('newProdCat').value = p.category;
+            document.getElementById('newProdStock').value = p.stock.toString();
+            document.getElementById('newProdAllowDiscount').value = p.allowDiscount.toString();
+            
+            let useTiers = (p.tiers && p.tiers.length > 0) ? p.tiers : globalTiers;
+            if(useTiers[0]) { document.getElementById('tier1Qty').value = useTiers[0].qty; document.getElementById('tier1Pct').value = useTiers[0].pct; }
+            if(useTiers[1]) { document.getElementById('tier2Qty').value = useTiers[1].qty; document.getElementById('tier2Pct').value = useTiers[1].pct; }
+            if(useTiers[2]) { document.getElementById('tier3Qty').value = useTiers[2].qty; document.getElementById('tier3Pct').value = useTiers[2].pct; }
+
+            document.getElementById('newProdBadge').value = p.badge;
+            document.getElementById('newProdImg').value = p.img && p.img.startsWith('data:') ? 'Imagen cargada localmente' : (p.img || '');
+            document.getElementById('newProdDesc').value = p.desc;
+
+            document.getElementById('formActionTitle').innerText = '✏️ Editar Producto';
+            document.getElementById('saveProdBtn').innerText = '💾 Actualizar y Guardar en la Nube';
+            document.getElementById('cancelEditBtn').style.display = 'block';
+            temporaryBase64Img = p.img && p.img.startsWith('data:') ? p.img : '';
+        }
+
+        function resetAdminForm() {
+            document.getElementById('editProductId').value = '';
+            document.getElementById('newProdName').value = '';
+            document.getElementById('newProdPrice').value = '';
+            
+            if(globalTiers[0]) { document.getElementById('tier1Qty').value = globalTiers[0].qty; document.getElementById('tier1Pct').value = globalTiers[0].pct; }
+            if(globalTiers[1]) { document.getElementById('tier2Qty').value = globalTiers[1].qty; document.getElementById('tier2Pct').value = globalTiers[1].pct; }
+            if(globalTiers[2]) { document.getElementById('tier3Qty').value = globalTiers[3]?.qty || 10; document.getElementById('tier3Pct').value = globalTiers[2].pct; }
+
+            document.getElementById('newProdBadge').value = '';
+            document.getElementById('newProdImg').value = '';
+            document.getElementById('newProdFile').value = '';
+            document.getElementById('newProdDesc').value = '';
+            temporaryBase64Img = '';
+
+            document.getElementById('formActionTitle').innerText = '➕ Agregar Nuevo Producto';
+            document.getElementById('saveProdBtn').innerText = '💾 Guardar y Publicar Producto';
+            document.getElementById('cancelEditBtn').style.display = 'none';
+
+            document.getElementById('productFormContainer').style.display = 'none';
+            document.getElementById('toggleFormBtn').innerText = '📂 Desplegar Formulario de Nuevo Producto ▼';
+        }
+
+        async function deleteProduct(id) {
+            if(currentUser && currentUser.role === 'admin2') {
+                alert('El Administrador 2 no tiene privilegios para eliminar productos.');
+                return;
+            }
+            if(currentUser && currentUser.role === 'colaborador' && !currentUser.canAddDelete) {
+                alert('No tiene privilegios para eliminar productos.');
+                return;
+            }
+
+            const pTarget = products.find(p => p.id === id);
+            if(confirm('¿Estás seguro de eliminar este producto?')) {
+                products = products.filter(p => p.id !== id);
+                if (window.deleteProductFromCloud) {
+                    await window.deleteProductFromCloud(id);
+                }
+                saveProductsToStorage();
+                renderAdminProductList();
+                updateDynamicBanner();
+                renderCatalog();
+                updateProducts();
+                notifyAdminAction(`Producto Eliminado: ${pTarget ? pTarget.name : id}`);
+                alert('Producto eliminado de la base de datos con éxito.');
+            }
+        }
+
+        function renderAdminProductList(filterQuery = '') {
+            const container = document.getElementById('adminProductListContainer');
+            if(!container) return;
+
+            let filteredProducts = products;
+            if (filterQuery) {
+                filteredProducts = products.filter(p => p.name.toLowerCase().includes(filterQuery));
+            }
+
+            if(filteredProducts.length === 0) {
+                container.innerHTML = '<p style="color:#94a3b8; font-size:0.8rem; padding: 10px;">No se encontraron productos coincidentes.</p>';
+                return;
+            }
+
+            let html = '';
+            filteredProducts.forEach(p => {
+                let currentTiers = p.tiers && p.tiers.length > 0 ? p.tiers : globalTiers;
+                let dctoInfo = discountsActive && p.allowDiscount ? currentTiers.map(t => `${t.pct}% (≥${t.qty})`).join(', ') : 'Desactivados';
+                let canDelete = !(currentUser.role === 'admin2' || (currentUser.role === 'colaborador' && !currentUser.canAddDelete));
+                let delBtnHtml = canDelete ? `<button class="admin-btn-danger" onclick="deleteProduct('${p.id}')">Eliminar</button>` : '';
+
+                html += `
+                    <div class="admin-product-row">
+                        <div>
+                            <strong>${p.name}</strong><br>
+                            <span style="color:#38bdf8;">S/. ${p.price.toFixed(2)}</span> | <span style="color:${p.stock?'#22c55e':'#e63946'}">${p.stock?'Disponible':'Sin Stock'}</span><br>
+                            <span style="color:#22c55e; font-size:0.7rem;">Niveles: ${dctoInfo}</span>
+                        </div>
+                        <div>
+                            <button class="admin-btn-action" onclick="editProduct('${p.id}')">Editar</button>
+                            ${delBtnHtml}
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function updateDynamicBanner() {
+            const banner = document.getElementById('dynamicPromoBadge');
+            if(!banner) return;
+            if (!discountsActive) {
+                banner.innerHTML = `¡Descuentos temporales desactivados!`;
+                return;
+            }
+
+            let themeLabel = '';
+            if (holidayTheme === 'navidad') themeLabel = '🎄 [Navidad] ';
+            else if (holidayTheme === 'patrias') themeLabel = '🇵🇪 [Fiestas Patrias] ';
+            else if (holidayTheme === 'halloween') themeLabel = '🎃 [Halloween / Black Friday] ';
+            else if (holidayTheme === 'inocentes') themeLabel = '🤡 [Día de los Inocentes] ';
+
+            if (globalTiers && globalTiers.length > 0) {
+                let parts = globalTiers.map(t => `<span>${t.qty}+ unids (${t.pct}%)</span>`);
+                banner.innerHTML = `${themeLabel}Descuentos automáticos: ${parts.join(' | ')}!`;
+            } else {
+                banner.innerHTML = `${themeLabel}¡Descuentos automáticos configurables!`;
+            }
+        }
+
+        function renderCatalog() {
+            const track = document.getElementById('carouselTrack');
+            const grid = document.getElementById('catalogoGrid');
+            if (!track || !grid) return;
+
+            let carouselHtml = '';
+            let gridHtml = '';
+
+            products.forEach(p => {
+                const isFeatured = p.badge && p.badge.length > 0;
+                const stockBadge = p.stock ? `<span class="badge-tag">${p.badge || 'Disponible'}</span>` : `<span class="badge-out-of-stock">Sin Stock</span>`;
+                
+                let effectivePrice = p.price;
+                let collabNotice = '';
+
+                if (currentUser && currentUser.role === 'colaborador' && discountsActive) {
+                    let factorCollab = 1 - (collabDiscountPct / 100);
+                    effectivePrice = p.price * factorCollab;
+                    collabNotice = `<div style="font-size:0.65rem; color:#f59e0b; font-weight:bold;">✨ Precio Colaborador (-${collabDiscountPct}%)</div>`;
+                }
+
+                let quickEditBtnHtml = (currentUser && currentUser.role === 'admin') 
+                    ? `<button class="admin-quick-edit-btn" onclick="quickEditProduct('${p.id}')" title="Editar producto directamente">✏️</button>` 
+                    : '';
+                
+                const disabledAttr = !p.stock ? 'disabled' : '';
+                const disabledClass = !p.stock ? 'btn-disabled' : '';
+
+                const cardHtml = `
+                    <article class="card ${isFeatured ? 'destacada' : 'general-card'}" data-category="${p.category}" data-base-price="${effectivePrice}" data-name="${p.name}" data-stock="${p.stock}" data-id="${p.id}">
+                        ${quickEditBtnHtml}
+                        <div class="card-img-container"><img src="${p.img}" alt="${p.name}"></div>
+                        <div class="card-content">
+                            <div>
+                                ${stockBadge}
+                                <h2 class="card-title">${p.name}</h2>
+                                <p class="card-description">${p.desc}</p>
+                                ${collabNotice}
+                            </div>
+                            <div>
+                                <div class="card-price-box">
+                                    <div class="card-price-container">
+                                        <div class="card-price product-price-el">S/. ${effectivePrice.toFixed(2)}</div>
+                                        <div class="original-price product-orig-price-el" style="display:none;"></div>
+                                    </div>
+                                    <div class="discount-notice product-disc-el" style="display:none;"></div>
+                                </div>
+                                <div class="calculator-box">
+                                    <div class="calc-label-container">
+                                        <span class="calc-label">Cantidad:</span>
+                                        <button class="calc-reset-btn ${disabledClass}" onclick="resetQty(this)" title="Restablecer cantidad" ${disabledAttr}>↺</button>
+                                    </div>
+                                    <div class="calc-controls">
+                                        <button class="calc-btn ${disabledClass}" onclick="changeQty(this, -1)" ${disabledAttr}>-</button>
+                                        <input type="text" class="calc-input product-qty-input" value="01" readonly>
+                                        <button class="calc-btn ${disabledClass}" onclick="changeQty(this, 1)" ${disabledAttr}>+</button>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn-cart ${!p.stock?'btn-disabled':''}" onclick="addToCart(this, '${p.name}', ${effectivePrice}, '${p.id}')">🛒 Agregar al Carrito</button>
+                                    <button class="btn-yape ${!p.stock?'btn-disabled':''}" onclick="openDirectPayment(this, '${p.name}', ${effectivePrice}, '${p.id}'); triggerBtnAnimation(this);">💜 Pagar con Yape o Plin</button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                `;
+
+                if(isFeatured) {
+                    carouselHtml += cardHtml;
+                }
+                gridHtml += cardHtml;
+            });
+
+            track.innerHTML = carouselHtml;
+            grid.innerHTML = gridHtml;
+        }
+
+        function showCartPopupModal() {
+            const modal = document.getElementById('cartPopupModal');
+            if(!modal) return;
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 1800);
+        }
+
+        function showToast() {
+            if (!toastsActive) return;
+            const toast = document.getElementById('toastNotification');
+            if(!toast) return;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 2000);
+        }
+
+        const recentBuyers = [
+            { name: "Un usuario en Lima", item: "Gemini Pro" },
+            { name: "Un cliente en Trujillo", item: "Office 365" },
+            { name: "Un comprador en Arequipa", item: "Windows Pro" },
+            { name: "Un estudiante en Piura", item: "Canva Pro" },
+            { name: "Un usuario en Cusco", item: "Autodesk All Apps" }
+        ];
+
+        function triggerRandomPurchaseToast() {
+            if (!toastsActive) return;
+            const toast = document.getElementById('recentPurchaseToast');
+            if(!toast) return;
+            const buyer = recentBuyers[Math.floor(Math.random() * recentBuyers.length)];
+            document.getElementById('purchaseUserText').innerText = buyer.name;
+            document.getElementById('purchaseItemText').innerText = buyer.item;
+
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 4000);
+        }
+        setInterval(triggerRandomPurchaseToast, 12000);
+        setTimeout(triggerRandomPurchaseToast, 4000);
+
+        function handleSearchInput() {
+            const val = document.getElementById('searchInput').value;
+            document.getElementById('clearSearchBtn').style.display = val.length > 0 ? 'block' : 'none';
+            updateProducts();
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('clearSearchBtn').style.display = 'none';
+            updateProducts();
+        }
+
+        function changeQty(btnElement, delta) {
+            const card = btnElement.closest('.card');
+            const isStock = card.getAttribute('data-stock') === 'true';
+            if (!isStock) return;
+
+            const input = card.querySelector('.product-qty-input');
+            if(!input) return;
+            let val = parseInt(input.value) + delta;
+            if (val < 1) val = 1;
+            
+            input.value = val < 10 ? '0' + val : val;
+            
+            const prodId = card.getAttribute('data-id');
+            recalculateCardPrice(card, prodId, val);
+        }
+
+        function resetQty(btnElement) {
+            const card = btnElement.closest('.card');
+            const isStock = card.getAttribute('data-stock') === 'true';
+            if (!isStock) return;
+
+            const input = card.querySelector('.product-qty-input');
+            if(!input) return;
+            input.value = '01';
+            
+            const prodId = card.getAttribute('data-id');
+            recalculateCardPrice(card, prodId, 1);
+        }
+
+        function getActiveTier(prodObj, qty) {
+            if (!discountsActive || !prodObj.allowDiscount || qty <= 0) return null;
+            let currentTiers = (prodObj.tiers && prodObj.tiers.length > 0) ? prodObj.tiers : globalTiers;
+            if (!currentTiers || currentTiers.length === 0) return null;
+
+            let sortedTiers = [...currentTiers].sort((a,b) => b.qty - a.qty);
+            for (let t of sortedTiers) {
+                if (qty >= t.qty) {
+                    return t;
+                }
+            }
+            return null;
+        }
+
+        function recalculateCardPrice(card, prodId, qty) {
+            let basePrice = parseFloat(card.getAttribute('data-base-price'));
+            const prodObj = products.find(p => p.id === prodId);
+            if (!prodObj) return;
+
+            const priceDisplay = card.querySelector('.product-price-el');
+            const origPriceDisplay = card.querySelector('.product-orig-price-el');
+            const discNotice = card.querySelector('.product-disc-el');
+
+            let unitPrice = basePrice;
+            const originalTotal = basePrice * qty;
+
+            const activeTier = getActiveTier(prodObj, qty);
+
+            if (activeTier) {
+                unitPrice = basePrice * (1 - (activeTier.pct / 100));
+                discNotice.innerText = `¡${activeTier.pct}% dcto aplicado!`;
+                discNotice.style.display = 'block';
+                if(origPriceDisplay) {
+                    origPriceDisplay.innerText = `S/. ${originalTotal.toFixed(2)}`;
+                    origPriceDisplay.style.display = 'inline';
+                }
+            } else {
+                discNotice.style.display = 'none';
+                if(origPriceDisplay) origPriceDisplay.style.display = 'none';
+            }
+
+            const finalPrice = unitPrice * qty;
+            if(priceDisplay) priceDisplay.innerText = `S/. ${finalPrice.toFixed(2)}`;
+        }
+
+        function addToCart(btnElement, productName, basePrice, prodId) {
+            const card = btnElement.closest('.card');
+            const isStock = card.getAttribute('data-stock') === 'true';
+            if (!isStock) return;
+
+            const input = card.querySelector('.product-qty-input');
+            const qty = parseInt(input.value);
+            
+            if (qty <= 0) {
+                alert('Por favor selecciona una cantidad mayor a 0.');
+                return;
+            }
+
+            const prodObj = products.find(p => p.id === prodId);
+            
+            let unitPrice = basePrice;
+            let discountPercent = 0;
+
+            const activeTier = prodObj ? getActiveTier(prodObj, qty) : null;
+            if (activeTier) {
+                discountPercent = activeTier.pct;
+                unitPrice = basePrice * (1 - (discountPercent / 100));
+            }
+
+            const totalPrice = unitPrice * qty;
+
+            const existing = cart.find(item => item.name === productName);
+            if (existing) {
+                existing.qty += qty;
+                let uP = basePrice;
+                let dP = 0;
+                const tierEx = prodObj ? getActiveTier(prodObj, existing.qty) : null;
+                if (tierEx) {
+                    dP = tierEx.pct;
+                    uP = basePrice * (1 - (dP / 100));
+                }
+                existing.unitPrice = uP;
+                existing.discountPercent = dP;
+                existing.totalPrice = uP * existing.qty;
+            } else {
+                cart.push({ name: productName, basePrice: basePrice, qty: qty, unitPrice: unitPrice, discountPercent: discountPercent, totalPrice: totalPrice });
+            }
+
+            updateCartUI();
+            showCartPopupModal();
+            showToast();
+
+            input.value = '01';
+            recalculateCardPrice(card, prodId, 1);
+        }
+
+        function updateCartItemQty(index, delta) {
+            cart[index].qty += delta;
+            if (cart[index].qty < 1) {
+                cart.splice(index, 1);
+            } else {
+                let bp = cart[index].basePrice;
+                let uP = bp;
+                let dP = 0;
+                const pObj = products.find(p => p.name === cart[index].name);
+                
+                const tierEx = pObj ? getActiveTier(pObj, cart[index].qty) : null;
+                if (tierEx) {
+                    dP = tierEx.pct;
+                    uP = bp * (1 - (dP / 100));
+                }
+                cart[index].unitPrice = uP;
+                cart[index].discountPercent = dP;
+                cart[index].totalPrice = uP * cart[index].qty;
+            }
+            updateCartUI();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function clearCart() {
+            cart = [];
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const totalItemsCount = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cartCount').innerText = totalItemsCount;
+            
+            const container = document.getElementById('cartItemsContainer');
+            if (cart.length === 0) {
+                container.innerHTML = `<p style="color: #94a3b8; font-size: 0.8rem; padding: 10px;">Tu carrito está vacío</p>`;
+                document.getElementById('cartTotalPrice').innerText = 'S/. 0.00';
+                return;
+            }
+
+            let html = '';
+            let grandTotal = 0;
+            cart.forEach((item, idx) => {
+                grandTotal += item.totalPrice;
+                let originalTotal = item.basePrice * item.qty;
+                let priceBoxHtml = '';
+                
+                if (item.discountPercent > 0) {
+                    priceBoxHtml = `
+                        <div class="cart-item-price-box">
+                            <span class="cart-item-price">S/. ${item.totalPrice.toFixed(2)}</span>
+                            <span class="cart-item-orig-price">S/. ${originalTotal.toFixed(2)}</span>
+                            <span style="color:#22c55e; font-size:0.65rem; font-weight:bold;">(${item.discountPercent}% dcto)</span>
+                        </div>
+                    `;
+                } else {
+                    priceBoxHtml = `<div class="cart-item-price">S/. ${item.totalPrice.toFixed(2)}</div>`;
+                }
+
+                html += `
+                    <div class="cart-item-row">
+                        <div class="cart-item-info">
+                            <strong>${item.name}</strong><br>
+                            <span style="font-size:0.7rem; color:#38bdf8;">S/. ${item.unitPrice.toFixed(2)} c/u</span>
+                        </div>
+                        <div class="cart-qty-controls">
+                            <button class="cart-q-btn" onclick="updateCartItemQty(${idx}, -1)">-</button>
+                            <span style="font-size:0.8rem; padding: 0 4px;">${item.qty}</span>
+                            <button class="cart-q-btn" onclick="updateCartItemQty(${idx}, 1)">+</button>
+                        </div>
+                        ${priceBoxHtml}
+                        <button class="cart-item-remove" onclick="removeFromCart(${idx})">Eliminar</button>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            document.getElementById('cartTotalPrice').innerText = `S/. ${grandTotal.toFixed(2)}`;
+        }
+
+        function openCartModal() { document.getElementById('cartModal').style.display = 'flex'; }
+        function closeCartModal() { closeModalWithImplosion('cartModal'); }
+
+        function proceedToCheckout() {
+            if (cart.length === 0) return;
+            const grandTotal = cart.reduce((sum, item) => sum + item.totalPrice, 0);
+            let summaryText = cart.map(i => `${i.qty}x ${i.name}`).join(', ');
+            
+            document.getElementById('modalProductName').innerText = `Carrito: ${summaryText}`;
+            document.getElementById('modalProductPrice').innerText = `S/. ${grandTotal.toFixed(2)}`;
+            
+            const whatsappMsg = `Hola,%20deseo%20pagar%20mi%20pedido%20del%20carrito:%20${encodeURIComponent(summaryText)}%20(Total:%20S/.%20${grandTotal.toFixed(2)}).%20Adjunto%20comprobante.`;
+            document.getElementById('modalConfirmBtn').href = `https://wa.me/51933907930?text=${whatsappMsg}`;
+
+            closeModalWithImplosion('cartModal');
+            document.getElementById('paymentModal').style.display = 'flex';
+        }
+
+        function openDirectPayment(btnElement, productName, basePrice, prodId) {
+            const card = btnElement.closest('.card');
+            const isStock = card.getAttribute('data-stock') === 'true';
+            if (!isStock) return;
+
+            const input = card.querySelector('.product-qty-input');
+            const qty = parseInt(input.value);
+
+            if (qty <= 0) {
+                alert('Por favor selecciona una cantidad mayor a 0 para pagar.');
+                return;
+            }
+
+            const prodObj = products.find(p => p.id === prodId);
+            let unitPrice = basePrice;
+            
+            const activeTier = getActiveTier(prodObj, qty);
+            if (activeTier) {
+                unitPrice = basePrice * (1 - (activeTier.pct / 100));
+            }
+            const totalPrice = unitPrice * qty;
+
+            document.getElementById('modalProductName').innerText = `${productName} (${qty} unidad/es)`;
+            document.getElementById('modalProductPrice').innerText = `S/. ${totalPrice.toFixed(2)}`;
+            
+            const whatsappMsg = `Hola,%20ya%20realicé%20el%20pago%20vía%20Yape/Plin%20para%20el%20producto:%20${encodeURIComponent(productName)}%20(Cant:%20${qty},%20Total:%20S/.%20${totalPrice.toFixed(2)}).%20Adjunto%20comprobante.`;
+            document.getElementById('modalConfirmBtn').href = `https://wa.me/51933907930?text=${whatsappMsg}`;
+
+            document.getElementById('paymentModal').style.display = 'flex';
+
+            input.value = '01';
+            recalculateCardPrice(card, prodId, 1);
+        }
+
+        function closePaymentModal() { closeModalWithImplosion('paymentModal'); }
+
+        let carouselIndex = 0;
+        const track = document.getElementById('carouselTrack');
+        const container = document.getElementById('carouselContainer');
+
+        let isDown = false;
+        let startX;
+
+        if (container) {
+            container.addEventListener('mousedown', (e) => { isDown = true; startX = e.pageX; });
+            window.addEventListener('mouseup', () => { isDown = false; });
+            container.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX;
+                const walk = x - startX;
+                if (Math.abs(walk) > 60) {
+                    if(walk > 0) carouselIndex--; else carouselIndex++;
+                    moveCarousel();
+                    isDown = false;
+                }
+            });
+
+            container.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; });
+            container.addEventListener('touchend', (e) => {
+                const endX = e.changedTouches[0].clientX;
+                if (startX - endX > 40) { carouselIndex++; moveCarousel(); }
+                else if (endX - startX > 40) { carouselIndex--; moveCarousel(); }
+            });
+        }
+
+        function moveCarousel() {
+            if (!track) return;
+            const cardsDestacadas = track.getElementsByClassName('destacada');
+            const cardElement = cardsDestacadas[0];
+            if (!cardElement) return;
+            const cardWidth = cardElement.offsetWidth + 15;
+            const visibleContainerWidth = track.parentElement.offsetWidth;
+            const cardsPerView = Math.floor(visibleContainerWidth / cardWidth) || 1;
+            const maxIndex = cardsDestacadas.length - cardsPerView;
+
+            if (carouselIndex > maxIndex) carouselIndex = 0;
+            if (carouselIndex < 0) carouselIndex = maxIndex;
+
+            track.style.transform = `translateX(-${carouselIndex * cardWidth}px)`;
+        }
+
+        function autoSlideCarousel() {
+            if (currentFilter !== 'principal' && currentFilter !== 'all-software') return;
+            carouselIndex++;
+            moveCarousel();
+        }
+        setInterval(autoSlideCarousel, 4000);
+
+        function updateProducts() {
+            const seccionDestacados = document.getElementById('seccionDestacados');
+            const seccionCatalogo = document.getElementById('seccionCatalogo');
+            const catalogoGrid = document.getElementById('catalogoGrid');
+            if(!catalogoGrid) return;
+
+            const allCards = Array.from(catalogoGrid.getElementsByClassName('card'));
+            const destacadasCards = track ? Array.from(track.getElementsByClassName('card')) : [];
+            
+            const bannerAntivirus = document.getElementById('bannerAntivirus');
+            const bannerJuegos = document.getElementById('bannerJuegos');
+            const panelNosotros = document.getElementById('panelNosotros');
+            
+            const searchText = document.getElementById('searchInput').value.toLowerCase().trim();
+            const sortValue = document.getElementById('sortSelect').value;
+            const stockValue = document.getElementById('stockSelect').value;
+            const isSearching = searchText.length > 0;
+
+            if (currentFilter === 'nosotros') {
+                if(seccionDestacados) seccionDestacados.style.display = "none";
+                if(seccionCatalogo) seccionCatalogo.style.display = "none";
+                if(bannerAntivirus) bannerAntivirus.style.display = "none";
+                if(bannerJuegos) bannerJuegos.style.display = "none";
+                if(panelNosotros) panelNosotros.style.display = "block";
+                return;
+            } else { if(panelNosotros) panelNosotros.style.display = "none"; }
+
+            if (currentFilter === 'antivirus') {
+                if(seccionDestacados) seccionDestacados.style.display = "none";
+                if(seccionCatalogo) seccionCatalogo.style.display = "none";
+                if(bannerJuegos) bannerJuegos.style.display = "none";
+                if(bannerAntivirus) bannerAntivirus.style.display = "block";
+                return;
+            } else { if(bannerAntivirus) bannerAntivirus.style.display = "none"; }
+
+            if (currentFilter === 'juegos') {
+                if(seccionDestacados) seccionDestacados.style.display = "none";
+                if(seccionCatalogo) seccionCatalogo.style.display = "none";
+                if(bannerJuegos) bannerJuegos.style.display = "block";
+                return;
+            } else { if(bannerJuegos) bannerJuegos.style.display = "none"; }
+
+            if(seccionCatalogo) seccionCatalogo.style.display = "block";
+
+            if ((currentFilter === 'principal' || currentFilter === 'all-software') && !isSearching) {
+                if(seccionDestacados) seccionDestacados.style.display = "block";
+            } else { if(seccionDestacados) seccionDestacados.style.display = "none"; }
+
+            destacadasCards.forEach(card => {
+                const category = card.getAttribute('data-category');
+                const title = card.getAttribute('data-name').toLowerCase();
+                const isStock = card.getAttribute('data-stock') === 'true';
+
+                const matchesSearch = isSearching ? title.includes(searchText) : true;
+                let matchesStock = true;
+                if (stockValue === 'instock') matchesStock = isStock;
+                else if (stockValue === 'outofstock') matchesStock = !isStock;
+
+                const matchesCategory = isSearching ? true : ((currentFilter === 'principal' || currentFilter === 'all-software') || (category === currentFilter));
+
+                if (matchesCategory && matchesSearch && matchesStock) { card.style.display = "flex"; }
+                else { card.style.display = "none"; }
+            });
+
+            allCards.forEach(card => {
+                const category = card.getAttribute('data-category');
+                const title = card.getAttribute('data-name').toLowerCase();
+                const isStock = card.getAttribute('data-stock') === 'true';
+
+                const matchesSearch = isSearching ? title.includes(searchText) : true;
+                let matchesStock = true;
+                if (stockValue === 'instock') matchesStock = isStock;
+                else if (stockValue === 'outofstock') matchesStock = !isStock;
+
+                const matchesCategory = isSearching ? true : ((currentFilter === 'principal' || currentFilter === 'all-software') || (category === currentFilter));
+
+                if (matchesCategory && matchesSearch && matchesStock) { card.style.display = "flex"; }
+                else { card.style.display = "none"; }
+            });
+
+            if (sortValue !== 'default') {
+                allCards.sort((a, b) => {
+                    const priceA = parseFloat(a.getAttribute('data-base-price'));
+                    const priceB = parseFloat(b.getAttribute('data-base-price'));
+                    const nameA = a.getAttribute('data-name').toLowerCase();
+                    const nameB = b.getAttribute('data-name').toLowerCase();
+
+                    if (sortValue === 'price-desc') return priceB - priceA;
+                    if (sortValue === 'price-asc') return priceA - priceB;
+                    if (sortValue === 'alpha-asc') return nameA.localeCompare(nameB);
+                    return 0;
+                });
+
+                allCards.forEach(card => catalogoGrid.appendChild(card));
+            }
+        }
+
+        renderCatalog();
+        updateProducts();
+        updateDynamicBanner();
+        updateActiveUserHeaderUI();
+    </script>
+</body>
+</html>
