@@ -8,7 +8,7 @@
     <!-- Ícono de la URL (Favicon) -->
     <link rel="icon" href="lubeltec.png" type="image/png">
 
-    <!-- INTEGRACIÓN TOTAL DE FIREBASE PARA PRODUCTOS Y CONFIGURACIONES -->
+    <!-- INTEGRACIÓN DE FIREBASE PARA SINCRONIZACIÓN EN LA NUBE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -26,7 +26,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Sincronización de Productos
         const productsCol = collection(db, "products");
         onSnapshot(productsCol, (snapshot) => {
             if (!snapshot.empty) {
@@ -51,7 +50,6 @@
             }
         });
 
-        // Sincronización de Configuración Global (Descuentos, Agentes y Ajustes)
         const settingsDocRef = doc(db, "settings", "global_config");
         onSnapshot(settingsDocRef, (docSnap) => {
             if (docSnap.exists()) {
@@ -112,12 +110,10 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Cronómetro Flotante Desactivado */
         .promo-timer-float {
             display: none !important;
         }
 
-        /* Notificación Flotante con Check Animado */
         .toast-notification {
             position: fixed;
             bottom: 30px;
@@ -162,7 +158,6 @@
             100% { transform: scale(1); }
         }
 
-        /* Notificaciones de Compras Recientes */
         .recent-purchase-toast {
             position: fixed;
             bottom: 20px;
@@ -188,7 +183,6 @@
             transform: translateX(0);
         }
 
-        /* Encabezado fijo */
         header {
             background: rgba(9, 19, 29, 0.95);
             backdrop-filter: blur(12px);
@@ -246,20 +240,19 @@
             display: none;
             align-items: center;
             gap: 6px;
+            cursor: pointer;
+        }
+        .active-user-badge:hover {
+            background: rgba(0, 180, 216, 0.25);
+            border-color: #00b4d8;
         }
 
         .active-username-text {
             cursor: pointer;
             padding: 2px 4px;
             border-radius: 4px;
-            transition: background 0.2s ease;
-        }
-        .active-username-text:hover {
-            background: rgba(0, 180, 216, 0.25);
-            color: #ffffff;
         }
 
-        /* Botón de cierre de sesión con icono de salida 🚪 */
         .logout-exit-btn {
             background: rgba(230, 57, 70, 0.2);
             border: 1px solid #e63946;
@@ -399,7 +392,6 @@
             border-radius: 4px;
         }
 
-        /* Menú Desplegable Principal */
         .menu-dropdown {
             max-height: 0;
             overflow-y: auto;
@@ -476,7 +468,6 @@
             font-weight: bold;
         }
 
-        /* Menú Hamburguesa Interno para el Panel de Control */
         .admin-nav-header {
             position: relative;
             margin-bottom: 15px;
@@ -547,7 +538,6 @@
             display: block;
         }
 
-        /* Estilo para el Switch deslizante */
         .switch-container {
             display: flex;
             align-items: center;
@@ -595,7 +585,6 @@
             transform: translateX(22px);
         }
 
-        /* Barra de Filtros */
         .controls-container {
             max-width: 600px;
             margin: 0 auto;
@@ -650,7 +639,6 @@
             text-align: center;
         }
 
-        /* Contenedor Principal */
         .container {
             max-width: 1200px;
             margin: 15px auto;
@@ -668,7 +656,6 @@
             gap: 8px;
         }
 
-        /* Carrusel Arrastrable */
         .carousel-container {
             position: relative;
             overflow: hidden;
@@ -705,7 +692,6 @@
             gap: 15px;
         }
 
-        /* Tarjeta de producto */
         .card {
             background: rgba(20, 26, 35, 0.9);
             border: 1px solid #2d3542;
@@ -944,7 +930,6 @@
             pointer-events: none;
         }
 
-        /* Animación de Explosión / Desvanecimiento al Cerrar Ventanas Emergentes */
         @keyframes explosionClose {
             0% { transform: scale(1); opacity: 1; filter: blur(0px); }
             50% { transform: scale(1.15); opacity: 0.5; filter: blur(2px); }
@@ -1628,33 +1613,31 @@
                     <h4>🌐 Configuración Global y Características</h4>
                     <p>Activa o desactiva las características principales del sitio mediante interruptores y configura umbrales de descuento.</p>
                     
-                    <!-- Switch de Estado de Descuentos -->
                     <div class="switch-container">
                         <div>
                             <strong style="font-size: 0.8rem; color: #fff; display:block;">Estado de Descuentos</strong>
                             <span style="font-size: 0.68rem; color: #94a3b8;">Activa o desactiva los descuentos por volumen</span>
                         </div>
                         <label class="switch">
-                            <input type="checkbox" id="settingDiscountsSwitch" onchange="saveGlobalSettings()">
+                            <input type="checkbox" id="settingDiscountsSwitch">
                             <span class="slider"></span>
                         </label>
                     </div>
 
-                    <!-- Switch de Alertas Toast Recientes -->
                     <div class="switch-container">
                         <div>
                             <strong style="font-size: 0.8rem; color: #fff; display:block;">Alertas Toast Recientes</strong>
                             <span style="font-size: 0.68rem; color: #94a3b8;">Muestra u oculta las compras flotantes recientes</span>
                         </div>
                         <label class="switch">
-                            <input type="checkbox" id="settingToastsSwitch" onchange="saveGlobalSettings()">
+                            <input type="checkbox" id="settingToastsSwitch">
                             <span class="slider"></span>
                         </label>
                     </div>
 
                     <div class="admin-form-group" style="margin-bottom: 8px;">
                         <label>Fiesta / Temporada Especial:</label>
-                        <select id="settingHolidayTheme" onchange="saveGlobalSettings()">
+                        <select id="settingHolidayTheme">
                             <option value="normal">Ninguna (Estándar)</option>
                             <option value="navidad">🎄 Navidad y Año Nuevo</option>
                             <option value="patrias">🇵🇪 Fiestas Patrias Perú</option>
@@ -1704,22 +1687,21 @@
                             </div>
                         </div>
                     </div>
-                    <button class="admin-btn-action" onclick="applyGlobalDiscountsToAll()" style="width:100%; height:30px; font-size:0.75rem;">Aplicar Globalmente a Todo el Catálogo</button>
+                    <button class="admin-btn-action" onclick="saveGlobalSettings()" style="width:100%; height:32px; font-size:0.78rem; margin-top:6px;">💾 Guardar y Aplicar Cambios de Configuración</button>
                 </div>
             </div>
 
-            <!-- SUBPANEL INDEPENDIENTE: NÚMEROS DE WHATSAPP - SOPORTE TÉCNICO CON EDICIÓN INDEPENDIENTE -->
+            <!-- SUBPANEL 2: NÚMEROS DE WHATSAPP - SOPORTE TÉCNICO -->
             <div class="admin-tab-pane" id="tabSoporteConfig">
                 <div style="background: rgba(0, 180, 216, 0.08); border: 1px solid rgba(0, 180, 216, 0.3); padding: 14px; border-radius: 12px; text-align: left;">
                     <h4 style="color: #38bdf8; font-size: 0.92rem; margin-bottom: 6px;">📱 Números de WhatsApp - Soporte Técnico</h4>
                     <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 12px;">Activa/desactiva ubicaciones y gestiona agentes o números alternativos de manera independiente.</p>
                     
-                    <!-- Control y Activación de Lima y Otras Provincias -->
                     <div style="background: rgba(0,0,0,0.25); padding: 10px; border-radius: 8px; margin-bottom: 12px; border: 1px solid rgba(0, 180, 216, 0.2);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                             <strong style="font-size: 0.8rem; color: #38bdf8;">📍 Lima y Otras Provincias</strong>
                             <label class="switch" style="transform: scale(0.8);">
-                                <input type="checkbox" id="settingLimaActive" onchange="saveGlobalSettings()">
+                                <input type="checkbox" id="settingLimaActive">
                                 <span class="slider"></span>
                             </label>
                         </div>
@@ -1731,12 +1713,11 @@
                         </div>
                     </div>
 
-                    <!-- Control y Activación de Trujillo -->
                     <div style="background: rgba(0,0,0,0.25); padding: 10px; border-radius: 8px; margin-bottom: 4px; border: 1px solid rgba(0, 180, 216, 0.2);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                             <strong style="font-size: 0.8rem; color: #38bdf8;">📍 Trujillo</strong>
                             <label class="switch" style="transform: scale(0.8);">
-                                <input type="checkbox" id="settingTrujilloActive" onchange="saveGlobalSettings()">
+                                <input type="checkbox" id="settingTrujilloActive">
                                 <span class="slider"></span>
                             </label>
                         </div>
@@ -1747,6 +1728,7 @@
                             <button class="admin-btn-action" onclick="addSupportAgent('trujillo')" style="font-size:0.7rem; padding: 5px 10px;">Agregar</button>
                         </div>
                     </div>
+                    <button class="admin-btn-action" onclick="saveGlobalSettings()" style="width:100%; height:32px; font-size:0.78rem; margin-top:8px;">💾 Guardar y Aplicar Cambios de Soporte</button>
                 </div>
             </div>
 
@@ -1759,7 +1741,7 @@
                         <label style="font-size: 0.72rem; color: #38bdf8; font-weight: bold; display: block; margin-bottom: 3px;">Porcentaje de Descuento Fijo para Colaboradores (%):</label>
                         <div style="display:flex; gap:6px;">
                             <input type="number" id="globalCollabDiscountInput" style="flex:1; padding:5px; background:#070a12; border:1px solid #00b4d8; border-radius:6px; color:#fff; font-size:0.8rem;" value="10">
-                            <button class="admin-btn-action" onclick="saveCollabDiscountSetting()" style="font-size:0.7rem;">Actualizar Colaborador</button>
+                            <button class="admin-btn-action" onclick="saveCollabDiscountSetting()" style="font-size:0.7rem;">Guardar Colaborador</button>
                         </div>
                     </div>
 
@@ -1892,7 +1874,7 @@
                     </div>
                     
                     <div style="display:flex; gap:6px; margin-top: 8px;">
-                        <button class="btn-cart" onclick="saveProduct()" style="flex:2; justify-content:center; padding:8px;" id="saveProdBtn">Guardar y Publicar Producto</button>
+                        <button class="btn-cart" onclick="saveProduct()" style="flex:2; justify-content:center; padding:8px;" id="saveProdBtn">💾 Guardar y Publicar Producto</button>
                         <button class="btn-clear-cart" onclick="resetAdminForm()" style="flex:1; display:none; padding:8px;" id="cancelEditBtn">Cancelar</button>
                     </div>
                 </div>
@@ -1958,10 +1940,11 @@
                 <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMenu()" title="Menú de Categorías">☰</button>
                 <button class="login-shortcut-btn" onclick="openAdminLogin()" title="Iniciar Sesión">🔐 Iniciar Sesión</button>
                 
-                <div class="active-user-badge" id="activeUserBadge">
-                    <span class="active-username-text" onclick="openAdminPanel()" title="Hacer clic para abrir Panel de Control">👤 <span id="activeUserNameText">Usuario</span></span>
+                <!-- CORREGIDO: SE HA VINCULADO CLIC AL BADGE Y AL TEXTO PARA ABRIR EL PANEL DE CONTROL -->
+                <div class="active-user-badge" id="activeUserBadge" onclick="openAdminPanel()" title="Hacer clic para abrir Panel de Control">
+                    <span class="active-username-text">👤 <span id="activeUserNameText">Usuario</span></span>
                     
-                    <button class="logout-exit-btn" onclick="promptLogout()" title="Cerrar Sesión">🚪</button>
+                    <button class="logout-exit-btn" onclick="event.stopPropagation(); promptLogout();" title="Cerrar Sesión">🚪</button>
                 </div>
             </div>
             
@@ -2332,7 +2315,7 @@
             saveSettingsStorage();
             renderAdminSupportAgents();
             checkSupportAvailability();
-            alert('Usuario/Agente agregado con éxito.');
+            alert('Usuario/Agente agregado. Haga clic en "Guardar y Aplicar Cambios de Soporte" para sincronizar.');
         }
 
         function editSupportAgent(cityType, index) {
@@ -2350,7 +2333,7 @@
                 ag.phone = newPhone.trim();
                 saveSettingsStorage();
                 renderAdminSupportAgents();
-                alert('Datos actualizados con éxito.');
+                alert('Datos actualizados y guardados en la nube con éxito.');
             } else {
                 alert('Los campos no pueden estar vacíos.');
             }
@@ -2374,6 +2357,7 @@
             saveSettingsStorage();
             renderAdminSupportAgents();
             checkSupportAvailability();
+            alert('Cambios aplicados y sincronizados en la nube.');
         }
 
         function renderAdminSupportAgents() {
@@ -2639,11 +2623,25 @@
             supportLimaActive = document.getElementById('settingLimaActive').checked;
             supportTrujilloActive = document.getElementById('settingTrujilloActive').checked;
 
+            const t1q = parseInt(document.getElementById('gTier1Qty').value) || 3;
+            const t1p = parseFloat(document.getElementById('gTier1Pct').value) || 5;
+            const t2q = parseInt(document.getElementById('gTier2Qty').value) || 6;
+            const t2p = parseFloat(document.getElementById('gTier2Pct').value) || 10;
+            const t3q = parseInt(document.getElementById('gTier3Qty').value) || 10;
+            const t3p = parseFloat(document.getElementById('gTier3Pct').value) || 15;
+
+            globalTiers = [
+                { qty: t1q, pct: t1p },
+                { qty: t2q, pct: t2p },
+                { qty: t3q, pct: t3p }
+            ];
+
             saveSettingsStorage();
             checkSupportAvailability();
             updateDynamicBanner();
             renderCatalog();
             updateProducts();
+            alert('¡Configuración guardada y aplicada en la nube con éxito!');
         }
 
         function saveCollabDiscountSetting() {
@@ -2656,7 +2654,7 @@
             collabDiscountPct = val;
             saveCollabDctoStorage();
             saveSettingsStorage();
-            alert(`¡Descuento para colaboradores actualizado a ${collabDiscountPct}% con éxito!`);
+            alert(`¡Descuento para colaboradores actualizado a ${collabDiscountPct}% y guardado en la nube!`);
             renderCatalog();
             updateProducts();
         }
@@ -2685,7 +2683,7 @@
                 }
             });
             updateDynamicBanner();
-            alert('¡Los porcentajes y cantidades globales se han actualizado y aplicado a todo el catálogo!');
+            alert('¡Los descuentos globales se han aplicado a todo el catálogo y sincronizado en la nube!');
         }
 
         function addNewUser() {
@@ -2836,10 +2834,10 @@
                     p.img = imgFinal;
                     p.desc = desc;
                 }
-                alert('¡Producto actualizado con éxito!');
+                alert('¡Producto actualizado y guardado en la nube con éxito!');
             } else {
                 products.push(productData);
-                alert('¡Producto agregado exitosamente!');
+                alert('¡Producto agregado y publicado en la nube con éxito!');
             }
 
             if (window.saveProductToCloud) {
@@ -2875,7 +2873,7 @@
             document.getElementById('newProdDesc').value = p.desc;
 
             document.getElementById('formActionTitle').innerText = '✏️ Editar Producto';
-            document.getElementById('saveProdBtn').innerText = 'Actualizar Producto';
+            document.getElementById('saveProdBtn').innerText = '💾 Actualizar y Guardar en la Nube';
             document.getElementById('cancelEditBtn').style.display = 'block';
             temporaryBase64Img = p.img && p.img.startsWith('data:') ? p.img : '';
         }
@@ -2896,7 +2894,7 @@
             temporaryBase64Img = '';
 
             document.getElementById('formActionTitle').innerText = '➕ Agregar Nuevo Producto';
-            document.getElementById('saveProdBtn').innerText = 'Guardar y Publicar Producto';
+            document.getElementById('saveProdBtn').innerText = '💾 Guardar y Publicar Producto';
             document.getElementById('cancelEditBtn').style.display = 'none';
         }
 
@@ -2920,6 +2918,7 @@
                 updateDynamicBanner();
                 renderCatalog();
                 updateProducts();
+                alert('Producto eliminado de la base de datos con éxito.');
             }
         }
 
