@@ -386,7 +386,6 @@
             font-weight: 800;
         }
 
-        /* Botón de Carrito Minimalista (Sólo Ícono y Cantidad, sin la palabra Carrito) */
         .cart-btn {
             background: rgba(0, 180, 216, 0.15);
             border: 2px solid #00b4d8;
@@ -485,10 +484,11 @@
             border-radius: 4px;
         }
 
+        /* Menú Desplegable con animación de deslizamiento suave (acordeón) */
         .menu-dropdown {
             max-height: 0;
-            overflow-y: auto;
-            transition: max-height 0.35s ease-out, opacity 0.25s ease;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
             opacity: 0;
             display: flex;
             flex-wrap: wrap;
@@ -496,32 +496,37 @@
             justify-content: center;
             max-width: 600px;
             margin: 0 auto;
-            scrollbar-width: thin;
-            scrollbar-color: #00b4d8 transparent;
         }
 
         .menu-dropdown.open {
-            max-height: 180px;
+            max-height: 220px;
             opacity: 1;
             margin-bottom: 10px;
-            padding: 6px 4px;
+            padding: 8px 4px;
         }
 
+        /* Submenú con animación de deslizamiento suave */
         .submenu-software {
-            display: none;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+            opacity: 0;
+            display: flex;
             flex-wrap: wrap;
             gap: 5px;
             justify-content: center;
             width: 100%;
-            background: rgba(10, 16, 26, 0.8);
-            padding: 8px;
+            background: rgba(10, 16, 26, 0.9);
+            padding: 0 8px;
             border-radius: 10px;
             border: 1px dashed rgba(0, 180, 216, 0.4);
             margin-top: 4px;
         }
 
         .submenu-software.open {
-            display: flex;
+            max-height: 150px;
+            opacity: 1;
+            padding: 8px;
         }
 
         @media (max-width: 768px) {
@@ -529,7 +534,6 @@
                 flex-wrap: nowrap;
                 overflow-x: auto;
                 justify-content: flex-start;
-                padding: 6px 8px;
                 scrollbar-width: thin;
                 scrollbar-color: #00b4d8 transparent;
             }
@@ -1045,6 +1049,14 @@
             pointer-events: none;
         }
 
+        /* Animación de Implosión y Estallido al cerrar modales */
+        @keyframes implosionClose {
+            0% { transform: scale(1); opacity: 1; filter: blur(0px); }
+            40% { transform: scale(0.75); opacity: 0.8; filter: blur(1px); }
+            70% { transform: scale(1.15); opacity: 0.4; filter: blur(3px); }
+            100% { transform: scale(0); opacity: 0; filter: blur(8px); }
+        }
+
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -1062,11 +1074,12 @@
             transition: opacity 0.3s ease;
         }
 
-        .modal-overlay.exploding .modal-card {
-            animation: explosionClose 0.35s ease forwards;
+        .modal-overlay.imploding .modal-card,
+        .modal-overlay.imploding .support-modal-card {
+            animation: implosionClose 0.35s cubic-bezier(0.36, 0, 0.66, -0.56) forwards;
         }
 
-        .modal-card {
+        .modal-card, .support-modal-card {
             background: linear-gradient(135deg, #101726, #162238);
             border: 2px solid rgba(0, 180, 216, 0.6);
             border-radius: 20px;
@@ -1592,7 +1605,7 @@
         </div>
     </div>
 
-    <!-- BOTÓN FLOTANTE PARPADEANTE DE SOPORTE TÉCNICO (Abajo a la izquierda) -->
+    <!-- BOTÓN FLOTANTE PARPADEANTE DE SOPORTE TÉCNICO -->
     <div class="float-support-btn" id="floatSupportBtn" onclick="openSupportModal()" title="Soporte Técnico y Mantenimiento">
         <span style="font-size: 1.1rem;">🛠️</span>
         <div>
@@ -1601,10 +1614,10 @@
         </div>
     </div>
 
-    <!-- MODAL DE SOPORTE TÉCNICO Y MANTENIMIENTO -->
+    <!-- MODAL DE SOPORTE TÉCNICO -->
     <div class="modal-overlay" id="supportModal">
         <div class="support-modal-card">
-            <button class="close-modal" onclick="closeModalWithExplosion('supportModal')">✕</button>
+            <button class="close-modal" onclick="closeModalWithImplosion('supportModal')">✕</button>
             <h3>🛠️ Soporte Técnico y Mantenimiento de PC y Laptop</h3>
             <p>Servicios especializados de limpieza física, optimización, formateo y reparación. Elige tu ubicación y modalidad:</p>
             
@@ -1642,7 +1655,7 @@
 
             <div id="anydeskContainer" style="display: none; margin-top: 8px;">
                 <p style="font-size: 0.73rem; color: #22c55e; margin-bottom: 6px; line-height: 1.3;">
-                    📌 <strong>Importante:</strong> En caso de seleccionar modalidad remota, descarga AnyDesk para que nos puedas compartir "tu puesto de trabajo" que son aproximadamente 10 dígitos numéricos.
+                    📌 <strong>Importante:</strong> En modalidad remota, descarga AnyDesk para compartir tu código de acceso.
                 </p>
                 <a href="https://anydesk.com/es/downloads/thank-you?dv=win_exe" target="_blank" class="btn-anydesk">
                     📥 Descargar AnyDesk para Windows
@@ -1673,8 +1686,9 @@
 
     <!-- Modal de Advertencia de Cierre de Sesión -->
     <div class="modal-overlay" id="logoutConfirmModal">
-        <div class="modal-card" style="max-width: 380px;">
-            <h3 class="modal-title" style="color: #ff6b6b; margin-bottom: 10px;">⚠️ Cerrar Sesión</h3>
+        <div class="support-modal-card" style="max-width: 380px;">
+            <button class="close-modal" onclick="closeModalWithImplosion('logoutConfirmModal')">✕</button>
+            <h3 style="color: #ff6b6b; margin-bottom: 10px;">⚠️ Cerrar Sesión</h3>
             <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 20px;">¿Estás seguro de que deseas salir de la sesión actual?</p>
             <div style="display: flex; gap: 10px;">
                 <button class="admin-btn-action" onclick="confirmLogout(true)" style="flex:1; padding: 8px;">Sí, salir</button>
@@ -1686,7 +1700,7 @@
     <!-- Modal Login Administrador / Colaborador -->
     <div class="modal-overlay" id="adminLoginModal">
         <div class="modal-card">
-            <button class="close-modal" onclick="closeModalWithExplosion('adminLoginModal')">✕</button>
+            <button class="close-modal" onclick="closeModalWithImplosion('adminLoginModal')">✕</button>
             <h3 class="modal-title">🔐 Ingrese su usuario</h3>
             <div class="admin-form-group">
                 <label>Usuario:</label>
@@ -1703,15 +1717,14 @@
         </div>
     </div>
 
-    <!-- Panel de Administración con Menú Hamburguesa para Subpaneles -->
+    <!-- Panel de Administración -->
     <div class="modal-overlay" id="adminPanelModal">
         <div class="modal-card">
-            <button class="close-modal" onclick="closeModalWithExplosion('adminPanelModal')">✕</button>
+            <button class="close-modal" onclick="closeModalWithImplosion('adminPanelModal')">✕</button>
             <h3 class="modal-title" id="adminPanelTitle">⚙️ Panel de Control y Gestión</h3>
             
             <div id="adminSessionInfo" style="font-size: 0.8rem; color: #22c55e; margin-bottom: 8px; font-weight: bold; text-align: left;"></div>
 
-            <!-- MENÚ HAMBURGUESA INTERNO DEL PANEL DE CONTROL -->
             <div class="admin-nav-header">
                 <button class="admin-hamburger-btn" onclick="toggleAdminMenu()" id="adminHamburgerBtn">
                     ☰ Menú de Opciones
@@ -1725,7 +1738,7 @@
                 </div>
             </div>
 
-            <!-- SUBPANEL 1: CONFIGURACIÓN DE DESCUENTOS Y SWITCHES -->
+            <!-- SUBPANEL 1 -->
             <div class="admin-tab-pane active" id="tabDescuentos">
                 <div class="global-config-box">
                     <h4>🌐 Configuración Global y Características</h4>
@@ -1809,7 +1822,7 @@
                 </div>
             </div>
 
-            <!-- SUBPANEL 2: NÚMEROS DE WHATSAPP - SOPORTE TÉCNICO -->
+            <!-- SUBPANEL 2 -->
             <div class="admin-tab-pane" id="tabSoporteConfig">
                 <div style="background: rgba(0, 180, 216, 0.08); border: 1px solid rgba(0, 180, 216, 0.3); padding: 14px; border-radius: 12px; text-align: left;">
                     <h4 style="color: #38bdf8; font-size: 0.92rem; margin-bottom: 6px;">📱 Números de WhatsApp - Soporte Técnico</h4>
@@ -1850,7 +1863,7 @@
                 </div>
             </div>
 
-            <!-- SUBPANEL 3: GESTIÓN DE USUARIOS Y DESCUENTO DE COLABORADOR -->
+            <!-- SUBPANEL 3 -->
             <div class="admin-tab-pane" id="tabUsuarios">
                 <div style="background: rgba(230,57,70,0.06); padding: 12px; border-radius: 12px; margin-bottom: 15px; border: 1px dashed rgba(230,57,70,0.4); text-align:left;">
                     <h4 style="color:#ff6b6b; font-size:0.88rem; margin-bottom:6px;">👥 Gestionar Usuarios, Claves y Beneficios</h4>
@@ -1886,7 +1899,7 @@
                 </div>
             </div>
 
-            <!-- SUBPANEL 4: GESTIÓN DE PRODUCTOS -->
+            <!-- SUBPANEL 4 -->
             <div class="admin-tab-pane" id="tabProductos">
                 
                 <button type="button" onclick="toggleProductForm()" id="toggleFormBtn" style="background: rgba(0, 180, 216, 0.2); border: 1px solid #00b4d8; color: #38bdf8; width: 100%; padding: 8px; border-radius: 10px; font-weight: bold; font-size: 0.8rem; cursor: pointer; margin-bottom: 12px; transition: all 0.2s ease;">
@@ -2017,7 +2030,7 @@
     <!-- Modal de Carrito -->
     <div class="modal-overlay" id="cartModal">
         <div class="modal-card">
-            <button class="close-modal" onclick="closeModalWithExplosion('cartModal')">✕</button>
+            <button class="close-modal" onclick="closeModalWithImplosion('cartModal')">✕</button>
             <h3 class="modal-title">🛒 Carrito de Compras</h3>
             
             <div class="cart-items-list" id="cartItemsContainer">
@@ -2040,7 +2053,7 @@
     <!-- Modal Pago Yape / Plin -->
     <div class="modal-overlay" id="paymentModal">
         <div class="modal-card">
-            <button class="close-modal" onclick="closeModalWithExplosion('paymentModal')">✕</button>
+            <button class="close-modal" onclick="closeModalWithImplosion('paymentModal')">✕</button>
             <h3 class="modal-title">Pagar con Yape o Plin</h3>
             <div class="modal-product" id="modalProductName">Producto</div>
             
@@ -2063,7 +2076,7 @@
     </div>
 
     <header>
-        <!-- ORDEN EXACTO SOLICITADO: 1. Hamburguesa, 2. Logo y Nombre, 3. Iniciar Sesión / Usuario, 4. Carrito (Sólo Ícono y Cantidad) -->
+        <!-- ORDEN ESTRICTO: 1. Hamburguesa, 2. Logo y Nombre, 3. Iniciar Sesión / Usuario, 4. Carrito -->
         <div class="header-top">
             <div class="header-left-cluster">
                 <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMenu()" title="Menú de Categorías">☰</button>
@@ -2082,7 +2095,6 @@
                 </div>
             </div>
 
-            <!-- Carrito minimalista (Sin la palabra Carrito, solo ícono y cantidad) -->
             <button class="cart-btn" onclick="openCartModal()" title="Ver Carrito">
                 🛒 (<span id="cartCount">0</span>)
             </button>
@@ -2095,14 +2107,14 @@
             ¡Descuentos automáticos: <span>3+ unids (5%)</span> | <span>6+ unids (10%)</span> | <span>10+ unids (15%)</span>!
         </div>
 
-        <!-- Menú Desplegable -->
+        <!-- Menú Desplegable Principal -->
         <div class="menu-dropdown" id="menuDropdown">
             <button class="cat-chip active" id="chip-principal" onclick="filterCategory('principal', event)">🏠 Principal</button>
             <button class="cat-chip" id="chip-software" onclick="toggleSubmenu('softwareSubmenu', event)">📂 Software ▾</button>
             <button class="cat-chip" onclick="filterCategory('juegos', event)">🎮 Juegos</button>
             <button class="cat-chip" onclick="filterCategory('nosotros', event)">📌 Visión y Misión</button>
 
-            <!-- Submenú de Software Agrupado -->
+            <!-- Submenú de Software Desplegable -->
             <div class="submenu-software" id="softwareSubmenu">
                 <button class="sub-chip active" onclick="filterCategory('all-software', event)">Todos los Software</button>
                 <button class="sub-chip" onclick="filterCategory('win', event)">💻 Windows 10/11</button>
@@ -2326,6 +2338,17 @@
             event.stopPropagation();
             const submenu = document.getElementById(submenuId);
             submenu.classList.toggle('open');
+        }
+
+        // Animación de cierre con implosión y estallido
+        function closeModalWithImplosion(modalId) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            modal.classList.add('imploding');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                modal.classList.remove('imploding');
+            }, 350);
         }
 
         function toggleProductForm() {
@@ -2568,16 +2591,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function closeModalWithExplosion(modalId) {
-            const modal = document.getElementById(modalId);
-            if (!modal) return;
-            modal.classList.add('exploding');
-            setTimeout(() => {
-                modal.style.display = 'none';
-                modal.classList.remove('exploding');
-            }, 350);
-        }
-
         function togglePasswordVisibility(inputId, btnElement) {
             const input = document.getElementById(inputId);
             if (input.type === "password") {
@@ -2596,7 +2609,7 @@
             document.getElementById('adminLoginModal').style.display = 'flex';
         }
         function closeAdminLogin() {
-            closeModalWithExplosion('adminLoginModal');
+            closeModalWithImplosion('adminLoginModal');
         }
 
         function verifyAdminLogin() {
@@ -2677,13 +2690,13 @@
         }
 
         function confirmLogout(proceed) {
-            closeModalWithExplosion('logoutConfirmModal');
+            closeModalWithImplosion('logoutConfirmModal');
             if (proceed) {
                 currentUser = null;
                 sessionStorage.removeItem('lubeltec_current_user');
                 sessionStorage.removeItem('lubeltec_session_time');
                 updateActiveUserHeaderUI();
-                closeModalWithExplosion('adminPanelModal');
+                closeModalWithImplosion('adminPanelModal');
                 alert('Has cerrado sesión correctamente.');
                 renderCatalog();
                 updateProducts();
@@ -2767,7 +2780,7 @@
         }
 
         function closeAdminPanel() {
-            closeModalWithExplosion('adminPanelModal');
+            closeModalWithImplosion('adminPanelModal');
             renderCatalog();
             updateProducts();
             updateDynamicBanner();
@@ -3173,7 +3186,6 @@
                     ? `<button class="admin-quick-edit-btn" onclick="quickEditProduct('${p.id}')" title="Editar producto directamente">✏️</button>` 
                     : '';
                 
-                // INHABILITAR CONTADOR SI EL PRODUCTO NO TIENE STOCK
                 const disabledAttr = !p.stock ? 'disabled' : '';
                 const disabledClass = !p.stock ? 'btn-disabled' : '';
 
@@ -3280,7 +3292,7 @@
         function changeQty(btnElement, delta) {
             const card = btnElement.closest('.card');
             const isStock = card.getAttribute('data-stock') === 'true';
-            if (!isStock) return; // Bloquear si no hay stock
+            if (!isStock) return;
 
             const input = card.querySelector('.product-qty-input');
             if(!input) return;
@@ -3485,7 +3497,7 @@
         }
 
         function openCartModal() { document.getElementById('cartModal').style.display = 'flex'; }
-        function closeCartModal() { closeModalWithExplosion('cartModal'); }
+        function closeCartModal() { closeModalWithImplosion('cartModal'); }
 
         function proceedToCheckout() {
             if (cart.length === 0) return;
@@ -3498,7 +3510,7 @@
             const whatsappMsg = `Hola,%20deseo%20pagar%20mi%20pedido%20del%20carrito:%20${encodeURIComponent(summaryText)}%20(Total:%20S/.%20${grandTotal.toFixed(2)}).%20Adjunto%20comprobante.`;
             document.getElementById('modalConfirmBtn').href = `https://wa.me/51933907930?text=${whatsappMsg}`;
 
-            closeModalWithExplosion('cartModal');
+            closeModalWithImplosion('cartModal');
             document.getElementById('paymentModal').style.display = 'flex';
         }
 
@@ -3536,7 +3548,7 @@
             recalculateCardPrice(card, prodId, 1);
         }
 
-        function closePaymentModal() { closeModalWithExplosion('paymentModal'); }
+        function closePaymentModal() { closeModalWithImplosion('paymentModal'); }
 
         let carouselIndex = 0;
         const track = document.getElementById('carouselTrack');
@@ -3680,7 +3692,7 @@
 
                     if (sortValue === 'price-desc') return priceB - priceA;
                     if (sortValue === 'price-asc') return priceA - priceB;
-                    if (sortValue === 'alpha-asc') nameA.localeCompare(nameB);
+                    if (sortValue === 'alpha-asc') return nameA.localeCompare(nameB);
                     return 0;
                 });
 
