@@ -7,12 +7,11 @@
     
     <link rel="icon" href="lubeltec.png" type="image/png">
 
-    <!-- Módulos de Firebase -->
+    <!-- Módulos de Firebase (v10 JS SDK) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // TUS CREDENCIALES DE FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyB2vERcbTTP8W5y_6r0rCjOfKztWRH4BJY",
             authDomain: "lubeltec.firebaseapp.com",
@@ -26,7 +25,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Conexión en tiempo real con la base de datos
         const productsCol = collection(db, "products");
         onSnapshot(productsCol, (snapshot) => {
             if (snapshot.empty) {
@@ -59,7 +57,7 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
         body { background: linear-gradient(-45deg, #070a12, #0d1527, #0b1120, #03060d); color: #e6edf3; padding-bottom: 80px; }
-        header { background: rgba(9, 19, 29, 0.95); padding: 10px; border-bottom: 2px solid #00b4d8; position: sticky; top: 0; z-index: 100; text-align: center; }
+        header { background: rgba(9, 19, 29, 0.95); padding: 12px; border-bottom: 2px solid #00b4d8; position: sticky; top: 0; z-index: 100; text-align: center; }
         .header-top { display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin: 0 auto; }
         .container { max-width: 1200px; margin: 15px auto; padding: 0 10px; }
         .grid-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 15px; }
@@ -71,14 +69,12 @@
         .modal-card { background: #101726; border: 2px solid #00b4d8; border-radius: 16px; padding: 20px; max-width: 500px; width: 90%; color: #fff; }
         .admin-form-group { margin-bottom: 10px; text-align: left; }
         .admin-form-group input, .admin-form-group select { width: 100%; padding: 8px; background: #070a12; border: 1px solid #00b4d8; border-radius: 6px; color: #fff; }
-        
         .float-support-btn { position: fixed; bottom: 18px; left: 18px; background: #0d1b2a; border: 2px solid #00b4d8; color: #fff; padding: 8px 14px; border-radius: 30px; display: flex; align-items: center; gap: 8px; z-index: 1000; cursor: pointer; }
         .float-whatsapp { position: fixed; width: 48px; height: 48px; bottom: 18px; right: 18px; background-color: #25d366; color: #FFF; border-radius: 50px; text-align: center; font-size: 22px; z-index: 1000; display: flex; align-items: center; justify-content: center; text-decoration: none; }
     </style>
 </head>
 <body>
 
-    <!-- BOTÓN SOPORTE TÉCNICO -->
     <div class="float-support-btn" onclick="openSupportModal()">
         <span style="font-size: 1.1rem;">🛠️</span>
         <div>
@@ -89,7 +85,6 @@
 
     <a href="https://wa.me/51933907930?text=Hola,%20quisiera%20consultar%20sobre%20sus%20licencias" class="float-whatsapp" target="_blank">💬</a>
 
-    <!-- MODAL SOPORTE TÉCNICO -->
     <div class="modal-overlay" id="supportModal">
         <div class="modal-card">
             <h3 style="color:#38bdf8; margin-bottom:10px;">🛠️ Soporte técnico y mantenimiento de PC y Laptop</h3>
@@ -103,21 +98,20 @@
             <h1 style="color: #00b4d8;">Lubeltec</h1>
             <button onclick="openAdminModal()" style="background: rgba(0,180,216,0.2); border: 1px solid #00b4d8; color: #38bdf8; padding: 6px 12px; border-radius: 8px; cursor: pointer;">🔐 Panel Admin</button>
         </div>
+        <div style="font-size: 0.76rem; color: #38bdf8; font-style: italic; margin-top: 4px;">✨ Software Original y Licencias Digitales a tu Alcance ✨</div>
     </header>
 
     <main class="container">
-        <h2 style="color: #00b4d8; margin-bottom: 15px;">📦 Catálogo Digital Dinámico (Nube Firebase)</h2>
+        <h2 style="color: #38bdf8; margin-bottom: 15px;">📦 Catálogo Digital Dinámico</h2>
         <div class="grid-layout" id="catalogoGrid"></div>
     </main>
 
-    <!-- MODAL ADMIN PRODUCTOS -->
     <div class="modal-overlay" id="adminModal">
         <div class="modal-card">
-            <h3 style="color: #38bdf8; margin-bottom: 10px;">⚙️ Admin: Agregar / Modificar Producto en la Nube</h3>
-            
+            <h3 style="color: #38bdf8; margin-bottom: 10px;">⚙️ Panel Admin: Gestionar Productos</h3>
             <input type="hidden" id="editProdId">
             <div class="admin-form-group">
-                <label>Nombre del Producto:</label>
+                <label>Nombre:</label>
                 <input type="text" id="prodName" placeholder="Ej. Windows 11 Pro">
             </div>
             <div class="admin-form-group">
@@ -133,10 +127,9 @@
             </div>
             <div class="admin-form-group">
                 <label>Descripción:</label>
-                <input type="text" id="prodDesc" placeholder="Detalles del producto o licencia...">
+                <input type="text" id="prodDesc" placeholder="Detalles de la licencia...">
             </div>
-
-            <button class="btn-yape" onclick="handleAddProduct()">Guardar Cambios en la Nube</button>
+            <button class="btn-yape" onclick="handleAddProduct()">Guardar en la Nube</button>
             <button onclick="closeAdminModal()" style="background: transparent; border: 1px solid #e63946; color: #ff6b6b; padding: 6px; border-radius: 6px; width: 100%; margin-top: 6px; cursor: pointer;">Cancelar</button>
         </div>
     </div>
@@ -145,9 +138,10 @@
         window.products = [];
 
         const initialProducts = [
-            { id: 'win-pro', name: 'Windows 10/11 Pro', price: 50.00, stock: true, desc: 'Licencia digital permanente.' },
-            { id: 'off-365', name: 'Office 365 (1 año)', price: 45.00, stock: true, desc: 'Word, Excel, PowerPoint para 5 dispositivos.' },
-            { id: 'canva-3', name: 'Canva Pro (3 años)', price: 55.00, stock: true, desc: 'Acceso completo a herramientas de diseño.' }
+            { id: 'win-pro', name: 'Windows 10/11 Pro (Siempre)', price: 50.00, stock: true, desc: 'Licencia digital permanente (OEM).' },
+            { id: 'off-365', name: 'Office 365 (1 año)', price: 45.00, stock: true, desc: 'Instálalo en hasta 5 dispositivos.' },
+            { id: 'gem-18', name: 'Gemini Pro 3.6 (18 meses)', price: 70.00, stock: true, desc: 'Incluye IA avanzada y 5TB Google Drive.' },
+            { id: 'canva-3', name: 'Canva Pro (3 años)', price: 55.00, stock: true, desc: 'Suscripción por 3 años con herramientas Pro.' }
         ];
 
         window.seedInitialProducts = async function() {
@@ -167,14 +161,14 @@
                         <div>
                             <span style="font-size:0.7rem; color:${p.stock ? '#22c55e' : '#e63946'}; font-weight:bold;">${p.stock ? 'DISPONIBLE' : 'AGOTADO'}</span>
                             <h3 class="card-title">${p.name}</h3>
-                            <p style="font-size:0.8rem; color:#94a3b8;">${p.desc || ''}</p>
+                            <p style="font-size:0.8rem; color:#94a3b8; margin-top:4px;">${p.desc || ''}</p>
                         </div>
-                        <div>
+                        <div style="margin-top: 10px;">
                             <div class="card-price">S/. ${parseFloat(p.price).toFixed(2)}</div>
-                            <button class="btn-yape" onclick="alert('Iniciando pedido de ${p.name}')">💜 Pagar con Yape o Plin</button>
-                            <div style="display:flex; gap:4px; margin-top:6px;">
-                                <button onclick="editProduct('${p.id}')" style="background:#00b4d8; border:none; color:#000; font-size:0.7rem; padding:4px; border-radius:4px; flex:1; cursor:pointer; font-weight:bold;">Editar</button>
-                                <button onclick="handleDeleteProduct('${p.id}')" style="background:rgba(230,57,70,0.2); border:1px solid #e63946; color:#ff6b6b; font-size:0.7rem; padding:4px; border-radius:4px; flex:1; cursor:pointer;">Eliminar</button>
+                            <button class="btn-yape" onclick="alert('Pedido de ${p.name} iniciado')">💜 Pagar con Yape o Plin</button>
+                            <div style="display:flex; gap:6px; margin-top:6px;">
+                                <button onclick="editProduct('${p.id}')" style="background:#00b4d8; border:none; color:#000; font-size:0.75rem; padding:5px; border-radius:6px; flex:1; cursor:pointer; font-weight:bold;">Editar</button>
+                                <button onclick="handleDeleteProduct('${p.id}')" style="background:rgba(230,57,70,0.2); border:1px solid #e63946; color:#ff6b6b; font-size:0.75rem; padding:5px; border-radius:6px; flex:1; cursor:pointer;">Eliminar</button>
                             </div>
                         </div>
                     </article>
@@ -198,10 +192,9 @@
             }
 
             const productData = { id, name, price, stock, desc };
-
             if (window.saveProductToCloud) {
                 await window.saveProductToCloud(productData);
-                alert('¡Producto actualizado exitosamente en la nube!');
+                alert('¡Producto guardado exitosamente!');
                 closeAdminModal();
             }
         }
@@ -218,7 +211,7 @@
         }
 
         async function handleDeleteProduct(id) {
-            if (confirm('¿Eliminar producto de la base de datos?')) {
+            if (confirm('¿Deseas eliminar este producto?')) {
                 if (window.deleteProductFromCloud) {
                     await window.deleteProductFromCloud(id);
                 }
