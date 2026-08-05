@@ -1336,6 +1336,106 @@
             color: #64748b;
             font-size: 0.75rem;
         }
+
+        /* BOTÓN FLOTANTE PARPADEANTE DE SOPORTE TÉCNICO (Abajo a la izquierda) */
+        @keyframes blinkSupportBtn {
+            0% { transform: scale(1); box-shadow: 0 0 10px rgba(0, 180, 216, 0.4); border-color: #00b4d8; }
+            50% { transform: scale(1.06); box-shadow: 0 0 22px rgba(0, 180, 216, 0.9), 0 0 10px rgba(34, 197, 94, 0.6); border-color: #22c55e; }
+            100% { transform: scale(1); box-shadow: 0 0 10px rgba(0, 180, 216, 0.4); border-color: #00b4d8; }
+        }
+
+        .float-support-btn {
+            position: fixed;
+            bottom: 18px;
+            left: 18px;
+            background: linear-gradient(135deg, #0d1b2a, #1b263b);
+            border: 2px solid #00b4d8;
+            color: #ffffff;
+            padding: 8px 14px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            animation: blinkSupportBtn 2s infinite ease-in-out;
+            transition: transform 0.2s ease;
+        }
+        .float-support-btn:hover {
+            transform: scale(1.08);
+        }
+
+        /* Estilos para el Modal Flotante de Soporte Técnico */
+        .support-modal-card {
+            background: linear-gradient(135deg, #101726, #162238);
+            border: 2px solid #00b4d8;
+            border-radius: 20px;
+            padding: 22px;
+            max-width: 480px;
+            width: 100%;
+            text-align: left;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 180, 216, 0.3);
+        }
+        .support-modal-card h3 {
+            color: #38bdf8;
+            font-size: 1.05rem;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .support-modal-card p {
+            font-size: 0.78rem;
+            color: #cbd5e1;
+            margin-bottom: 12px;
+            line-height: 1.35;
+        }
+        .support-form-group {
+            margin-bottom: 10px;
+        }
+        .support-form-group label {
+            display: block;
+            font-size: 0.75rem;
+            color: #38bdf8;
+            margin-bottom: 3px;
+            font-weight: 600;
+        }
+        .support-form-group select {
+            width: 100%;
+            padding: 8px 10px;
+            background: #070a12;
+            border: 1px solid rgba(0, 180, 216, 0.4);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.8rem;
+            outline: none;
+        }
+
+        /* Botón de descarga de AnyDesk */
+        .btn-anydesk {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #ef233c, #d90429);
+            color: #ffffff;
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
+        .btn-anydesk:hover {
+            box-shadow: 0 0 12px rgba(239, 35, 60, 0.7);
+        }
     </style>
 </head>
 <body>
@@ -1344,6 +1444,69 @@
     <div class="promo-timer-float" id="promoTimerFloat">
         <span>⚡ Oferta Relámpago:</span>
         <span class="timer-digits" id="timerDigitsDisplay">00:00:00</span>
+    </div>
+
+    <!-- BOTÓN FLOTANTE PARPADEANTE DE SOPORTE TÉCNICO (Abajo a la izquierda) -->
+    <div class="float-support-btn" onclick="openSupportModal()" title="Soporte Técnico y Mantenimiento">
+        <span style="font-size: 1.1rem;">🛠️</span>
+        <div>
+            <div style="color: #38bdf8; font-size: 0.72rem;">¿Necesitas ayuda?</div>
+            <div style="color: #22c55e;">Soporte y Mantenimiento</div>
+        </div>
+    </div>
+
+    <!-- MODAL DE SOPORTE TÉCNICO Y MANTENIMIENTO -->
+    <div class="modal-overlay" id="supportModal">
+        <div class="support-modal-card">
+            <button class="close-modal" onclick="closeModalWithExplosion('supportModal')">✕</button>
+            <h3>🛠️ Soporte Técnico y Mantenimiento de PC y Laptop</h3>
+            <p>Servicios especializados de limpieza física, optimización, formateo y reparación. Elige tu ubicación y modalidad:</p>
+            
+            <ul style="font-size: 0.75rem; color: #cbd5e1; margin-bottom: 12px; padding-left: 15px;">
+                <li><strong>Lima y Trujillo:</strong> Presencial / Domicilio y Remoto.</li>
+                <li><strong>Otras Provincias:</strong> Exclusivamente Remoto.</li>
+            </ul>
+
+            <div class="support-form-group">
+                <label>Selecciona tu Ciudad / Ubicación:</label>
+                <select id="supportCitySelect" onchange="updateSupportWhatsAppLink()">
+                    <option value="lima">Lima (Presencial / Domicilio / Remoto)</option>
+                    <option value="trujillo">Trujillo (Presencial / Domicilio / Remoto)</option>
+                    <option value="otras">Otras Provincias (Solo Remoto)</option>
+                </select>
+            </div>
+
+            <div class="support-form-group">
+                <label>Modalidad de Servicio:</label>
+                <select id="supportModalitySelect" onchange="updateSupportWhatsAppLink()">
+                    <option value="remoto">💻 Remoto (Conexión a distancia)</option>
+                    <option value="presencial">🏢 Presencial / Domicilio</option>
+                </select>
+            </div>
+
+            <div class="support-form-group">
+                <label>Tipo de Servicio:</label>
+                <select id="supportTypeSelect" onchange="updateSupportWhatsAppLink()">
+                    <option value="mantenimiento">Mantenimiento y Limpieza General</option>
+                    <option value="soporte">Soporte Técnico de Software / Hardware</option>
+                    <option value="ambos">Mantenimiento + Soporte Técnico Completo</option>
+                </select>
+            </div>
+
+            <!-- BOTÓN DE DESCARGA ANYDESK E INFORMACIÓN DE PUESTO DE TRABAJO -->
+            <div id="anydeskContainer" style="display: none; margin-top: 8px;">
+                <p style="font-size: 0.73rem; color: #22c55e; margin-bottom: 6px; line-height: 1.3;">
+                    📌 <strong>Importante:</strong> En caso de seleccionar modalidad remota, descarga AnyDesk para que nos puedas compartir "tu puesto de trabajo" que son aproximadamente 10 dígitos numéricos.
+                </p>
+                <a href="https://anydesk.com/es/downloads/thank-you?dv=win_exe" target="_blank" class="btn-anydesk">
+                    📥 Descargar AnyDesk para Windows
+                </a>
+            </div>
+
+            <a href="#" id="supportWhatsappBtn" target="_blank" class="btn-yape" style="text-decoration: none; padding: 10px; font-size: 0.85rem; justify-content: center; margin-top: 14px;">
+                📲 Contactar al Técnico por WhatsApp
+            </a>
+        </div>
     </div>
 
     <a href="https://wa.me/51933907930?text=Hola,%20quisiera%20consultar%20sobre%20sus%20licencias%20digitales" class="float-whatsapp" target="_blank" title="Contactar por WhatsApp">💬</a>
@@ -1409,34 +1572,42 @@
                 </button>
 
                 <div class="admin-dropdown-menu" id="adminDropdownMenu">
-                    <button class="admin-tab-btn active" onclick="switchAdminTab('tabDescuentos', this)" id="tabBtnDescuentos">🌐 1. Descuentos y Festividades</button>
-                    <button class="admin-tab-btn" onclick="switchAdminTab('tabCronometro', this)" id="tabBtnCronometro">⏱️ 2. Configuración del Cronómetro</button>
-                    <button class="admin-tab-btn" onclick="switchAdminTab('tabUsuarios', this)" id="tabBtnUsuarios">👥 3. Gestión de Usuarios</button>
-                    <button class="admin-tab-btn" onclick="switchAdminTab('tabProductos', this)" id="tabBtnProductos">📦 4. Gestión de Productos</button>
+                    <button class="admin-tab-btn active" onclick="switchAdminTab('tabDescuentos', this)" id="tabBtnDescuentos">🌐 1. Descuentos y Configuración</button>
+                    <button class="admin-tab-btn" onclick="switchAdminTab('tabSoporteConfig', this)" id="tabBtnSoporteConfig">📱 2. Números de WhatsApp - Soporte Técnico</button>
+                    <button class="admin-tab-btn" onclick="switchAdminTab('tabCronometro', this)" id="tabBtnCronometro">⏱️ 3. Configuración del Cronómetro</button>
+                    <button class="admin-tab-btn" onclick="switchAdminTab('tabUsuarios', this)" id="tabBtnUsuarios">👥 4. Gestión de Usuarios</button>
+                    <button class="admin-tab-btn" onclick="switchAdminTab('tabProductos', this)" id="tabBtnProductos">📦 5. Gestión de Productos</button>
                 </div>
             </div>
 
-            <!-- SUBPANEL 1: CONFIGURACIÓN DE DESCUENTOS Y FESTIVIDADES -->
+            <!-- SUBPANEL 1: CONFIGURACIÓN DE DESCUENTOS Y SWITCHES -->
             <div class="admin-tab-pane active" id="tabDescuentos">
                 <div class="global-config-box">
-                    <h4>🌐 Configuración Global de Descuentos y Festividades</h4>
-                    <p>Modifica umbrales, activa/desactiva características y selecciona temporada de festividades.</p>
+                    <h4>🌐 Configuración Global y Características</h4>
+                    <p>Activa o desactiva las características principales del sitio mediante interruptores y configura umbrales.</p>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
-                        <div class="admin-form-group" style="margin-bottom:0;">
-                            <label>Estado de Descuentos:</label>
-                            <select id="settingDiscountsActive" onchange="saveGlobalSettings()">
-                                <option value="true">Activados</option>
-                                <option value="false">Desactivados</option>
-                            </select>
+                    <!-- Switch de Estado de Descuentos -->
+                    <div class="switch-container">
+                        <div>
+                            <strong style="font-size: 0.8rem; color: #fff; display:block;">Estado de Descuentos</strong>
+                            <span style="font-size: 0.68rem; color: #94a3b8;">Activa o desactiva los descuentos por volumen</span>
                         </div>
-                        <div class="admin-form-group" style="margin-bottom:0;">
-                            <label>Alertas Toast Recientes:</label>
-                            <select id="settingToastsActive" onchange="saveGlobalSettings()">
-                                <option value="true">Activadas</option>
-                                <option value="false">Desactivadas</option>
-                            </select>
+                        <label class="switch">
+                            <input type="checkbox" id="settingDiscountsSwitch" onchange="saveGlobalSettings()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <!-- Switch de Alertas Toast Recientes -->
+                    <div class="switch-container">
+                        <div>
+                            <strong style="font-size: 0.8rem; color: #fff; display:block;">Alertas Toast Recientes</strong>
+                            <span style="font-size: 0.68rem; color: #94a3b8;">Muestra u oculta las compras flotantes recientes</span>
                         </div>
+                        <label class="switch">
+                            <input type="checkbox" id="settingToastsSwitch" onchange="saveGlobalSettings()">
+                            <span class="slider"></span>
+                        </label>
                     </div>
 
                     <div class="admin-form-group" style="margin-bottom: 8px;">
@@ -1492,6 +1663,24 @@
                         </div>
                     </div>
                     <button class="admin-btn-action" onclick="applyGlobalDiscountsToAll()" style="width:100%; height:30px; font-size:0.75rem;">Aplicar Globalmente a Todo el Catálogo</button>
+                </div>
+            </div>
+
+            <!-- SUBPANEL ESPECÍFICO: NÚMEROS DE WHATSAPP - SOPORTE TÉCNICO -->
+            <div class="admin-tab-pane" id="tabSoporteConfig">
+                <div style="background: rgba(0, 180, 216, 0.08); border: 1px solid rgba(0, 180, 216, 0.3); padding: 14px; border-radius: 12px; text-align: left;">
+                    <h4 style="color: #38bdf8; font-size: 0.92rem; margin-bottom: 6px;">📱 Números de WhatsApp - Soporte Técnico</h4>
+                    <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 12px;">Aquí puedes modificar individualmente los números de contacto de WhatsApp para cada ciudad o zona de soporte técnico.</p>
+                    
+                    <div class="admin-form-group">
+                        <label>Lima y Otras Provincias (Contacto Principal):</label>
+                        <input type="text" id="settingSupportLimaPhone" placeholder="Ej. 933907930" value="933907930" onchange="saveGlobalSettings()">
+                    </div>
+
+                    <div class="admin-form-group" style="margin-bottom: 0;">
+                        <label>Trujillo (Contacto Específico):</label>
+                        <input type="text" id="settingSupportTrujilloPhone" placeholder="Ej. 9929770729" value="9929770729" onchange="saveGlobalSettings()">
+                    </div>
                 </div>
             </div>
 
@@ -1892,6 +2081,10 @@
         let timeEnd = '22:00';
         let calendarDateTime = '';
 
+        // Números de WhatsApp de Soporte Técnico (Editables por el Administrador)
+        let supportLimaPhone = '933907930';
+        let supportTrujilloPhone = '9929770729';
+
         let products = [
             { id: 'win-pro', name: 'Windows 10/11 Pro (Siempre)', price: 50.00, category: 'win', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'windows11.png', desc: 'Licencia digital permanente (OEM). Reactivación de por vida.' },
             { id: 'off-365', name: 'Office 365 (1 año)', price: 45.00, category: 'ia', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'office365.png', desc: 'Instálalo en hasta 5 dispositivos. Word, Excel, PowerPoint, Outlook y Teams.' },
@@ -1900,7 +2093,7 @@
             { id: 'auto-1', name: 'Autodesk All Apps (1 año)', price: 75.00, category: 'diseno', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'autodesk.png', desc: 'AutoCAD, Revit, Inventor, Maya, Fusion 360, etc.' },
             { id: 'crunch-1', name: 'Crunchyroll 1 Perfil (1 año)', price: 99.00, category: 'iptv', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'crunchyroll.png', desc: 'Cuenta Mega Fan individual. Sin anuncios y alta velocidad.' },
             { id: 'win-home', name: 'Windows 10/11 Home (Siempre)', price: 50.00, category: 'win', stock: true, allowDiscount: true, badge: '', img: 'windows11.png', desc: 'Activación permanente y original para uso doméstico.' },
-            { id: 'canva-1', name: 'Canva Pro (1 año)', price: 35.00, category: 'diseno', stock: true, allowDiscount: true, badge: 'Popular', img: 'canva.png', desc: 'Acceso a imágenes premium, vídeos y quita fondos.' },
+            { id: 'canva-1', name: 'Canva Pro (1 año)', price: 35.00, category: 'diseno', stock: true, allowDiscount: true, badge: 'Popular', img: 'canva.png', desc: 'Acceso al contenido premium y plantillas de diseño.' },
             { id: 'canva-2', name: 'Canva Pro (2 años)', price: 45.00, category: 'diseno', stock: true, allowDiscount: true, badge: '', img: 'canva.png', desc: 'Acceso Pro extendido para plantillas exclusivas y kit de marca.' },
             { id: 'canva-inf', name: 'Canva Pro (para siempre)', price: 99.00, category: 'diseno', stock: false, allowDiscount: false, badge: '', img: 'canva.png', desc: 'Licencia vitalicia con acceso completo a funciones de diseño.' },
             { id: 'gem-12', name: 'Gemini Pro 3.6 (12 meses)', price: 50.00, category: 'ia', stock: true, allowDiscount: true, badge: '', img: 'gemini12.png', desc: 'IA de Google One por 1 año y almacenamiento de 5TB.' },
@@ -1945,6 +2138,12 @@
         if(localStorage.getItem('lubeltec_holiday_theme')) {
             holidayTheme = localStorage.getItem('lubeltec_holiday_theme');
         }
+        if(localStorage.getItem('lubeltec_support_lima')) {
+            supportLimaPhone = localStorage.getItem('lubeltec_support_lima');
+        }
+        if(localStorage.getItem('lubeltec_support_trujillo')) {
+            supportTrujilloPhone = localStorage.getItem('lubeltec_support_trujillo');
+        }
         if(localStorage.getItem('lubeltec_timer_active') !== null) {
             timerActive = localStorage.getItem('lubeltec_timer_active') === 'true';
         }
@@ -1984,6 +2183,8 @@
             localStorage.setItem('lubeltec_discounts_active', discountsActive);
             localStorage.setItem('lubeltec_toasts_active', toastsActive);
             localStorage.setItem('lubeltec_holiday_theme', holidayTheme);
+            localStorage.setItem('lubeltec_support_lima', supportLimaPhone);
+            localStorage.setItem('lubeltec_support_trujillo', supportTrujilloPhone);
             localStorage.setItem('lubeltec_timer_active', timerActive);
             localStorage.setItem('lubeltec_timer_mode', timerMode);
             localStorage.setItem('lubeltec_timer_hours', timerHours);
@@ -2003,6 +2204,49 @@
             event.stopPropagation();
             const submenu = document.getElementById(submenuId);
             submenu.classList.toggle('open');
+        }
+
+        function openSupportModal() {
+            document.getElementById('supportModal').style.display = 'flex';
+            updateSupportWhatsAppLink();
+        }
+
+        function updateSupportWhatsAppLink() {
+            const city = document.getElementById('supportCitySelect').value;
+            const modality = document.getElementById('supportModalitySelect').value;
+            const type = document.getElementById('supportTypeSelect').value;
+            const btn = document.getElementById('supportWhatsappBtn');
+            const anydeskDiv = document.getElementById('anydeskContainer');
+
+            let phone = supportLimaPhone; 
+            let cityNameText = 'Lima';
+            let modalityText = 'Remoto';
+
+            if (city === 'trujillo') {
+                phone = supportTrujilloPhone; 
+                cityNameText = 'Trujillo';
+            } else if (city === 'otras') {
+                phone = supportLimaPhone;
+                cityNameText = 'Otras Provincias';
+                document.getElementById('supportModalitySelect').value = 'remoto';
+            } else if (city === 'lima') {
+                phone = supportLimaPhone;
+                cityNameText = 'Lima';
+            }
+
+            const currentModality = document.getElementById('supportModalitySelect').value;
+            if (currentModality === 'remoto' || city === 'otras') {
+                modalityText = 'Remoto';
+                anydeskDiv.style.display = 'block';
+            } else {
+                modalityText = 'Presencial / Domicilio';
+                anydeskDiv.style.display = 'none';
+            }
+
+            let typeNameText = type === 'mantenimiento' ? 'Mantenimiento y Limpieza General' : (type === 'soporte' ? 'Soporte Técnico' : 'Mantenimiento y Soporte Técnico');
+
+            const msg = `Hola,%20deseo%20solicitar%20el%20servicio%20de%20${encodeURIComponent(typeNameText)}%20en%20la%20ciudad%20de%20${encodeURIComponent(cityNameText)}%20(Modalidad:%20${encodeURIComponent(modalityText)}).`;
+            btn.href = `https://wa.me/51${phone}?text=${msg}`;
         }
 
         function filterCategory(category, event) {
@@ -2187,6 +2431,7 @@
             
             const sessionInfo = document.getElementById('adminSessionInfo');
             const tabDescuentosBtn = document.getElementById('tabBtnDescuentos');
+            const tabSoporteConfigBtn = document.getElementById('tabBtnSoporteConfig');
             const tabCronometroBtn = document.getElementById('tabBtnCronometro');
             const tabUsuariosBtn = document.getElementById('tabBtnUsuarios');
             const tabProductosBtn = document.getElementById('tabBtnProductos');
@@ -2196,14 +2441,17 @@
 
             if (currentUser.role === 'admin') {
                 tabDescuentosBtn.style.display = 'block';
+                tabSoporteConfigBtn.style.display = 'block';
                 tabCronometroBtn.style.display = 'block';
                 tabUsuariosBtn.style.display = 'block';
                 tabProductosBtn.style.display = 'block';
                 
                 document.getElementById('globalCollabDiscountInput').value = collabDiscountPct;
-                document.getElementById('settingDiscountsActive').value = discountsActive.toString();
-                document.getElementById('settingToastsActive').value = toastsActive.toString();
+                document.getElementById('settingDiscountsSwitch').checked = discountsActive;
+                document.getElementById('settingToastsSwitch').checked = toastsActive;
                 document.getElementById('settingHolidayTheme').value = holidayTheme;
+                document.getElementById('settingSupportLimaPhone').value = supportLimaPhone;
+                document.getElementById('settingSupportTrujilloPhone').value = supportTrujilloPhone;
 
                 document.getElementById('settingTimerSwitch').checked = timerActive;
                 document.getElementById('settingTimerMode').value = timerMode;
@@ -2221,6 +2469,7 @@
                 switchAdminTab('tabDescuentos', tabDescuentosBtn);
             } else {
                 tabDescuentosBtn.style.display = 'none';
+                tabSoporteConfigBtn.style.display = 'none';
                 tabCronometroBtn.style.display = 'none';
                 tabUsuariosBtn.style.display = 'none';
                 tabProductosBtn.style.display = 'block';
@@ -2239,9 +2488,12 @@
 
         function saveGlobalSettings() {
             if (!currentUser || currentUser.role !== 'admin') return;
-            discountsActive = document.getElementById('settingDiscountsActive').value === 'true';
-            toastsActive = document.getElementById('settingToastsActive').value === 'true';
+            discountsActive = document.getElementById('settingDiscountsSwitch').checked;
+            toastsActive = document.getElementById('settingToastsSwitch').checked;
             holidayTheme = document.getElementById('settingHolidayTheme').value;
+            supportLimaPhone = document.getElementById('settingSupportLimaPhone').value.trim() || '933907930';
+            supportTrujilloPhone = document.getElementById('settingSupportTrujilloPhone').value.trim() || '9929770729';
+
             saveSettingsStorage();
             updateDynamicBanner();
             renderCatalog();
@@ -2682,6 +2934,7 @@
         }
 
         function showToast() {
+            if (!toastsActive) return;
             const toast = document.getElementById('toastNotification');
             toast.classList.add('show');
             setTimeout(() => { toast.classList.remove('show'); }, 2000);
