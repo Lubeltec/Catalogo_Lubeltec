@@ -247,7 +247,7 @@
             backdrop-filter: blur(12px);
             color: #ffffff;
             text-align: center;
-            padding: 12px 16px;
+            padding: 10px 12px;
             border-bottom: 2px solid #00b4d8;
             position: sticky;
             top: 0;
@@ -259,29 +259,31 @@
             align-items: center;
             justify-content: space-between;
             max-width: 1200px;
-            margin: 0 auto 6px auto;
-            gap: 8px;
-            flex-wrap: wrap; /* CORRECCIÓN PARA CELULARES: permite ajustar elementos si no entran en una línea */
+            margin: 0 auto 4px auto;
+            gap: 6px;
+            flex-wrap: nowrap; /* Mantiene todo estrictamente en una sola línea */
         }
 
         .header-left-cluster {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            min-width: 0; /* Permite que se contraiga si es necesario */
         }
 
         .hamburger-btn {
             background: rgba(0, 180, 216, 0.15);
             color: #38bdf8;
             border: 1px solid #00b4d8;
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            font-size: 1.1rem;
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            font-size: 1rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
             transition: all 0.3s ease;
         }
 
@@ -294,22 +296,24 @@
         .header-auth-group {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
+            flex-shrink: 0;
         }
 
         .login-shortcut-btn {
             background: rgba(0, 180, 216, 0.15);
             border: 1px solid #00b4d8;
             color: #38bdf8;
-            padding: 6px 10px;
-            border-radius: 10px;
-            font-size: 0.75rem;
+            padding: 5px 8px;
+            border-radius: 8px;
+            font-size: 0.7rem;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
             transition: all 0.2s ease;
+            white-space: nowrap;
         }
         .login-shortcut-btn:hover {
             background: #00b4d8;
@@ -320,13 +324,13 @@
             background: rgba(0, 180, 216, 0.15);
             border: 1px solid #00b4d8;
             color: #38bdf8;
-            padding: 5px 10px;
-            border-radius: 10px;
-            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 0.7rem;
             font-weight: 600;
             display: none;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             cursor: pointer;
         }
         .active-user-badge:hover {
@@ -336,7 +340,7 @@
 
         .active-username-text {
             cursor: pointer;
-            padding: 2px 4px;
+            padding: 2px 2px;
             border-radius: 4px;
         }
 
@@ -344,14 +348,14 @@
             background: rgba(230, 57, 70, 0.2);
             border: 1px solid #e63946;
             color: #ff6b6b;
-            width: 22px;
-            height: 22px;
-            border-radius: 5px;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             transition: all 0.2s ease;
         }
         .logout-exit-btn:hover {
@@ -364,9 +368,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
             cursor: pointer;
             user-select: none;
+            min-width: 0;
+            overflow: hidden;
         }
 
         @keyframes pulseGlow {
@@ -376,42 +382,48 @@
         }
 
         .header-logo {
-            height: 32px;
-            width: 32px;
+            height: 28px;
+            width: 28px;
             object-fit: cover;
             border-radius: 50%;
             animation: pulseGlow 3s infinite ease-in-out;
             border: 1px solid #00b4d8;
+            flex-shrink: 0;
         }
 
         header h1 {
-            font-size: 1.25rem;
+            font-size: 1rem;
             color: #00b4d8;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.8px;
             margin: 0;
             font-weight: 800;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .cart-btn {
             background: rgba(0, 180, 216, 0.15);
-            border: 2px solid #00b4d8;
+            border: 1.5px solid #00b4d8;
             color: #38bdf8;
-            padding: 6px 12px;
-            border-radius: 12px;
+            padding: 5px 10px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             font-weight: bold;
             display: flex;
             align-items: center;
-            gap: 6px;
-            box-shadow: 0 0 12px rgba(0, 180, 216, 0.4);
+            gap: 4px;
+            box-shadow: 0 0 10px rgba(0, 180, 216, 0.4);
             transition: all 0.3s ease;
+            flex-shrink: 0;
+            white-space: nowrap;
         }
 
         .cart-btn:hover {
             transform: scale(1.06);
-            box-shadow: 0 0 18px rgba(0, 180, 216, 0.9);
+            box-shadow: 0 0 15px rgba(0, 180, 216, 0.9);
             background: #00b4d8;
             color: #080c14;
         }
@@ -445,23 +457,23 @@
         }
 
         .slogan-text {
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             color: #38bdf8;
             font-style: italic;
-            margin-bottom: 4px;
-            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+            letter-spacing: 0.4px;
             font-weight: 500;
         }
 
         .hours-badge {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: #38bdf8;
             background: rgba(0, 180, 216, 0.1);
             border: 1px solid rgba(0, 180, 216, 0.3);
-            padding: 3px 10px;
-            border-radius: 8px;
+            padding: 2px 8px;
+            border-radius: 6px;
             display: inline-block;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             font-weight: 600;
         }
 
@@ -472,13 +484,13 @@
         }
 
         .payment-methods-badge {
-            font-size: 0.72rem;
+            font-size: 0.68rem;
             color: #ffffff;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             background: rgba(34, 197, 94, 0.15);
             border: 1px dashed #22c55e;
-            padding: 3px 8px;
-            border-radius: 8px;
+            padding: 2px 6px;
+            border-radius: 6px;
             display: inline-block;
             animation: blinkAlert 1.5s infinite ease-in-out;
             max-width: 100%;
@@ -489,8 +501,8 @@
             color: #22c55e;
             font-weight: bold;
             background: #ffffff;
-            padding: 1px 4px;
-            border-radius: 4px;
+            padding: 1px 3px;
+            border-radius: 3px;
         }
 
         /* Menú Lateral (Sidebar Drawer) */
@@ -756,7 +768,7 @@
             max-width: 600px;
             margin: 0 auto;
             display: flex;
-            gap: 5px;
+            gap: 4px;
             justify-content: center;
             align-items: center;
         }
@@ -770,23 +782,23 @@
 
         .search-input {
             width: 100%;
-            padding: 6px 26px 6px 10px;
-            border-radius: 12px;
+            padding: 5px 24px 5px 8px;
+            border-radius: 10px;
             border: 1px solid #00b4d8;
             background: rgba(13, 22, 35, 0.95);
             color: #ffffff;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             outline: none;
             text-align: center;
         }
 
         .clear-search-btn {
             position: absolute;
-            right: 8px;
+            right: 6px;
             background: none;
             border: none;
             color: #94a3b8;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             cursor: pointer;
             display: none;
         }
@@ -795,12 +807,12 @@
 
         .select-control {
             flex: 1;
-            padding: 6px 4px;
-            border-radius: 12px;
+            padding: 5px 2px;
+            border-radius: 10px;
             border: 1px solid #00b4d8;
             background: rgba(13, 22, 35, 0.95);
             color: #ffffff;
-            font-size: 0.72rem;
+            font-size: 0.68rem;
             outline: none;
             cursor: pointer;
             text-align: center;
