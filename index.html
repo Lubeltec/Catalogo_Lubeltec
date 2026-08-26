@@ -94,7 +94,7 @@
             }
         });
 
-        // Sincronización de Configuración Global, Categorías, Bestsellers y Promociones
+        // Sincronización de Configuración Global, Categorías, Bestsellers, Promociones y Toasts
         const settingsDocRef = doc(db, "settings", "global_config");
         onSnapshot(settingsDocRef, (docSnap) => {
             if (docSnap.exists()) {
@@ -113,6 +113,10 @@
                 }
                 if (data.discountsActive !== undefined && typeof window.discountsActive !== "undefined") window.discountsActive = data.discountsActive;
                 if (data.toastsActive !== undefined && typeof window.toastsActive !== "undefined") window.toastsActive = data.toastsActive;
+                if (data.toastIntervalSec !== undefined && typeof window.toastIntervalSec !== "undefined") {
+                    window.toastIntervalSec = data.toastIntervalSec;
+                    if (typeof window.restartToastTimer === "function") window.restartToastTimer();
+                }
                 if (data.holidayTheme && typeof window.holidayTheme !== "undefined") window.holidayTheme = data.holidayTheme;
                 if (data.supportLimaActive !== undefined && typeof window.supportLimaActive !== "undefined") window.supportLimaActive = data.supportLimaActive;
                 if (data.supportTrujilloActive !== undefined && typeof window.supportTrujilloActive !== "undefined") window.supportTrujilloActive = data.supportTrujilloActive;
@@ -773,6 +777,24 @@
                         </div>
                     </div>
 
+                    <!-- CONTROL DE MENSAJES TOAST FLOTANTES Y TIEMPO EDITABLE -->
+                    <div class="border-t border-slate-800 pt-2.5 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <strong class="text-white block">Alertas Flotantes de Compras</strong>
+                                <span class="text-slate-400 text-[11px]">Muestra u oculta notificaciones emergentes de compras</span>
+                            </div>
+                            <input type="checkbox" id="settingToastsSwitch" class="w-4 h-4 accent-indigo-600 rounded">
+                        </div>
+                        <div class="flex items-center justify-between bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                            <div>
+                                <span class="text-slate-300 font-semibold block">Intervalo de Aparición (Segundos):</span>
+                                <span class="text-[10px] text-slate-400">Cada cuántos segundos se disparará la notificación</span>
+                            </div>
+                            <input type="number" id="settingToastInterval" value="14" min="3" max="120" class="w-16 bg-slate-950 border border-slate-700 rounded-lg p-1.5 text-center text-white font-bold">
+                        </div>
+                    </div>
+
                     <div class="border-t border-slate-800 pt-2">
                         <label class="block text-slate-400 mb-1">Temporada Especial:</label>
                         <select id="settingHolidayTheme" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-200">
@@ -956,42 +978,252 @@
 
         // PRODUCTOS ORGANIZADOS EN SUS CATEGORÍAS REALES CON DURACIÓN EXACTA
         let products = [
-            // WINDOWS ('win')
-            { id: 'win-pro', name: 'Windows 10/11 Pro (De por vida)', price: 50.00, category: 'win', stock: true, allowDiscount: true, badge: '⭐ Bestseller #1', img: 'windows11.png', desc: 'Licencia digital permanente (OEM). Reactivación de por vida en 1 PC.' },
-            { id: 'win-home', name: 'Windows 10/11 Home (De por vida)', price: 50.00, category: 'win', stock: true, allowDiscount: true, badge: 'Original', img: 'windows11.png', desc: 'Activación permanente y original para uso doméstico en 1 PC.' },
+            // CATEGORÍA WINDOWS ('win')
+            { 
+                id: 'win-pro', 
+                name: 'Windows 10 / 11 Pro OEM', 
+                price: 50.00, 
+                category: 'win', 
+                stock: true, 
+                allowDiscount: true, 
+                badge: '⭐ Bestseller #1', 
+                img: 'windows11.png', 
+                desc: 'Clave de activación digital oficial de 25 caracteres para 1 PC. Vigencia permanente (de por vida) con derecho a reinstalación en el mismo equipo. Desbloquea cifrado BitLocker, Escritorio Remoto, Hyper-V y acceso a todas las actualizaciones de seguridad de Microsoft.' 
+            },
+            { 
+                id: 'win-home', 
+                name: 'Windows 10 / 11 Home OEM', 
+                price: 50.00, 
+                category: 'win', 
+                stock: true, 
+                allowDiscount: true, 
+                badge: 'Original', 
+                img: 'windows11.png', 
+                desc: 'Licencia original digital permanente de por vida para 1 equipo de uso personal o doméstico. Permite validar tu sistema operativo sin programas externos ni riesgos de virus, recibiendo parches de seguridad y estabilidad oficiales de Microsoft.' 
+            },
             
-            // OFFICE ('office')
-            { id: 'off-365', name: 'Microsoft Office 365 (1 año)', price: 45.00, category: 'office', stock: true, allowDiscount: true, badge: '⭐ Bestseller #2', img: 'office365.png', desc: 'Suscripción por 1 año para hasta 5 dispositivos. Word, Excel, PowerPoint y Teams.' },
+            // CATEGORÍA OFFICE ('office')
+            { 
+                id: 'off-365', 
+                name: 'Microsoft Office 365 ProPlus (1 año)', 
+                price: 45.00, 
+                category: 'office', 
+                stock: true, 
+                allowDiscount: true, 
+                badge: '⭐ Bestseller #2', 
+                img: 'office365.png', 
+                desc: 'Suscripción por 12 meses completa para hasta 5 dispositivos en simultáneo (Windows, macOS, Android, iOS). Incluye las versiones más recientes de Word, Excel, PowerPoint, Outlook, OneNote y Teams, además de 1TB de almacenamiento en la nube de OneDrive.' 
+            },
             
-            // IA ('ia')
-            { id: 'gem-18', name: 'Gemini Pro 3.6 (18 meses)', price: 70.00, category: 'ia', stock: true, allowDiscount: true, badge: '⭐ Bestseller #3', img: 'gemini18.png', desc: 'Suscripción por 18 meses. Incluye IA avanzada Gemini Pro y 5TB en Google Drive.' },
-            { id: 'gem-12', name: 'Gemini Pro 3.6 (12 meses)', price: 50.00, category: 'ia', stock: true, allowDiscount: true, badge: 'Popular', img: 'gemini12.png', desc: 'Suscripción por 12 meses. IA avanzada de Google One y almacenamiento de 5TB.' },
+            // CATEGORÍA IA ('ia')
+            { 
+                id: 'gem-18', 
+                name: 'Google Gemini Pro & Advanced (18 meses)', 
+                price: 70.00, 
+                category: 'ia', 
+                stock: true, 
+                allowDiscount: true, 
+                badge: '⭐ Bestseller #3', 
+                img: 'gemini18.png', 
+                desc: 'Plan premium de Inteligencia Artificial por 18 meses. Acceso a modelos avanzados de razonamiento, integración con Workspace, generación de video con Veo 3, análisis de código y documentos extensos, junto con 5TB de almacenamiento seguro en Google Drive.' 
+            },
+            { 
+                id: 'gem-12', 
+                name: 'Google Gemini Pro & Advanced (12 meses)', 
+                price: 50.00, 
+                category: 'ia', 
+                stock: true, 
+                allowDiscount: true, 
+                badge: 'Popular', 
+                img: 'gemini12.png', 
+                desc: 'Acceso por 1 año a las capacidades de IA de Google One AI Premium. Incluye procesamiento multimodal avanzado para redacción técnica, análisis de datos y 5TB en la nube para copias de seguridad de fotos, documentos y archivos.' 
+            },
             
-            // DISEÑO ('diseno')
-            { id: 'canva-1', name: 'Canva Pro (1 año)', price: 35.00, category: 'diseno', stock: true, allowDiscount: true, badge: 'Popular', img: 'canva.png', desc: 'Suscripción por 1 año. Acceso premium a plantillas, kit de marca y herramientas IA.' },
-            { id: 'canva-2', name: 'Canva Pro (2 años)', price: 45.00, category: 'diseno', stock: true, allowDiscount: true, badge: 'Recomendado', img: 'canva.png', desc: 'Suscripción por 2 años con acceso completo a recursos premium.' },
-            { id: 'canva-3', name: 'Canva Pro (3 años)', price: 55.00, category: 'diseno', stock: true, allowDiscount: true, badge: '⭐ Oferta', img: 'canva.png', desc: 'Suscripción por 3 años de Canva Pro con garantía total.' },
-            { id: 'canva-inf', name: 'Canva Pro (De por vida)', price: 99.00, category: 'diseno', stock: false, allowDiscount: false, badge: 'Vitalicio', img: 'canva.png', desc: 'Acceso vitalicio permanente con todas las funciones de diseño habilitadas.' },
-            { id: 'capcut-1', name: 'Capcut Pro (1 mes)', price: 23.00, category: 'diseno', stock: true, allowDiscount: true, badge: 'Edición', img: 'capcut.png', desc: 'Suscripción por 1 mes. Efectos y plantillas exclusivas sin marca de agua.' },
-            { id: 'auto-1', name: 'Autodesk All Apps (1 año)', price: 75.00, category: 'diseno', stock: true, allowDiscount: true, badge: '⭐ Pro', img: 'autodesk.png', desc: 'Suscripción por 1 año: AutoCAD, Revit, Inventor, Maya, 3ds Max y Fusion 360.' },
-            { id: 'auto-6', name: 'Autodesk All Apps (6 meses)', price: 49.00, category: 'diseno', stock: true, allowDiscount: true, badge: 'Pro', img: 'autodesk.png', desc: 'Suscripción por 6 meses con acceso a toda la suite oficial.' },
-            { id: 'auto-3', name: 'Autodesk All Apps (3 meses)', price: 29.00, category: 'diseno', stock: true, allowDiscount: true, badge: 'Pro', img: 'autodesk.png', desc: 'Suscripción por 3 meses a todas las aplicaciones profesionales.' },
+            // CATEGORÍA DISEÑO ('diseno')
+            { 
+                id: 'canva-1', 
+                name: 'Canva Pro Premium (1 año)', 
+                price: 35.00, 
+                category: 'diseno', 
+                stock: true, 
+                allowDiscount: true, 
+                badge: 'Popular', 
+                img: 'canva.png', 
+                desc: 'Activación directa por 1 año a tu correo personal. Desbloquea más de 100 millones de plantillas, fotos y recursos premium, herramienta de borrado de fondos con un clic, redimensionamiento mágico de diseños, fuentes exclusivas y 1TB de almacenamiento.' 
+            },
+            { 
+                id: 'canva-2', 
+                name: 'Canva Pro Premium (2 años)', 
+                price: 45.00, 
+                category: 'diseno', 
+                stock: true, 
+                allowDiscount: true, 
+                badge: 'Recomendado', 
+                img: 'canva.png', 
+                desc: 'Plan Pro extendido por 24 meses sin interrupciones. Acceso ilimitado al kit de marcas, planificador de contenido para redes sociales, animaciones prémium y herramientas de edición asistidas por IA para diseñadores y marcas.' 
+            },
+            { 
+                id: 'canva-3', 
+                name: 'Canva Pro Premium (3 años)', 
+                price: 55.00, 
+                category: 'diseno', 
+                stock: true, 
+                allowDiscount: true, 
+                badge: '⭐ Máximo Ahorro', 
+                img: 'canva.png', 
+                desc: 'Suscripción por 36 meses con tarifa preferencial. La solución más económica para agencias, creadores de contenido y estudiantes que requieren diseñar piezas gráficas, presentaciones y videos de nivel profesional a diario.' 
+            },
+            { 
+                id: 'canva-inf', 
+                name: 'Canva Pro Premium (De por vida)', 
+                price: 99.00, 
+                category: 'diseno', 
+                stock: false, 
+                allowDiscount: false, 
+                badge: 'Vitalicio', 
+                img: 'canva.png', 
+                desc: 'Membresía vitalicia permanente vinculada a tu cuenta. Disfruta de todas las actualizaciones y herramientas Pro presentes y futuras sin pagos mensuales ni renovaciones anuales.' 
+            },
+            { 
+                id: 'capcut-1', 
+                name: 'CapCut Pro (1 mes)', 
+                price: 23.00, 
+                category: 'diseno', 
+                stock: true, 
+                allowDiscount: true, 
+                badge: 'Edición VIP', 
+                img: 'capcut.png', 
+                desc: 'Suscripción mensual para PC y dispositivos móviles. Accede a efectos y transiciones VIP, generación de subtítulos automáticos en múltiples idiomas, eliminación de fondos en video sin chroma key y exportación en 4K a 60 FPS sin marcas de agua.' 
+            },
+            { 
+                id: 'auto-1', 
+                name: 'Autodesk All Apps Suite (1 año)', 
+                price: 75.00, 
+                category: 'diseno', 
+                stock: true, 
+                allowDiscount: true, 
+                badge: '⭐ Suite Completa', 
+                img: 'autodesk.png', 
+                desc: 'Licencia oficial educativa por 12 meses asociada a tu correo. Descarga directa desde la web de Autodesk para AutoCAD, Revit, Inventor Professional, 3ds Max, Maya, Civil 3D y Fusion 360, con acceso a librerías y renderizado en la nube.' 
+            },
+            { 
+                id: 'auto-6', 
+                name: 'Autodesk All Apps Suite (6 meses)', 
+                price: 49.00, 
+                category: 'diseno', 
+                stock: true, 
+                allowDiscount: true, 
+                badge: 'Semestral', 
+                img: 'autodesk.png', 
+                desc: 'Acceso por 6 meses a toda la colección de software de arquitectura, ingeniería y modelado 3D de Autodesk con actualizaciones oficiales y compatibilidad para Windows y macOS.' 
+            },
+            { 
+                id: 'auto-3', 
+                name: 'Autodesk All Apps Suite (3 meses)', 
+                price: 29.00, 
+                category: 'diseno', 
+                stock: true, 
+                allowDiscount: true, 
+                badge: 'Trimestral', 
+                img: 'autodesk.png', 
+                desc: 'Plan trimestral para desarrollo de proyectos académicos o profesionales específicos. Acceso completo a todas las aplicaciones de Autodesk sin limitaciones funcionales.' 
+            },
             
-            // ANTIVIRUS ('antivirus')
-            { id: 'anti-eset', name: 'ESET NOD32 Antivirus (1 año)', price: 39.00, category: 'antivirus', stock: true, allowDiscount: true, badge: '🛡️ Seguridad', img: 'antivirus.png', desc: 'Licencia original por 1 año. Protección ligera y proactiva contra amenazas.' },
-            { id: 'anti-kasp', name: 'Kaspersky Premium (1 año)', price: 45.00, category: 'antivirus', stock: true, allowDiscount: true, badge: '🛡️ Seguridad', img: 'antivirus.png', desc: 'Licencia oficial por 1 año con VPN ilimitada y protección bancaria.' },
+            // CATEGORÍA ANTIVIRUS ('antivirus')
+            { 
+                id: 'anti-eset', 
+                name: 'ESET NOD32 Antivirus (1 año)', 
+                price: 39.00, 
+                category: 'antivirus', 
+                stock: true, 
+                allowDiscount: true, 
+                badge: '🛡️ Protección Ligera', 
+                img: 'antivirus.png', 
+                desc: 'Código digital oficial por 1 año para 1 PC. Tecnología antivirus y antispyware galardonada que neutraliza virus, troyanos, ransomware y ataques de phishing en tiempo real sin ralentizar el rendimiento del procesador ni la memoria RAM.' 
+            },
+            { 
+                id: 'anti-kasp', 
+                name: 'Kaspersky Premium Security (1 año)', 
+                price: 45.00, 
+                category: 'antivirus', 
+                stock: true, 
+                allowDiscount: true, 
+                badge: '🛡️ Seguridad Total', 
+                img: 'antivirus.png', 
+                desc: 'Licencia digital oficial por 12 meses. Protección multicapa integral contra amenazas cibernéticas avanzadas, VPN ultrarrápida e ilimitada, protección de pagos bancarios y compras por internet, y optimizador de limpieza de disco.' 
+            },
 
-            // STREAMING & IPTV ('iptv')
-            { id: 'crunch-1', name: 'Crunchyroll 1 Perfil (1 año)', price: 99.00, category: 'iptv', stock: true, allowDiscount: true, badge: 'Mega Fan', img: 'crunchyroll.png', desc: 'Suscripción Mega Fan por 1 año completo. Sin anuncios y en Full HD.' },
-            { id: 'crunch-3', name: 'Crunchyroll 1 Perfil (3 meses)', price: 35.00, category: 'iptv', stock: true, allowDiscount: true, badge: 'Mega Fan', img: 'crunchyroll.png', desc: 'Suscripción Mega Fan por 3 meses.' },
-            { id: 'crunch-6', name: 'Crunchyroll Cuenta Completa (6 meses)', price: 89.00, category: 'iptv', stock: true, allowDiscount: true, badge: 'Mega Fan', img: 'crunchyroll.png', desc: 'Cuenta completa para varios dispositivos por 6 meses.' },
-            { id: 'flujo-1', name: 'Flujo TV (1 mes)', price: 20.00, category: 'iptv', stock: true, allowDiscount: true, badge: 'En Vivo', img: 'flujotv.png', desc: 'Suscripción por 1 mes para 3 dispositivos. Más de 1000 canales en vivo.' },
+            // CATEGORÍA STREAMING & IPTV ('iptv')
+            { 
+                id: 'crunch-1', 
+                name: 'Crunchyroll Mega Fan (1 año)', 
+                price: 99.00, 
+                category: 'iptv', 
+                stock: true, 
+                allowDiscount: true, 
+                badge: 'Mega Fan 12M', 
+                img: 'crunchyroll.png', 
+                desc: 'Suscripción Mega Fan por 1 año. Disfruta de todo el catálogo de anime sin anuncios, con episodios de estreno 1 hora después de Japón en calidad Full HD / 4K y descarga de capítulos para visualización offline.' 
+            },
+            { 
+                id: 'crunch-3', 
+                name: 'Crunchyroll Mega Fan (3 meses)', 
+                price: 35.00, 
+                category: 'iptv', 
+                stock: true, 
+                allowDiscount: true, 
+                badge: 'Mega Fan 3M', 
+                img: 'crunchyroll.png', 
+                desc: 'Acceso Mega Fan por 3 meses continuos. Reproducción fluida en Smart TV, PC, consolas y smartphones con audio original, subtítulos y doblajes exclusivos.' 
+            },
+            { 
+                id: 'crunch-6', 
+                name: 'Crunchyroll Mega Fan Cuenta Completa (6 meses)', 
+                price: 89.00, 
+                category: 'iptv', 
+                stock: true, 
+                allowDiscount: true, 
+                badge: '4 Pantallas', 
+                img: 'crunchyroll.png', 
+                desc: 'Cuenta completa privada por 6 meses con 4 perfiles independientes y reproducción simultánea en hasta 4 dispositivos.' 
+            },
+            { 
+                id: 'flujo-1', 
+                name: 'Flujo TV Premium (1 mes)', 
+                price: 20.00, 
+                category: 'iptv', 
+                stock: true, 
+                allowDiscount: true, 
+                badge: 'En Vivo HD', 
+                img: 'flujotv.png', 
+                desc: 'Servicio de televisión digital y streaming por 1 mes para 3 dispositivos en simultáneo. Más de 1,200 canales en vivo (deportes, noticias, cine) y biblioteca VOD con miles de películas y series en alta definición.' 
+            },
 
-            // MÚSICA ('musica')
-            { id: 'spot-1', name: 'Spotify Premium (1 mes)', price: 15.00, category: 'musica', stock: true, allowDiscount: true, badge: 'Música', img: 'spotify.png', desc: 'Suscripción por 1 mes. Música en alta calidad sin interrupciones.' },
+            // CATEGORÍA MÚSICA ('musica')
+            { 
+                id: 'spot-1', 
+                name: 'Spotify Premium Individual (1 mes)', 
+                price: 15.00, 
+                category: 'musica', 
+                stock: true, 
+                allowDiscount: true, 
+                badge: 'Sin Anuncios', 
+                img: 'spotify.png', 
+                desc: 'Suscripción por 1 mes activada directamente en tu cuenta personal. Escucha más de 100 millones de canciones y podcasts sin cortes comerciales, con saltos ilimitados, audio en máxima fidelidad (320 kbps) y descargas para escuchar sin internet.' 
+            },
 
-            // EDUCACIÓN ('edu')
-            { id: 'duo-12', name: 'Duolingo Super (12 meses)', price: 144.00, category: 'edu', stock: true, allowDiscount: true, badge: 'Idiomas', img: 'duolingo.png', desc: 'Suscripción por 1 año. Vidas ilimitadas y 100% libre de anuncios.' }
+            // CATEGORÍA EDUCACIÓN ('edu')
+            { 
+                id: 'duo-12', 
+                name: 'Duolingo Super (12 meses)', 
+                price: 144.00, 
+                category: 'edu', 
+                stock: true, 
+                allowDiscount: true, 
+                badge: 'Idiomas Pro', 
+                img: 'duolingo.png', 
+                desc: 'Suscripción oficial por 1 año vinculada a tu perfil. Aprende inglés, francés, alemán, italiano y más sin límites: incluye vidas infinitas, repasos personalizados de errores, pruebas de progreso y una experiencia de estudio 100% libre de anuncios.' 
+            }
         ];
 
         let bestsellerIds = ['win-pro', 'off-365', 'gem-18'];
@@ -1004,6 +1236,8 @@
 
         let discountsActive = true;
         let toastsActive = true;
+        let toastIntervalSec = 14; // TIEMPO EDITABLE POR EL ADMIN EN SEGUNDOS
+        let toastIntervalId = null;
         let holidayTheme = 'normal';
 
         let supportLimaActive = true;
@@ -1149,6 +1383,8 @@
                 document.getElementById('gTier3Qty').value = globalTiers[2].qty;
                 document.getElementById('gTier3Pct').value = globalTiers[2].pct;
             }
+            document.getElementById('settingToastsSwitch').checked = toastsActive;
+            document.getElementById('settingToastInterval').value = toastIntervalSec || 14;
         }
 
         function populateBestsellerSelectors() {
@@ -1230,6 +1466,7 @@
                     bestsellerIds,
                     discountsActive,
                     toastsActive,
+                    toastIntervalSec,
                     holidayTheme,
                     supportLimaActive,
                     supportTrujilloActive,
@@ -1586,10 +1823,12 @@
             updateDynamicBanner();
         }
 
-        // GUARDAR PROMOS Y BESTSELLERS EDITADOS POR EL ADMIN
+        // GUARDAR PROMOS, TIEMPO DE TOAST Y BESTSELLERS
         function saveGlobalSettings() {
             if (!currentUser || currentUser.role !== 'admin') return;
             discountsActive = document.getElementById('settingDiscountsSwitch').checked;
+            toastsActive = document.getElementById('settingToastsSwitch').checked;
+            toastIntervalSec = parseInt(document.getElementById('settingToastInterval').value) || 14;
             holidayTheme = document.getElementById('settingHolidayTheme').value;
             supportLimaActive = document.getElementById('settingLimaActive').checked;
             supportTrujilloActive = document.getElementById('settingTrujilloActive').checked;
@@ -1615,10 +1854,11 @@
             saveSettingsStorage();
             checkSupportAvailability();
             updateDynamicBanner();
+            restartToastTimer();
             renderCatalog();
             updateProducts();
-            logAdminAction(`Promociones y Top 3 Bestsellers actualizados en la nube.`);
-            alert('¡Configuración, Promociones y Top 3 guardados con éxito!');
+            logAdminAction(`Configuración, Promociones, Toasts y Top 3 actualizados.`);
+            alert('¡Configuración guardada en la nube con éxito!');
         }
 
         function saveCollabDiscountSetting() {
@@ -1895,7 +2135,7 @@
                     <div class="p-3.5 sm:p-4 flex flex-col flex-grow space-y-2.5">
                         <div>
                             <h3 onclick="openQuickView('${p.id}')" class="font-bold text-white text-xs sm:text-sm leading-snug hover:text-indigo-400 cursor-pointer transition-colors">${p.name}</h3>
-                            <p class="text-[11px] text-slate-400 line-clamp-2 mt-0.5">${p.desc}</p>
+                            <p class="text-[11px] text-slate-400 line-clamp-2 mt-0.5 leading-relaxed">${p.desc}</p>
                             ${collabNotice}
                         </div>
                         
@@ -2281,11 +2521,11 @@
         }
 
         const recentBuyers = [
-            { name: "Carlos", item: "Windows 11 Pro" },
+            { name: "Carlos", item: "Windows 11 Pro OEM" },
             { name: "Lucía", item: "Microsoft Office 365" },
-            { name: "Renzo", item: "Kaspersky Premium" },
-            { name: "Andrea", item: "Canva Pro" },
-            { name: "Mateo", item: "Gemini Pro 3.6" }
+            { name: "Renzo", item: "Kaspersky Premium Security" },
+            { name: "Andrea", item: "Canva Pro Premium" },
+            { name: "Mateo", item: "Google Gemini Pro" }
         ];
 
         function dispararToastCompra() {
@@ -2303,13 +2543,20 @@
             }, 4000);
         }
 
+        function restartToastTimer() {
+            if (toastIntervalId) clearInterval(toastIntervalId);
+            if (toastsActive && toastIntervalSec > 0) {
+                toastIntervalId = setInterval(dispararToastCompra, toastIntervalSec * 1000);
+            }
+        }
+
         window.onload = () => {
             renderCategoryControls();
             renderCatalog();
             updateProducts();
             updateDynamicBanner();
             updateActiveUserHeaderUI();
-            setInterval(dispararToastCompra, 14000);
+            restartToastTimer();
             setTimeout(dispararToastCompra, 3000);
         };
     </script>
