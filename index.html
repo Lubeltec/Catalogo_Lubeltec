@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lubeltec Pro | Catálogo Digital y Tienda de Software</title>
+    <title>Lubeltec Pro | Plataforma Digital de Licencias & Software</title>
     
     <!-- Favicon -->
     <link rel="icon" href="lubeltec.png" type="image/png">
@@ -94,11 +94,15 @@
             }
         });
 
-        // Sincronización de Configuración Global, Bestsellers y Promociones
+        // Sincronización de Configuración Global, Categorías, Bestsellers y Promociones
         const settingsDocRef = doc(db, "settings", "global_config");
         onSnapshot(settingsDocRef, (docSnap) => {
             if (docSnap.exists()) {
                 const data = docSnap.data();
+                if (data.categories && typeof window.categories !== "undefined") {
+                    window.categories = data.categories;
+                    if (typeof window.renderCategoryControls === "function") window.renderCategoryControls();
+                }
                 if (data.globalTiers && typeof window.globalTiers !== "undefined") {
                     window.globalTiers = data.globalTiers;
                     if (typeof window.populateAdminTierInputs === "function") window.populateAdminTierInputs();
@@ -185,8 +189,8 @@
             <i class="fa-solid fa-circle-check"></i>
         </div>
         <div>
-            <h4 class="font-bold text-emerald-200 text-xs sm:text-sm">¡Agregado al Carrito!</h4>
-            <p class="text-[11px] sm:text-xs text-emerald-300/90" id="toastGeneralMsg">Producto listo para procesar.</p>
+            <h4 class="font-bold text-emerald-200 text-xs sm:text-sm">¡Acción Exitosa!</h4>
+            <p class="text-[11px] sm:text-xs text-emerald-300/90" id="toastGeneralMsg">Operación completada.</p>
         </div>
     </div>
 
@@ -199,7 +203,7 @@
     <header class="sticky top-0 z-30 bg-slate-900/90 backdrop-blur-xl border-b border-slate-800/80 transition-all">
         <!-- Barra de avisos de horario oficial y transparencia -->
         <div class="bg-gradient-to-r from-indigo-950/90 via-purple-950/90 to-indigo-950/90 border-b border-indigo-500/20 py-1.5 px-3 text-center text-[11px] sm:text-xs font-medium text-indigo-200 flex flex-wrap items-center justify-center gap-2">
-            <span class="flex items-center gap-1.5"><i class="fa-regular fa-clock text-amber-400"></i> Atención: Lunes a Sábado (8:00 AM a 10:00 PM)</span>
+            <span class="flex items-center gap-1.5"><i class="fa-regular fa-clock text-amber-400"></i> Horario: Lunes a Sábado (8:00 AM a 10:00 PM)</span>
             <span class="text-slate-600 hidden sm:inline">•</span>
             <span class="flex items-center gap-1.5"><i class="fa-solid fa-bolt text-indigo-400"></i> Entrega: Hasta 20 min</span>
             <span class="text-slate-600 hidden sm:inline">•</span>
@@ -230,7 +234,7 @@
             <div class="flex items-center space-x-1.5 sm:space-x-2.5">
                 <button onclick="openSupportModal()" class="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/60 text-slate-300 hover:text-white text-xs sm:text-sm font-medium transition-all">
                     <i class="fa-solid fa-headset text-indigo-400"></i>
-                    <span class="hidden md:inline">Soporte</span>
+                    <span class="hidden md:inline">Soporte Técnico</span>
                 </button>
 
                 <button onclick="openAdminLogin()" id="loginShortcutBtn" class="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/60 text-slate-300 hover:text-white text-xs sm:text-sm font-medium transition-all">
@@ -257,12 +261,12 @@
             </div>
         </div>
 
-        <!-- Buscador y Categorías Horizontales (Chips) -->
+        <!-- Buscador y Categorías Horizontales Dinámicas -->
         <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pb-3 pt-1 flex flex-col gap-2.5">
             <div class="flex flex-col sm:flex-row items-center justify-between gap-2">
                 <div class="relative w-full sm:w-80 md:w-96">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                    <input type="text" id="searchInput" placeholder="Buscar Windows, Office, Antivirus, Canva, IA..." oninput="handleSearchInput()" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl pl-8 pr-8 py-1.5 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all">
+                    <input type="text" id="searchInput" placeholder="Buscar Office, Windows, Antivirus, Canva, IA..." oninput="handleSearchInput()" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl pl-8 pr-8 py-1.5 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all">
                     <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-400 text-xs">✕</button>
                 </div>
 
@@ -282,71 +286,27 @@
                 </div>
             </div>
 
-            <!-- Chips de Filtro Horizontal Organizados por Categorías Reales -->
-            <div class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 custom-scrollbar text-xs">
-                <button onclick="filterCategoryQuick('principal', this)" class="chip-btn px-3 py-1 rounded-lg bg-indigo-600 text-white font-semibold shrink-0 transition-all">🌟 Todos</button>
-                <button onclick="filterCategoryQuick('win', this)" class="chip-btn px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white shrink-0 transition-all">💻 Windows</button>
-                <button onclick="filterCategoryQuick('office', this)" class="chip-btn px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white shrink-0 transition-all">📊 Office</button>
-                <button onclick="filterCategoryQuick('ia', this)" class="chip-btn px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white shrink-0 transition-all">🤖 IA</button>
-                <button onclick="filterCategoryQuick('diseno', this)" class="chip-btn px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white shrink-0 transition-all">🎨 Diseño</button>
-                <button onclick="filterCategoryQuick('antivirus', this)" class="chip-btn px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white shrink-0 transition-all">🛡️ Antivirus</button>
-                <button onclick="filterCategoryQuick('iptv', this)" class="chip-btn px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white shrink-0 transition-all">📺 Streaming</button>
-                <button onclick="filterCategoryQuick('musica', this)" class="chip-btn px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white shrink-0 transition-all">🎵 Música</button>
-                <button onclick="filterCategoryQuick('edu', this)" class="chip-btn px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white shrink-0 transition-all">📚 Educación</button>
-            </div>
+            <!-- Chips de Filtro Horizontal Generados Dinámicamente -->
+            <div id="categoryChipsContainer" class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 custom-scrollbar text-xs"></div>
         </div>
     </header>
 
-    <!-- Menú Lateral -->
+    <!-- Menú Lateral Dinámico -->
     <div id="sidebarOverlay" onclick="toggleMenu()" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden transition-opacity"></div>
     <div id="sidebarDrawer" class="fixed top-0 -left-80 w-72 sm:w-80 h-full bg-slate-900 border-r border-slate-800 z-50 flex flex-col transition-all duration-300 shadow-2xl">
         <div class="p-5 border-b border-slate-800 flex items-center justify-between">
             <h3 class="font-bold text-base text-white flex items-center gap-2">
-                <i class="fa-solid fa-layer-group text-indigo-400"></i> Menú Completo
+                <i class="fa-solid fa-layer-group text-indigo-400"></i> Categorías
             </h3>
             <button onclick="toggleMenu()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white">✕</button>
         </div>
-        <div class="p-3 overflow-y-auto space-y-1.5 flex-grow custom-scrollbar">
-            <button onclick="filterCategory('principal', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-indigo-600 text-white font-medium text-xs flex items-center justify-between sidebar-item active">
-                <span>🏠 Principal</span>
-            </button>
-            <button onclick="filterCategory('win', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between">
-                <span>💻 Windows 10/11</span>
-            </button>
-            <button onclick="filterCategory('office', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between">
-                <span>📊 Microsoft Office</span>
-            </button>
-            <button onclick="filterCategory('ia', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between">
-                <span>🤖 Inteligencia Artificial</span>
-            </button>
-            <button onclick="filterCategory('diseno', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between">
-                <span>🎨 Diseño (Canva, Adobe, Autodesk)</span>
-            </button>
-            <button onclick="filterCategory('antivirus', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between">
-                <span>🛡️ Antivirus</span>
-            </button>
-            <button onclick="filterCategory('iptv', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between">
-                <span>📺 Streaming & IPTV</span>
-            </button>
-            <button onclick="filterCategory('musica', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between">
-                <span>🎵 Música</span>
-            </button>
-            <button onclick="filterCategory('edu', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between">
-                <span>📚 Educación</span>
-            </button>
-            <button onclick="filterCategory('juegos', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between">
-                <span>🎮 Juegos</span>
-            </button>
-            <button onclick="filterCategory('nosotros', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between">
-                <span>📌 Visión y Misión</span>
-            </button>
-        </div>
+        <div id="sidebarCategoriesContainer" class="p-3 overflow-y-auto space-y-1.5 flex-grow custom-scrollbar"></div>
     </div>
 
     <!-- Contenido Principal -->
     <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 flex-grow space-y-8 sm:space-y-10 w-full">
 
-        <!-- SECCIÓN HERO DE CONFIANZA Y BENEFICIOS (INTERNACIONAL Y TRANSPARENTE) -->
+        <!-- SECCIÓN HERO DE CONFIANZA Y BENEFICIOS -->
         <section id="heroSection" class="bg-gradient-to-br from-slate-900 via-indigo-950/30 to-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-10 relative overflow-hidden shadow-2xl">
             <div class="max-w-3xl space-y-4">
                 <div class="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 px-3 py-1 rounded-full text-xs font-bold">
@@ -356,7 +316,7 @@
                     Software Original, Licencias y Cuentas Digitales
                 </h2>
                 <p class="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl">
-                    Adquiere licencias de software permanente o suscripciones por meses y años para Windows, Office, Canva Pro, Inteligencia Artificial y Antivirus con soporte postventa y entrega rápida.
+                    Adquiere licencias de software permanente o suscripciones por meses y años con soporte postventa garantizado y entrega inmediata.
                 </p>
                 <!-- Beneficios de Confianza -->
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-xs">
@@ -453,6 +413,47 @@
             </div>
         </div>
     </footer>
+
+    <!-- PLUS DE VALOR: MODAL DE RECIBO / PRE-BOLETA DIGITAL -->
+    <div id="receiptModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-3 sm:p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-7 space-y-4 shadow-2xl relative text-left">
+            <button onclick="closeReceiptModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center text-sm">✕</button>
+            
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div class="flex items-center gap-2">
+                    <img src="lubeltec.png" alt="Logo" class="w-8 h-8 rounded-lg">
+                    <div>
+                        <h3 class="font-extrabold text-sm text-white">Lubeltec Pro</h3>
+                        <span class="text-[10px] text-slate-400">Comprobante Digital de Pedido</span>
+                    </div>
+                </div>
+                <span id="receiptHash" class="bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded font-mono text-xs font-bold">LUB-00000</span>
+            </div>
+
+            <div class="space-y-2 text-xs">
+                <div class="flex justify-between text-slate-400 text-[11px]">
+                    <span>Fecha: <strong id="receiptDate" class="text-white">--</strong></span>
+                    <span>Estado: <strong class="text-amber-400">Pendiente de Verificación</strong></span>
+                </div>
+                
+                <div id="receiptItemsContainer" class="bg-slate-950/70 p-3 rounded-xl border border-slate-800 space-y-1.5 max-h-40 overflow-y-auto custom-scrollbar"></div>
+
+                <div class="flex justify-between items-center bg-indigo-950/40 p-2.5 rounded-xl border border-indigo-500/30 text-xs">
+                    <span class="font-bold text-white">Total a Transferir:</span>
+                    <span id="receiptTotalPrice" class="font-black text-emerald-400 text-base">S/. 0.00</span>
+                </div>
+            </div>
+
+            <div class="pt-2 flex gap-2">
+                <button onclick="window.print()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-print"></i> Imprimir / PDF
+                </button>
+                <a id="receiptWhatsappBtn" href="#" target="_blank" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5">
+                    <i class="fa-brands fa-whatsapp"></i> Validar por WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
 
     <!-- MODAL: DETALLES RÁPIDOS (QUICK VIEW) -->
     <div id="quickViewModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-3 sm:p-4">
@@ -558,12 +559,17 @@
             </div>
 
             <p class="text-[10px] text-slate-400 text-left leading-tight">
-                📌 <strong>Horario de atención:</strong> Lunes a Sábado de 8:00 AM a 10:00 PM. Envíanos tu comprobante por WhatsApp tras transferir para la verificación y entrega inmediata (aprox. hasta 20 min).
+                📌 <strong>Horario de atención:</strong> Lunes a Sábado de 8:00 AM a 10:00 PM. Envíanos tu comprobante por WhatsApp tras transferir para la verificación y entrega rápida (aprox. hasta 20 min).
             </p>
 
-            <a id="modalConfirmBtn" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold py-2.5 sm:py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition-all text-xs sm:text-sm">
-                <i class="fa-brands fa-whatsapp text-base"></i> Enviar comprobante por WhatsApp
-            </a>
+            <div class="flex gap-2">
+                <button onclick="openReceiptModalFromPayment()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-receipt"></i> Ver Boleta
+                </button>
+                <a id="modalConfirmBtn" href="#" target="_blank" class="flex-1 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold py-2.5 rounded-xl flex items-center justify-center gap-1 shadow-lg shadow-emerald-600/30 text-xs">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
+                </a>
+            </div>
         </div>
     </div>
 
@@ -658,7 +664,7 @@
         </div>
     </div>
 
-    <!-- MODAL: PANEL DE ADMINISTRACIÓN COMPLETO CON CONTROL DE BESTSELLERS Y PROMOS -->
+    <!-- MODAL: PANEL DE ADMINISTRACIÓN COMPLETO DE SOLUCIONES (6 PESTAÑAS) -->
     <div id="adminPanelModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-3 sm:p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-3xl w-full p-4 sm:p-7 space-y-4 shadow-2xl relative max-h-[92vh] overflow-y-auto custom-scrollbar flex flex-col">
             <button onclick="closeAdminPanel()" class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center text-sm">✕</button>
@@ -676,15 +682,16 @@
             <!-- Navegación por pestañas -->
             <div class="flex overflow-x-auto gap-1.5 border-b border-slate-800 pb-2 text-xs custom-scrollbar">
                 <button onclick="switchAdminTab('tabDescuentos', this)" id="tabBtnDescuentos" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold admin-tab-btn active whitespace-nowrap">🌐 Promos & Top 3</button>
-                <button onclick="switchAdminTab('tabSoporteConfig', this)" id="tabBtnSoporteConfig" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold admin-tab-btn whitespace-nowrap">📱 Soporte</button>
-                <button onclick="switchAdminTab('tabUsuarios', this)" id="tabBtnUsuarios" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold admin-tab-btn whitespace-nowrap">👥 Usuarios</button>
+                <button onclick="switchAdminTab('tabCategorias', this)" id="tabBtnCategorias" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold admin-tab-btn whitespace-nowrap">🏷️ Categorías</button>
                 <button onclick="switchAdminTab('tabProductos', this)" id="tabBtnProductos" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold admin-tab-btn whitespace-nowrap">📦 Productos</button>
+                <button onclick="switchAdminTab('tabUsuarios', this)" id="tabBtnUsuarios" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold admin-tab-btn whitespace-nowrap">👥 Usuarios</button>
+                <button onclick="switchAdminTab('tabSoporteConfig', this)" id="tabBtnSoporteConfig" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold admin-tab-btn whitespace-nowrap">📱 Soporte</button>
                 <button onclick="switchAdminTab('tabLogs', this)" id="tabBtnLogs" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold admin-tab-btn whitespace-nowrap">📊 Auditoría</button>
             </div>
 
-            <!-- Pestaña 1: Configuración de Promos y Top 3 Bestsellers Editables -->
+            <!-- Pestaña 1: Promos & Top 3 -->
             <div id="tabDescuentos" class="admin-tab-pane space-y-3 text-xs">
-                <!-- SECCIÓN EDITABLE: TOP 3 MÁS VENDIDOS -->
+                <!-- TOP 3 MÁS VENDIDOS -->
                 <div class="bg-slate-950/60 p-3.5 rounded-xl border border-amber-500/30 space-y-3">
                     <h4 class="text-sm font-bold text-amber-400 flex items-center gap-1.5">
                         <i class="fa-solid fa-crown"></i> Configuración del Top 3 Más Vendidos
@@ -707,9 +714,9 @@
                     </div>
                 </div>
 
-                <!-- SECCIÓN EDITABLE: DESCUENTOS POR VOLUMEN -->
+                <!-- DESCUENTOS POR VOLUMEN -->
                 <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 space-y-3">
-                    <h4 class="text-sm font-bold text-indigo-400">🔥 Configuración Dinámica de Descuentos</h4>
+                    <h4 class="text-sm font-bold text-indigo-400">🔥 Descuentos por Volumen</h4>
                     
                     <div class="flex items-center justify-between">
                         <div>
@@ -768,67 +775,33 @@
                         <select id="settingHolidayTheme" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-200">
                             <option value="normal">Estándar</option>
                             <option value="navidad">🎄 Navidad y Año Nuevo</option>
-                            <option value="patrias">🇵🇪 Fiestas Patrias Perú</option>
+                            <option value="patrias">🇵🇪 Fiestas Patrias</option>
                             <option value="halloween">🎃 Halloween / Black Friday</option>
                             <option value="inocentes">🤡 Día de los Inocentes</option>
                         </select>
                     </div>
 
-                    <button onclick="saveGlobalSettings()" class="w-full bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-bold py-2.5 rounded-xl transition-all shadow-lg shadow-indigo-600/30">💾 Guardar Cambios de Promos y Bestsellers</button>
+                    <button onclick="saveGlobalSettings()" class="w-full bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-bold py-2.5 rounded-xl transition-all shadow-lg shadow-indigo-600/30">💾 Guardar Cambios</button>
                 </div>
             </div>
 
-            <!-- Pestaña 2: Soporte -->
-            <div id="tabSoporteConfig" class="admin-tab-pane hidden space-y-3 text-xs">
-                <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 space-y-2.5">
-                    <div class="flex items-center justify-between">
-                        <strong class="text-indigo-400">📍 Lima y Provincias</strong>
-                        <input type="checkbox" id="settingLimaActive" class="w-4 h-4 accent-indigo-600 rounded">
-                    </div>
-                    <div id="adminLimaAgentsList" class="space-y-1"></div>
-                    <div class="flex gap-1.5">
-                        <input type="text" id="newLimaAgentName" placeholder="Nombre" class="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-2 py-1">
-                        <input type="text" id="newLimaAgentPhone" placeholder="WhatsApp" class="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-2 py-1">
-                        <button onclick="addSupportAgent('lima')" class="bg-indigo-600 text-white px-2.5 rounded-lg font-bold">Add</button>
+            <!-- Pestaña 2: GESTIÓN DE CATEGORÍAS DINÁMICAS (Crear, Editar, Eliminar) -->
+            <div id="tabCategorias" class="admin-tab-pane hidden space-y-3 text-xs">
+                <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 space-y-3">
+                    <h4 class="text-sm font-bold text-indigo-400">🏷️ Gestión de Categorías del Catálogo</h4>
+                    <p class="text-slate-400 text-[11px]">Agrega nuevas categorías o modifica las existentes para organizar tu tienda.</p>
+
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="text" id="newCatIdInput" placeholder="ID (ej. streaming)" class="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-2 text-white flex-1">
+                        <input type="text" id="newCatNameInput" placeholder="Nombre (ej. 📺 Streaming & Series)" class="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-2 text-white flex-2">
+                        <button onclick="addNewCategory()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-4 py-2 rounded-lg">➕ Crear</button>
                     </div>
 
-                    <div class="flex items-center justify-between border-t border-slate-800 pt-2">
-                        <strong class="text-indigo-400">📍 Trujillo</strong>
-                        <input type="checkbox" id="settingTrujilloActive" class="w-4 h-4 accent-indigo-600 rounded">
-                    </div>
-                    <div id="adminTrujilloAgentsList" class="space-y-1"></div>
-                    <div class="flex gap-1.5">
-                        <input type="text" id="newTrujilloAgentName" placeholder="Nombre" class="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-2 py-1">
-                        <input type="text" id="newTrujilloAgentPhone" placeholder="WhatsApp" class="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-2 py-1">
-                        <button onclick="addSupportAgent('trujillo')" class="bg-indigo-600 text-white px-2.5 rounded-lg font-bold">Add</button>
-                    </div>
-                    <button onclick="saveGlobalSettings()" class="w-full bg-indigo-600 active:scale-95 text-white font-bold py-2 rounded-xl transition-all mt-1">💾 Guardar Números</button>
+                    <div id="adminCategoriesList" class="space-y-1.5 max-h-56 overflow-y-auto custom-scrollbar pt-2 border-t border-slate-800"></div>
                 </div>
             </div>
 
-            <!-- Pestaña 3: Usuarios -->
-            <div id="tabUsuarios" class="admin-tab-pane hidden space-y-3 text-xs">
-                <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 space-y-2.5">
-                    <div class="flex items-center gap-2">
-                        <label class="text-slate-400 text-[11px]">Dcto Colaborador (%):</label>
-                        <input type="number" id="globalCollabDiscountInput" value="10" class="w-14 bg-slate-900 border border-slate-800 rounded-lg px-1.5 py-1 text-center text-white">
-                        <button onclick="saveCollabDiscountSetting()" class="bg-indigo-600 text-white px-2.5 py-1 rounded-lg">Guardar</button>
-                    </div>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 border-t border-slate-800 pt-2">
-                        <input type="text" id="newLoginUser" placeholder="Usuario" class="bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-white">
-                        <input type="text" id="newLoginPass" placeholder="Clave" class="bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-white">
-                        <select id="newLoginRole" class="bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-white">
-                            <option value="colaborador">Colaborador</option>
-                            <option value="admin2">Admin 2</option>
-                            <option value="admin">Admin 1</option>
-                        </select>
-                        <button onclick="addNewUser()" class="bg-indigo-600 text-white rounded-lg font-bold py-1">Crear</button>
-                    </div>
-                    <div id="usersListContainer" class="space-y-1.5 max-h-40 overflow-y-auto custom-scrollbar pt-1"></div>
-                </div>
-            </div>
-
-            <!-- Pestaña 4: Gestión de Productos -->
+            <!-- Pestaña 3: Gestión de Productos -->
             <div id="tabProductos" class="admin-tab-pane hidden space-y-3 text-xs">
                 <button onclick="toggleProductForm()" id="toggleFormBtn" class="w-full bg-slate-800 hover:bg-slate-700 text-indigo-300 font-bold py-2 rounded-xl transition-all">
                     📂 Formulario de Nuevo Producto ▼
@@ -847,17 +820,8 @@
                             <input type="number" id="newProdPrice" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white">
                         </div>
                         <div>
-                            <label class="text-slate-400 block mb-0.5">Categoría Exacta:</label>
-                            <select id="newProdCat" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white">
-                                <option value="win">Windows</option>
-                                <option value="office">Office</option>
-                                <option value="ia">IA</option>
-                                <option value="diseno">Diseño</option>
-                                <option value="antivirus">Antivirus</option>
-                                <option value="iptv">Streaming & IPTV</option>
-                                <option value="musica">Música</option>
-                                <option value="edu">Educación</option>
-                            </select>
+                            <label class="text-slate-400 block mb-0.5">Categoría:</label>
+                            <select id="newProdCat" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white"></select>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
@@ -887,7 +851,7 @@
                     </div>
                     <div>
                         <label class="text-slate-400 block mb-0.5">Descripción y Duración:</label>
-                        <textarea id="newProdDesc" rows="2" placeholder="Indicar si es de 1 mes, 1 año o de por vida..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white"></textarea>
+                        <textarea id="newProdDesc" rows="2" placeholder="Indicar si es de 1 mes, 1 año o permanente..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white"></textarea>
                     </div>
                     <div class="flex gap-2">
                         <button onclick="saveProduct()" id="saveProdBtn" class="flex-1 bg-indigo-600 active:scale-95 text-white font-bold py-2 rounded-xl transition-all">💾 Guardar</button>
@@ -901,7 +865,57 @@
                 </div>
             </div>
 
-            <!-- Pestaña 5: Auditoría -->
+            <!-- Pestaña 4: Usuarios -->
+            <div id="tabUsuarios" class="admin-tab-pane hidden space-y-3 text-xs">
+                <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 space-y-2.5">
+                    <div class="flex items-center gap-2">
+                        <label class="text-slate-400 text-[11px]">Dcto Colaborador (%):</label>
+                        <input type="number" id="globalCollabDiscountInput" value="10" class="w-14 bg-slate-900 border border-slate-800 rounded-lg px-1.5 py-1 text-center text-white">
+                        <button onclick="saveCollabDiscountSetting()" class="bg-indigo-600 text-white px-2.5 py-1 rounded-lg">Guardar</button>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 border-t border-slate-800 pt-2">
+                        <input type="text" id="newLoginUser" placeholder="Usuario" class="bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-white">
+                        <input type="text" id="newLoginPass" placeholder="Clave" class="bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-white">
+                        <select id="newLoginRole" class="bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-white">
+                            <option value="colaborador">Colaborador</option>
+                            <option value="admin2">Admin 2</option>
+                            <option value="admin">Admin 1</option>
+                        </select>
+                        <button onclick="addNewUser()" class="bg-indigo-600 text-white rounded-lg font-bold py-1">Crear</button>
+                    </div>
+                    <div id="usersListContainer" class="space-y-1.5 max-h-40 overflow-y-auto custom-scrollbar pt-1"></div>
+                </div>
+            </div>
+
+            <!-- Pestaña 5: Soporte -->
+            <div id="tabSoporteConfig" class="admin-tab-pane hidden space-y-3 text-xs">
+                <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <strong class="text-indigo-400">📍 Soporte 1</strong>
+                        <input type="checkbox" id="settingLimaActive" class="w-4 h-4 accent-indigo-600 rounded">
+                    </div>
+                    <div id="adminLimaAgentsList" class="space-y-1"></div>
+                    <div class="flex gap-1.5">
+                        <input type="text" id="newLimaAgentName" placeholder="Nombre" class="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-2 py-1">
+                        <input type="text" id="newLimaAgentPhone" placeholder="WhatsApp" class="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-2 py-1">
+                        <button onclick="addSupportAgent('lima')" class="bg-indigo-600 text-white px-2.5 rounded-lg font-bold">Add</button>
+                    </div>
+
+                    <div class="flex items-center justify-between border-t border-slate-800 pt-2">
+                        <strong class="text-indigo-400">📍 Soporte 2</strong>
+                        <input type="checkbox" id="settingTrujilloActive" class="w-4 h-4 accent-indigo-600 rounded">
+                    </div>
+                    <div id="adminTrujilloAgentsList" class="space-y-1"></div>
+                    <div class="flex gap-1.5">
+                        <input type="text" id="newTrujilloAgentName" placeholder="Nombre" class="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-2 py-1">
+                        <input type="text" id="newTrujilloAgentPhone" placeholder="WhatsApp" class="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-2 py-1">
+                        <button onclick="addSupportAgent('trujillo')" class="bg-indigo-600 text-white px-2.5 rounded-lg font-bold">Add</button>
+                    </div>
+                    <button onclick="saveGlobalSettings()" class="w-full bg-indigo-600 active:scale-95 text-white font-bold py-2 rounded-xl transition-all mt-1">💾 Guardar Números</button>
+                </div>
+            </div>
+
+            <!-- Pestaña 6: Auditoría -->
             <div id="tabLogs" class="admin-tab-pane hidden space-y-2 text-xs">
                 <div id="activityLogsContainer" class="bg-slate-950/60 p-3 rounded-xl border border-slate-800 space-y-1.5 max-h-48 overflow-y-auto custom-scrollbar">
                     <p class="text-slate-500 text-center py-4">No hay registros de cambios todavía.</p>
@@ -925,20 +939,32 @@
 
     <!-- SCRIPT DE LÓGICA Y TIENDA PRO -->
     <script>
+        // CATEGORÍAS DINÁMICAS (CONFIGURABLES POR EL ADMINISTRADOR)
+        let categories = [
+            { id: 'win', name: '💻 Windows' },
+            { id: 'office', name: '📊 Office' },
+            { id: 'ia', name: '🤖 IA' },
+            { id: 'diseno', name: '🎨 Diseño' },
+            { id: 'antivirus', name: '🛡️ Antivirus' },
+            { id: 'iptv', name: '📺 Streaming' },
+            { id: 'musica', name: '🎵 Música' },
+            { id: 'edu', name: '📚 Educación' }
+        ];
+
         // PRODUCTOS ORGANIZADOS EN SUS CATEGORÍAS REALES CON DURACIÓN EXACTA
         let products = [
-            // CATEGORÍA WINDOWS ('win')
+            // WINDOWS ('win')
             { id: 'win-pro', name: 'Windows 10/11 Pro (De por vida)', price: 50.00, category: 'win', stock: true, allowDiscount: true, badge: '⭐ Bestseller #1', img: 'windows11.png', desc: 'Licencia digital permanente (OEM). Reactivación de por vida en 1 PC.' },
             { id: 'win-home', name: 'Windows 10/11 Home (De por vida)', price: 50.00, category: 'win', stock: true, allowDiscount: true, badge: 'Original', img: 'windows11.png', desc: 'Activación permanente y original para uso doméstico en 1 PC.' },
             
-            // CATEGORÍA OFFICE ('office')
+            // OFFICE ('office')
             { id: 'off-365', name: 'Microsoft Office 365 (1 año)', price: 45.00, category: 'office', stock: true, allowDiscount: true, badge: '⭐ Bestseller #2', img: 'office365.png', desc: 'Suscripción por 1 año para hasta 5 dispositivos. Word, Excel, PowerPoint y Teams.' },
             
-            // CATEGORÍA IA ('ia')
+            // IA ('ia')
             { id: 'gem-18', name: 'Gemini Pro 3.6 (18 meses)', price: 70.00, category: 'ia', stock: true, allowDiscount: true, badge: '⭐ Bestseller #3', img: 'gemini18.png', desc: 'Suscripción por 18 meses. Incluye IA avanzada Gemini Pro y 5TB en Google Drive.' },
             { id: 'gem-12', name: 'Gemini Pro 3.6 (12 meses)', price: 50.00, category: 'ia', stock: true, allowDiscount: true, badge: 'Popular', img: 'gemini12.png', desc: 'Suscripción por 12 meses. IA avanzada de Google One y almacenamiento de 5TB.' },
             
-            // CATEGORÍA DISEÑO ('diseno')
+            // DISEÑO ('diseno')
             { id: 'canva-1', name: 'Canva Pro (1 año)', price: 35.00, category: 'diseno', stock: true, allowDiscount: true, badge: 'Popular', img: 'canva.png', desc: 'Suscripción por 1 año. Acceso premium a plantillas, kit de marca y herramientas IA.' },
             { id: 'canva-2', name: 'Canva Pro (2 años)', price: 45.00, category: 'diseno', stock: true, allowDiscount: true, badge: 'Recomendado', img: 'canva.png', desc: 'Suscripción por 2 años con acceso completo a recursos premium.' },
             { id: 'canva-3', name: 'Canva Pro (3 años)', price: 55.00, category: 'diseno', stock: true, allowDiscount: true, badge: '⭐ Oferta', img: 'canva.png', desc: 'Suscripción por 3 años de Canva Pro con garantía total.' },
@@ -948,27 +974,25 @@
             { id: 'auto-6', name: 'Autodesk All Apps (6 meses)', price: 49.00, category: 'diseno', stock: true, allowDiscount: true, badge: 'Pro', img: 'autodesk.png', desc: 'Suscripción por 6 meses con acceso a toda la suite oficial.' },
             { id: 'auto-3', name: 'Autodesk All Apps (3 meses)', price: 29.00, category: 'diseno', stock: true, allowDiscount: true, badge: 'Pro', img: 'autodesk.png', desc: 'Suscripción por 3 meses a todas las aplicaciones profesionales.' },
             
-            // CATEGORÍA ANTIVIRUS ('antivirus')
+            // ANTIVIRUS ('antivirus')
             { id: 'anti-eset', name: 'ESET NOD32 Antivirus (1 año)', price: 39.00, category: 'antivirus', stock: true, allowDiscount: true, badge: '🛡️ Seguridad', img: 'antivirus.png', desc: 'Licencia original por 1 año. Protección ligera y proactiva contra amenazas.' },
             { id: 'anti-kasp', name: 'Kaspersky Premium (1 año)', price: 45.00, category: 'antivirus', stock: true, allowDiscount: true, badge: '🛡️ Seguridad', img: 'antivirus.png', desc: 'Licencia oficial por 1 año con VPN ilimitada y protección bancaria.' },
 
-            // CATEGORÍA STREAMING & IPTV ('iptv')
+            // STREAMING & IPTV ('iptv')
             { id: 'crunch-1', name: 'Crunchyroll 1 Perfil (1 año)', price: 99.00, category: 'iptv', stock: true, allowDiscount: true, badge: 'Mega Fan', img: 'crunchyroll.png', desc: 'Suscripción Mega Fan por 1 año completo. Sin anuncios y en Full HD.' },
             { id: 'crunch-3', name: 'Crunchyroll 1 Perfil (3 meses)', price: 35.00, category: 'iptv', stock: true, allowDiscount: true, badge: 'Mega Fan', img: 'crunchyroll.png', desc: 'Suscripción Mega Fan por 3 meses.' },
             { id: 'crunch-6', name: 'Crunchyroll Cuenta Completa (6 meses)', price: 89.00, category: 'iptv', stock: true, allowDiscount: true, badge: 'Mega Fan', img: 'crunchyroll.png', desc: 'Cuenta completa para varios dispositivos por 6 meses.' },
             { id: 'flujo-1', name: 'Flujo TV (1 mes)', price: 20.00, category: 'iptv', stock: true, allowDiscount: true, badge: 'En Vivo', img: 'flujotv.png', desc: 'Suscripción por 1 mes para 3 dispositivos. Más de 1000 canales en vivo.' },
 
-            // CATEGORÍA MÚSICA ('musica')
+            // MÚSICA ('musica')
             { id: 'spot-1', name: 'Spotify Premium (1 mes)', price: 15.00, category: 'musica', stock: true, allowDiscount: true, badge: 'Música', img: 'spotify.png', desc: 'Suscripción por 1 mes. Música en alta calidad sin interrupciones.' },
 
-            // CATEGORÍA EDUCACIÓN ('edu')
+            // EDUCACIÓN ('edu')
             { id: 'duo-12', name: 'Duolingo Super (12 meses)', price: 144.00, category: 'edu', stock: true, allowDiscount: true, badge: 'Idiomas', img: 'duolingo.png', desc: 'Suscripción por 1 año. Vidas ilimitadas y 100% libre de anuncios.' }
         ];
 
-        // CONFIGURACIÓN DE BESTSELLERS ELEGIBLES POR EL ADMINISTRADOR
         let bestsellerIds = ['win-pro', 'off-365', 'gem-18'];
 
-        // NIVELES DE DESCUENTO EDITABLES POR EL ADMINISTRADOR
         let globalTiers = [
             { qty: 3, pct: 5 },
             { qty: 6, pct: 10 },
@@ -1016,6 +1040,98 @@
         let currentFilter = 'principal';
         let cart = [];
         let temporaryBase64Img = '';
+        let lastGeneratedOrder = null;
+
+        function renderCategoryControls() {
+            // Render Chips
+            const chipsBox = document.getElementById('categoryChipsContainer');
+            if (chipsBox) {
+                let chipsHtml = `<button onclick="filterCategoryQuick('principal', this)" class="chip-btn px-3 py-1 rounded-lg ${currentFilter==='principal'?'bg-indigo-600 text-white font-semibold':'bg-slate-900 border border-slate-800 text-slate-300'} shrink-0 transition-all">🌟 Todos</button>`;
+                categories.forEach(c => {
+                    const isActive = currentFilter === c.id;
+                    chipsHtml += `<button onclick="filterCategoryQuick('${c.id}', this)" class="chip-btn px-3 py-1 rounded-lg ${isActive?'bg-indigo-600 text-white font-semibold':'bg-slate-900 border border-slate-800 text-slate-300 hover:text-white'} shrink-0 transition-all">${c.name}</button>`;
+                });
+                chipsBox.innerHTML = chipsHtml;
+            }
+
+            // Render Sidebar
+            const sidebarBox = document.getElementById('sidebarCategoriesContainer');
+            if (sidebarBox) {
+                let sHtml = `<button onclick="filterCategory('principal', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl ${currentFilter==='principal'?'bg-indigo-600 text-white':'bg-slate-950/50 hover:bg-slate-800 text-slate-300'} font-medium text-xs flex items-center justify-between"><span>🏠 Principal</span></button>`;
+                categories.forEach(c => {
+                    const isActive = currentFilter === c.id;
+                    sHtml += `<button onclick="filterCategory('${c.id}', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl ${isActive?'bg-indigo-600 text-white':'bg-slate-950/50 hover:bg-slate-800 text-slate-300'} font-medium text-xs flex items-center justify-between"><span>${c.name}</span></button>`;
+                });
+                sHtml += `
+                    <button onclick="filterCategory('juegos', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between"><span>🎮 Juegos</span></button>
+                    <button onclick="filterCategory('nosotros', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between"><span>📌 Visión y Misión</span></button>
+                `;
+                sidebarBox.innerHTML = sHtml;
+            }
+
+            // Render Admin Product Form Category Selector
+            const prodCatSelect = document.getElementById('newProdCat');
+            if (prodCatSelect) {
+                prodCatSelect.innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            }
+
+            // Render Admin Categories List
+            const adminCatList = document.getElementById('adminCategoriesList');
+            if (adminCatList) {
+                adminCatList.innerHTML = categories.map((c, idx) => `
+                    <div class="flex justify-between items-center bg-slate-900 border border-slate-800 p-2 rounded-lg text-xs">
+                        <div>
+                            <strong class="text-white">${c.name}</strong> <span class="text-slate-500 font-mono text-[10px]">(${c.id})</span>
+                        </div>
+                        <div class="flex gap-1">
+                            <button onclick="editCategoryName(${idx})" class="bg-indigo-600 text-white px-2 py-0.5 rounded text-[10px]">Editar</button>
+                            <button onclick="deleteCategory(${idx})" class="bg-red-600 text-white px-2 py-0.5 rounded text-[10px]">Eliminar</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function addNewCategory() {
+            if (!currentUser || currentUser.role !== 'admin') return alert('Solo el Admin Principal.');
+            const id = document.getElementById('newCatIdInput').value.trim().toLowerCase();
+            const name = document.getElementById('newCatNameInput').value.trim();
+            if (!id || !name) return alert('Completa el ID y el Nombre.');
+
+            if (categories.some(c => c.id === id)) return alert('El ID de categoría ya existe.');
+
+            categories.push({ id, name });
+            saveSettingsStorage();
+            renderCategoryControls();
+            document.getElementById('newCatIdInput').value = '';
+            document.getElementById('newCatNameInput').value = '';
+            logAdminAction(`Nueva categoría creada: ${name} (${id})`);
+            alert('¡Categoría agregada con éxito!');
+        }
+
+        function editCategoryName(idx) {
+            if (!currentUser || currentUser.role !== 'admin') return;
+            const current = categories[idx];
+            const newName = prompt(`Editar nombre de la categoría (${current.id}):`, current.name);
+            if (newName && newName.trim() !== '') {
+                current.name = newName.trim();
+                saveSettingsStorage();
+                renderCategoryControls();
+                logAdminAction(`Categoría editada: ${current.name}`);
+            }
+        }
+
+        function deleteCategory(idx) {
+            if (!currentUser || currentUser.role !== 'admin') return;
+            if (categories.length <= 1) return alert('Debe haber al menos una categoría.');
+            const target = categories[idx];
+            if (confirm(`¿Eliminar la categoría "${target.name}"?`)) {
+                categories.splice(idx, 1);
+                saveSettingsStorage();
+                renderCategoryControls();
+                logAdminAction(`Categoría eliminada: ${target.name}`);
+            }
+        }
 
         function populateAdminTierInputs() {
             if(globalTiers[0]) {
@@ -1106,6 +1222,7 @@
         function saveSettingsStorage() {
             if (window.saveSettingsToCloud) {
                 window.saveSettingsToCloud({
+                    categories,
                     globalTiers,
                     bestsellerIds,
                     discountsActive,
@@ -1304,19 +1421,14 @@
             currentFilter = category;
             document.getElementById('searchInput').value = '';
             document.getElementById('clearSearchBtn').classList.add('hidden');
+            renderCategoryControls();
             renderCatalog();
             updateProducts();
         }
 
         function filterCategoryQuick(category, btn) {
             currentFilter = category;
-            document.querySelectorAll('.chip-btn').forEach(b => {
-                b.classList.remove('bg-indigo-600', 'text-white', 'font-semibold');
-                b.classList.add('bg-slate-900', 'border', 'border-slate-800', 'text-slate-300');
-            });
-            btn.classList.add('bg-indigo-600', 'text-white', 'font-semibold');
-            btn.classList.remove('bg-slate-900', 'border', 'border-slate-800', 'text-slate-300');
-            
+            renderCategoryControls();
             document.getElementById('searchInput').value = '';
             document.getElementById('clearSearchBtn').classList.add('hidden');
             renderCatalog();
@@ -1330,16 +1442,7 @@
             document.getElementById('sortSelect').value = 'default';
             document.getElementById('stockSelect').value = 'all';
             
-            document.querySelectorAll('.chip-btn').forEach((b, i) => {
-                if(i === 0) {
-                    b.classList.add('bg-indigo-600', 'text-white', 'font-semibold');
-                    b.classList.remove('bg-slate-900', 'border', 'border-slate-800', 'text-slate-300');
-                } else {
-                    b.classList.remove('bg-indigo-600', 'text-white', 'font-semibold');
-                    b.classList.add('bg-slate-900', 'border', 'border-slate-800', 'text-slate-300');
-                }
-            });
-
+            renderCategoryControls();
             renderCatalog();
             updateProducts();
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1434,9 +1537,11 @@
             renderActivityLogs();
             populateAdminTierInputs();
             populateBestsellerSelectors();
+            renderCategoryControls();
             
             const sessionInfo = document.getElementById('adminSessionInfo');
             const tabDescuentosBtn = document.getElementById('tabBtnDescuentos');
+            const tabCategoriasBtn = document.getElementById('tabBtnCategorias');
             const tabSoporteConfigBtn = document.getElementById('tabBtnSoporteConfig');
             const tabUsuariosBtn = document.getElementById('tabBtnUsuarios');
             const tabProductosBtn = document.getElementById('tabBtnProductos');
@@ -1446,6 +1551,7 @@
 
             if (currentUser.role === 'admin') {
                 tabDescuentosBtn.classList.remove('hidden');
+                tabCategoriasBtn.classList.remove('hidden');
                 tabSoporteConfigBtn.classList.remove('hidden');
                 tabUsuariosBtn.classList.remove('hidden');
                 
@@ -1459,6 +1565,7 @@
                 switchAdminTab('tabDescuentos', tabDescuentosBtn);
             } else {
                 tabDescuentosBtn.classList.add('hidden');
+                tabCategoriasBtn.classList.add('hidden');
                 tabSoporteConfigBtn.classList.add('hidden');
                 tabUsuariosBtn.classList.add('hidden');
                 switchAdminTab('tabProductos', tabProductosBtn);
@@ -1508,7 +1615,7 @@
             renderCatalog();
             updateProducts();
             logAdminAction(`Promociones y Top 3 Bestsellers actualizados en la nube.`);
-            alert('¡Configuración, Promociones y Top 3 guardados en la nube con éxito!');
+            alert('¡Configuración, Promociones y Top 3 guardados con éxito!');
         }
 
         function saveCollabDiscountSetting() {
@@ -1551,13 +1658,27 @@
                             <strong class="text-white">${usr.user}</strong> <span class="text-indigo-400">(${usr.role})</span><br>
                             <span class="text-amber-400 text-[10px]">Clave: ${usr.pass}</span>
                         </div>
-                        <div>
+                        <div class="flex gap-1">
+                            <button onclick="editUserPass('${usr.user}')" class="text-indigo-400 text-[10px] px-2 py-0.5 bg-indigo-950/40 rounded border border-indigo-500/30">Cambiar Clave</button>
                             ${usr.user !== 'luislmvg88' ? `<button onclick="deleteUser('${usr.user}')" class="text-red-400 text-[10px] px-2 py-0.5 bg-red-950/40 rounded border border-red-500/30">Eliminar</button>` : ''}
                         </div>
                     </div>
                 `;
             });
             container.innerHTML = html;
+        }
+
+        async function editUserPass(username) {
+            const usr = usersDB.find(u => u.user === username);
+            if (!usr) return;
+            const newP = prompt(`Nueva contraseña para ${username}:`, usr.pass);
+            if (newP && newP.trim() !== '') {
+                usr.pass = newP.trim();
+                if (window.saveUserToCloud) await window.saveUserToCloud(usr);
+                renderUsersList();
+                logAdminAction(`Contraseña actualizada para ${username}`);
+                alert('Contraseña actualizada con éxito.');
+            }
         }
 
         async function deleteUser(username) {
@@ -1823,7 +1944,6 @@
 
             const basePrice = parseFloat(card.getAttribute('data-base-price'));
             
-            // Determinar descuento aplicable según niveles configurados
             let discountPct = 0;
             if (discountsActive) {
                 if (qty >= globalTiers[2].qty) discountPct = globalTiers[2].pct;
@@ -2002,6 +2122,14 @@
             const summary = cart.map(i => `${i.qty}x ${i.name}`).join(', ');
             const orderHash = generateOrderHash();
 
+            lastGeneratedOrder = {
+                hash: orderHash,
+                items: [...cart],
+                total: total,
+                summary: summary,
+                date: new Date().toLocaleString()
+            };
+
             document.getElementById('paymentOrderHash').innerText = orderHash;
             document.getElementById('modalProductName').innerText = summary;
             document.getElementById('modalProductPrice').innerText = total;
@@ -2027,6 +2155,14 @@
             const unitPrice = basePrice * (1 - (discountPct / 100));
             const total = unitPrice * qty;
 
+            lastGeneratedOrder = {
+                hash: orderHash,
+                items: [{ name, qty, unitPrice, total }],
+                total: `S/. ${total.toFixed(2)}`,
+                summary: `${qty}x ${name}`,
+                date: new Date().toLocaleString()
+            };
+
             document.getElementById('paymentOrderHash').innerText = orderHash;
             document.getElementById('modalProductName').innerText = `${name} (${qty} unid/es)`;
             document.getElementById('modalProductPrice').innerText = `S/. ${total.toFixed(2)}`;
@@ -2041,6 +2177,34 @@
         function closePaymentModal() {
             document.getElementById('paymentModal').classList.remove('flex');
             document.getElementById('paymentModal').classList.add('hidden');
+        }
+
+        // PLUS: RECIBO / PRE-BOLETA DIGITAL
+        function openReceiptModalFromPayment() {
+            if (!lastGeneratedOrder) return;
+            document.getElementById('receiptHash').innerText = lastGeneratedOrder.hash;
+            document.getElementById('receiptDate').innerText = lastGeneratedOrder.date;
+            document.getElementById('receiptTotalPrice').innerText = lastGeneratedOrder.total;
+
+            const container = document.getElementById('receiptItemsContainer');
+            container.innerHTML = lastGeneratedOrder.items.map(i => `
+                <div class="flex justify-between items-center text-[11px] border-b border-slate-800/60 pb-1">
+                    <span class="text-white">${i.qty}x ${i.name}</span>
+                    <span class="font-bold text-emerald-400">S/. ${(i.total || (i.unitPrice * i.qty)).toFixed(2)}</span>
+                </div>
+            `).join('');
+
+            const msg = `Hola,%20adjunto%20mi%20comprobante%20del%20pedido%20[${lastGeneratedOrder.hash}]:%20${encodeURIComponent(lastGeneratedOrder.summary)}%20(Total:%20${lastGeneratedOrder.total}).`;
+            document.getElementById('receiptWhatsappBtn').href = `https://wa.me/51933907930?text=${msg}`;
+
+            closePaymentModal();
+            document.getElementById('receiptModal').classList.remove('hidden');
+            document.getElementById('receiptModal').classList.add('flex');
+        }
+
+        function closeReceiptModal() {
+            document.getElementById('receiptModal').classList.remove('flex');
+            document.getElementById('receiptModal').classList.add('hidden');
         }
 
         function handleSearchInput() {
@@ -2069,21 +2233,12 @@
             document.getElementById('bestsellersSection').classList.toggle('hidden', !isHome);
             document.getElementById('seccionCatalogo').classList.toggle('hidden', ['juegos', 'nosotros'].includes(currentFilter));
 
-            // Actualizar Título de la Sección de Catálogo dinámicamente
-            const titleMap = {
-                'principal': 'Catálogo Completo de Licencias',
-                'win': '💻 Licencias Originales de Windows',
-                'office': '📊 Microsoft Office 365 y Suites',
-                'ia': '🤖 Cuentas de Inteligencia Artificial',
-                'diseno': '🎨 Herramientas de Diseño (Canva, Adobe, Autodesk)',
-                'antivirus': '🛡️ Licencias Originales de Antivirus',
-                'iptv': '📺 Streaming y Cuentas IPTV',
-                'musica': '🎵 Cuentas de Música Premium',
-                'edu': '📚 Cuentas Educativas y Aprendizaje'
-            };
+            // Actualizar Título de la Sección dinámicamente según la categoría activa
+            const catObj = categories.find(c => c.id === currentFilter);
             const titleEl = document.getElementById('catalogoTitleText');
             if(titleEl) {
-                titleEl.innerHTML = `<span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-xs sm:text-sm"><i class="fa-solid fa-box-archive"></i></span> ${titleMap[currentFilter] || 'Catálogo de Productos'}`;
+                const titleName = catObj ? catObj.name : (currentFilter === 'principal' ? 'Catálogo Completo de Licencias' : 'Productos');
+                titleEl.innerHTML = `<span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-xs sm:text-sm"><i class="fa-solid fa-box-archive"></i></span> ${titleName}`;
             }
 
             document.querySelectorAll('#catalogoGrid .card').forEach(card => {
@@ -2123,6 +2278,7 @@
         }
 
         window.onload = () => {
+            renderCategoryControls();
             renderCatalog();
             updateProducts();
             updateDynamicBanner();
