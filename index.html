@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lubeltec - Catálogo Digital y Control de Licencias</title>
+    <title>Lubeltec Pro | Catálogo Digital y Tienda de Software</title>
     
     <!-- Favicon -->
     <link rel="icon" href="lubeltec.png" type="image/png">
@@ -11,7 +11,7 @@
     <!-- Fuentes & Iconos -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Tailwind CSS CDN -->
@@ -31,14 +31,14 @@
                         }
                     },
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
 
-    <!-- INTEGRACIÓN DE FIREBASE FIRESTORE EN TIEMPO REAL -->
+    <!-- INTEGRACIÓN FIREBASE FIRESTORE EN TIEMPO REAL -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -94,12 +94,19 @@
             }
         });
 
-        // Sincronización de Configuración Global y Logs
+        // Sincronización de Configuración Global, Bestsellers y Promociones
         const settingsDocRef = doc(db, "settings", "global_config");
         onSnapshot(settingsDocRef, (docSnap) => {
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                if (data.globalTiers && typeof window.globalTiers !== "undefined") window.globalTiers = data.globalTiers;
+                if (data.globalTiers && typeof window.globalTiers !== "undefined") {
+                    window.globalTiers = data.globalTiers;
+                    if (typeof window.populateAdminTierInputs === "function") window.populateAdminTierInputs();
+                }
+                if (data.bestsellerIds && typeof window.bestsellerIds !== "undefined") {
+                    window.bestsellerIds = data.bestsellerIds;
+                    if (typeof window.populateBestsellerSelectors === "function") window.populateBestsellerSelectors();
+                }
                 if (data.discountsActive !== undefined && typeof window.discountsActive !== "undefined") window.discountsActive = data.discountsActive;
                 if (data.toastsActive !== undefined && typeof window.toastsActive !== "undefined") window.toastsActive = data.toastsActive;
                 if (data.holidayTheme && typeof window.holidayTheme !== "undefined") window.holidayTheme = data.holidayTheme;
@@ -115,6 +122,8 @@
 
                 if (typeof window.updateDynamicBanner === "function") {
                     window.updateDynamicBanner();
+                    window.renderCatalog();
+                    window.updateProducts();
                     window.checkSupportAvailability();
                     if (typeof window.renderAdminSupportAgents === "function") window.renderAdminSupportAgents();
                 }
@@ -147,52 +156,26 @@
     </script>
 
     <style>
-        /* Prevención estricta de desborde horizontal en móviles */
         html, body {
             overflow-x: hidden;
             width: 100%;
-            position: relative;
         }
-
         .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #090d16; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0b0f19; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #334155; }
-        
-        .carousel-track {
-            display: flex;
-            gap: 1rem;
-            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-            will-change: transform;
-        }
-        .carousel-track .card-destacada {
-            min-width: 250px;
-            flex: 0 0 250px;
-        }
-        @media (min-width: 640px) {
-            .carousel-track .card-destacada {
-                min-width: 260px;
-                flex: 0 0 calc(50% - 0.5rem);
-            }
-        }
-        @media (min-width: 1024px) {
-            .carousel-track .card-destacada {
-                min-width: 270px;
-                flex: 0 0 calc(25% - 0.75rem);
-            }
-        }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white pb-20 sm:pb-12">
+<body class="bg-[#050811] text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white pb-20 sm:pb-12">
 
-    <!-- Notificación Toast de Compras Recientes (Responsive) -->
+    <!-- Notificación Toast de Compras Recientes -->
     <div id="recentPurchaseToast" class="fixed bottom-20 sm:bottom-6 left-3 sm:left-6 z-40 max-w-[90vw] sm:max-w-sm transform -translate-x-[150%] opacity-0 transition-all duration-500 bg-slate-900/95 border border-indigo-500/30 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-2xl flex items-center space-x-3 pointer-events-none">
         <div class="bg-indigo-500/20 text-indigo-400 p-2 rounded-xl text-sm shrink-0">
             <i class="fa-solid fa-cart-shopping"></i>
         </div>
         <div class="truncate">
-            <p class="text-[10px] text-slate-400">Actividad reciente</p>
-            <p class="text-xs font-medium text-slate-200 truncate"><span id="purchaseUserText" class="text-indigo-400 font-semibold">Un usuario</span> adquirió <span id="purchaseItemText" class="text-emerald-400 font-semibold">Gemini Pro</span></p>
+            <p class="text-[10px] text-slate-400 font-medium">Compra verificada</p>
+            <p class="text-xs font-semibold text-slate-200 truncate"><span id="purchaseUserText" class="text-indigo-400">Cliente</span> adquirió <span id="purchaseItemText" class="text-emerald-400">Windows 11 Pro</span></p>
         </div>
     </div>
 
@@ -202,8 +185,8 @@
             <i class="fa-solid fa-circle-check"></i>
         </div>
         <div>
-            <h4 class="font-semibold text-emerald-200 text-xs sm:text-sm">¡Éxito!</h4>
-            <p class="text-[11px] sm:text-xs text-emerald-300/90" id="toastGeneralMsg">Se ha añadido con éxito a tu carrito.</p>
+            <h4 class="font-bold text-emerald-200 text-xs sm:text-sm">¡Agregado al Carrito!</h4>
+            <p class="text-[11px] sm:text-xs text-emerald-300/90" id="toastGeneralMsg">Producto listo para procesar.</p>
         </div>
     </div>
 
@@ -212,14 +195,16 @@
         <i class="fa-brands fa-whatsapp text-xl sm:text-2xl"></i>
     </a>
 
-    <!-- Header Totalmente Adaptable -->
+    <!-- Header Principal -->
     <header class="sticky top-0 z-30 bg-slate-900/90 backdrop-blur-xl border-b border-slate-800/80 transition-all">
-        <!-- Barra de avisos superior -->
-        <div class="bg-gradient-to-r from-indigo-950/80 via-purple-950/80 to-indigo-950/80 border-b border-indigo-500/20 py-1.5 px-3 text-center text-[11px] sm:text-xs font-medium text-indigo-200 flex flex-wrap items-center justify-center gap-1.5 sm:gap-3">
-            <span class="flex items-center gap-1"><i class="fa-regular fa-clock text-indigo-400"></i> 8:00 AM - 10:00 PM</span>
+        <!-- Barra de avisos de horario oficial y transparencia -->
+        <div class="bg-gradient-to-r from-indigo-950/90 via-purple-950/90 to-indigo-950/90 border-b border-indigo-500/20 py-1.5 px-3 text-center text-[11px] sm:text-xs font-medium text-indigo-200 flex flex-wrap items-center justify-center gap-2">
+            <span class="flex items-center gap-1.5"><i class="fa-regular fa-clock text-amber-400"></i> Atención: Lunes a Sábado (8:00 AM a 10:00 PM)</span>
             <span class="text-slate-600 hidden sm:inline">•</span>
-            <span id="dynamicPromoBadge" class="text-emerald-400 font-bold bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-500/30 text-[10px] sm:text-xs truncate max-w-full">
-                🚀 ¡Descuentos: 3+ (5%) | 6+ (10%) | 10+ (15%)!
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-bolt text-indigo-400"></i> Entrega: Hasta 20 min</span>
+            <span class="text-slate-600 hidden sm:inline">•</span>
+            <span id="dynamicPromoBadge" class="text-emerald-400 font-bold bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-500/30 text-[10px] sm:text-xs">
+                🚀 ¡Descuentos automáticos activados!
             </span>
         </div>
 
@@ -243,13 +228,11 @@
 
             <!-- Acciones de Cabecera -->
             <div class="flex items-center space-x-1.5 sm:space-x-2.5">
-                <!-- Botón Soporte -->
                 <button onclick="openSupportModal()" class="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/60 text-slate-300 hover:text-white text-xs sm:text-sm font-medium transition-all">
                     <i class="fa-solid fa-headset text-indigo-400"></i>
                     <span class="hidden md:inline">Soporte</span>
                 </button>
 
-                <!-- Botón Login / Usuario -->
                 <button onclick="openAdminLogin()" id="loginShortcutBtn" class="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/60 text-slate-300 hover:text-white text-xs sm:text-sm font-medium transition-all">
                     <i class="fa-solid fa-user-shield text-purple-400"></i>
                     <span class="hidden sm:inline">Ingresar</span>
@@ -265,7 +248,7 @@
                     </button>
                 </div>
 
-                <!-- Botón Carrito con contador -->
+                <!-- Botón Carrito -->
                 <button onclick="openCartModal()" class="relative flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all font-semibold text-xs sm:text-sm shrink-0">
                     <i class="fa-solid fa-cart-shopping"></i>
                     <span class="hidden sm:inline">Carrito</span>
@@ -274,37 +257,52 @@
             </div>
         </div>
 
-        <!-- Buscador y Filtros Adaptables -->
-        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pb-3 pt-1 flex flex-col sm:flex-row items-center justify-between gap-2">
-            <div class="relative w-full sm:w-80 md:w-96">
-                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                <input type="text" id="searchInput" placeholder="Buscar programas, licencias, IA..." oninput="handleSearchInput()" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl pl-8 pr-8 py-1.5 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all">
-                <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-400 text-xs">✕</button>
+        <!-- Buscador y Categorías Horizontales (Chips) -->
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pb-3 pt-1 flex flex-col gap-2.5">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-2">
+                <div class="relative w-full sm:w-80 md:w-96">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" id="searchInput" placeholder="Buscar Windows, Office, Antivirus, Canva, IA..." oninput="handleSearchInput()" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl pl-8 pr-8 py-1.5 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all">
+                    <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-400 text-xs">✕</button>
+                </div>
+
+                <div class="grid grid-cols-2 sm:flex items-center gap-2 w-full sm:w-auto">
+                    <select id="sortSelect" onchange="updateProducts()" class="w-full sm:w-auto bg-slate-950/80 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500">
+                        <option value="default">Destacados</option>
+                        <option value="price-desc">Precio: Mayor a menor</option>
+                        <option value="price-asc">Precio: Menor a mayor</option>
+                        <option value="alpha-asc">Nombre: A - Z</option>
+                    </select>
+
+                    <select id="stockSelect" onchange="updateProducts()" class="w-full sm:w-auto bg-slate-950/80 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500">
+                        <option value="all">Todo el stock</option>
+                        <option value="instock">Disponible</option>
+                        <option value="outofstock">Sin stock</option>
+                    </select>
+                </div>
             </div>
 
-            <div class="grid grid-cols-2 sm:flex items-center gap-2 w-full sm:w-auto">
-                <select id="sortSelect" onchange="updateProducts()" class="w-full sm:w-auto bg-slate-950/80 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500">
-                    <option value="default">Destacados</option>
-                    <option value="price-desc">Precio: Mayor a menor</option>
-                    <option value="price-asc">Precio: Menor a mayor</option>
-                    <option value="alpha-asc">Nombre: A - Z</option>
-                </select>
-
-                <select id="stockSelect" onchange="updateProducts()" class="w-full sm:w-auto bg-slate-950/80 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500">
-                    <option value="all">Todo el stock</option>
-                    <option value="instock">Disponible</option>
-                    <option value="outofstock">Sin stock</option>
-                </select>
+            <!-- Chips de Filtro Horizontal Organizados por Categorías Reales -->
+            <div class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 custom-scrollbar text-xs">
+                <button onclick="filterCategoryQuick('principal', this)" class="chip-btn px-3 py-1 rounded-lg bg-indigo-600 text-white font-semibold shrink-0 transition-all">🌟 Todos</button>
+                <button onclick="filterCategoryQuick('win', this)" class="chip-btn px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white shrink-0 transition-all">💻 Windows</button>
+                <button onclick="filterCategoryQuick('office', this)" class="chip-btn px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white shrink-0 transition-all">📊 Office</button>
+                <button onclick="filterCategoryQuick('ia', this)" class="chip-btn px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white shrink-0 transition-all">🤖 IA</button>
+                <button onclick="filterCategoryQuick('diseno', this)" class="chip-btn px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white shrink-0 transition-all">🎨 Diseño</button>
+                <button onclick="filterCategoryQuick('antivirus', this)" class="chip-btn px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white shrink-0 transition-all">🛡️ Antivirus</button>
+                <button onclick="filterCategoryQuick('iptv', this)" class="chip-btn px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white shrink-0 transition-all">📺 Streaming</button>
+                <button onclick="filterCategoryQuick('musica', this)" class="chip-btn px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white shrink-0 transition-all">🎵 Música</button>
+                <button onclick="filterCategoryQuick('edu', this)" class="chip-btn px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white shrink-0 transition-all">📚 Educación</button>
             </div>
         </div>
     </header>
 
-    <!-- Menú Lateral (Drawer) -->
+    <!-- Menú Lateral -->
     <div id="sidebarOverlay" onclick="toggleMenu()" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden transition-opacity"></div>
     <div id="sidebarDrawer" class="fixed top-0 -left-80 w-72 sm:w-80 h-full bg-slate-900 border-r border-slate-800 z-50 flex flex-col transition-all duration-300 shadow-2xl">
         <div class="p-5 border-b border-slate-800 flex items-center justify-between">
             <h3 class="font-bold text-base text-white flex items-center gap-2">
-                <i class="fa-solid fa-layer-group text-indigo-400"></i> Categorías
+                <i class="fa-solid fa-layer-group text-indigo-400"></i> Menú Completo
             </h3>
             <button onclick="toggleMenu()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white">✕</button>
         </div>
@@ -312,71 +310,104 @@
             <button onclick="filterCategory('principal', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-indigo-600 text-white font-medium text-xs flex items-center justify-between sidebar-item active">
                 <span>🏠 Principal</span>
             </button>
-            <button onclick="toggleSidebarSubmenu('sidebarSoftwareSubmenu', event)" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between sidebar-item">
-                <span>📂 Software</span>
-                <i class="fa-solid fa-chevron-down text-[10px]"></i>
+            <button onclick="filterCategory('win', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between">
+                <span>💻 Windows 10/11</span>
             </button>
-            <div id="sidebarSoftwareSubmenu" class="hidden pl-3 space-y-1">
-                <button onclick="filterCategory('all-software', event); toggleMenu();" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-400 hover:text-white hover:bg-slate-800">Todos los Software</button>
-                <button onclick="filterCategory('win', event); toggleMenu();" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-400 hover:text-white hover:bg-slate-800">💻 Windows 10/11</button>
-                <button onclick="filterCategory('diseno', event); toggleMenu();" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-400 hover:text-white hover:bg-slate-800">🎨 Diseño</button>
-                <button onclick="filterCategory('ia', event); toggleMenu();" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-400 hover:text-white hover:bg-slate-800">🤖 Inteligencia Artificial</button>
-                <button onclick="filterCategory('iptv', event); toggleMenu();" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-400 hover:text-white hover:bg-slate-800">📺 IPTV</button>
-                <button onclick="filterCategory('musica', event); toggleMenu();" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-400 hover:text-white hover:bg-slate-800">🎵 Música</button>
-                <button onclick="filterCategory('edu', event); toggleMenu();" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-400 hover:text-white hover:bg-slate-800">📚 Educación</button>
-                <button onclick="filterCategory('antivirus', event); toggleMenu();" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-400 hover:text-white hover:bg-slate-800">🛡️ Antivirus</button>
-            </div>
-            <button onclick="filterCategory('juegos', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between sidebar-item">
+            <button onclick="filterCategory('office', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between">
+                <span>📊 Microsoft Office</span>
+            </button>
+            <button onclick="filterCategory('ia', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between">
+                <span>🤖 Inteligencia Artificial</span>
+            </button>
+            <button onclick="filterCategory('diseno', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between">
+                <span>🎨 Diseño (Canva, Adobe, Autodesk)</span>
+            </button>
+            <button onclick="filterCategory('antivirus', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between">
+                <span>🛡️ Antivirus</span>
+            </button>
+            <button onclick="filterCategory('iptv', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between">
+                <span>📺 Streaming & IPTV</span>
+            </button>
+            <button onclick="filterCategory('musica', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between">
+                <span>🎵 Música</span>
+            </button>
+            <button onclick="filterCategory('edu', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between">
+                <span>📚 Educación</span>
+            </button>
+            <button onclick="filterCategory('juegos', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between">
                 <span>🎮 Juegos</span>
             </button>
-            <button onclick="filterCategory('nosotros', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between sidebar-item">
+            <button onclick="filterCategory('nosotros', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between">
                 <span>📌 Visión y Misión</span>
             </button>
         </div>
     </div>
 
     <!-- Contenido Principal -->
-    <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 flex-grow space-y-8 sm:space-y-12 w-full">
+    <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 flex-grow space-y-8 sm:space-y-10 w-full">
 
-        <!-- Programas Destacados -->
-        <section id="seccionDestacados" class="space-y-4">
-            <div class="flex items-center justify-between">
-                <h2 class="text-lg sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-                    <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xs sm:text-sm">
-                        <i class="fa-solid fa-fire"></i>
-                    </span>
-                    Programas Destacados
+        <!-- SECCIÓN HERO DE CONFIANZA Y BENEFICIOS (INTERNACIONAL Y TRANSPARENTE) -->
+        <section id="heroSection" class="bg-gradient-to-br from-slate-900 via-indigo-950/30 to-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-10 relative overflow-hidden shadow-2xl">
+            <div class="max-w-3xl space-y-4">
+                <div class="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 px-3 py-1 rounded-full text-xs font-bold">
+                    <i class="fa-solid fa-check-circle"></i> Entrega Digital Garantizada
+                </div>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+                    Software Original, Licencias y Cuentas Digitales
                 </h2>
-                <span class="text-[11px] sm:text-xs text-slate-400 font-medium">Más solicitados</span>
-            </div>
-            <!-- Carrusel Track -->
-            <div class="relative overflow-x-auto sm:overflow-hidden w-full py-2 custom-scrollbar cursor-grab" id="carouselContainer">
-                <div class="carousel-track" id="carouselTrack"></div>
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl">
+                    Adquiere licencias de software permanente o suscripciones por meses y años para Windows, Office, Canva Pro, Inteligencia Artificial y Antivirus con soporte postventa y entrega rápida.
+                </p>
+                <!-- Beneficios de Confianza -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-xs">
+                    <div class="flex items-center gap-2 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800">
+                        <i class="fa-regular fa-clock text-amber-400 text-sm"></i>
+                        <span class="font-medium text-slate-200">Entrega: Hasta 20 min</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800">
+                        <i class="fa-solid fa-shield-halved text-emerald-400 text-sm"></i>
+                        <span class="font-medium text-slate-200">Garantía Total</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800">
+                        <i class="fa-solid fa-calendar-check text-purple-400 text-sm"></i>
+                        <span class="font-medium text-slate-200">Lun - Sáb: 8am - 10pm</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800">
+                        <i class="fa-solid fa-headset text-indigo-400 text-sm"></i>
+                        <span class="font-medium text-slate-200">Soporte Técnico</span>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- Catálogo General -->
-        <section id="seccionCatalogo" class="space-y-4">
+        <!-- TOP 3 MÁS VENDIDOS (CONFIGURABLE POR EL ADMINISTRADOR) -->
+        <section id="bestsellersSection" class="space-y-4">
             <div class="flex items-center justify-between">
                 <h2 class="text-lg sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+                    <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xs sm:text-sm">
+                        <i class="fa-solid fa-crown"></i>
+                    </span>
+                    Top 3 Más Vendidos
+                </h2>
+                <span class="text-[11px] sm:text-xs text-slate-400 font-medium">Mayor demanda</span>
+            </div>
+            <div id="bestsellersGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6"></div>
+        </section>
+
+        <!-- CATÁLOGO GENERAL COMPLETO -->
+        <section id="seccionCatalogo" class="space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 id="catalogoTitleText" class="text-lg sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
                     <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-xs sm:text-sm">
                         <i class="fa-solid fa-box-archive"></i>
                     </span>
-                    Catálogo General de Licencias
+                    Catálogo Completo de Licencias
                 </h2>
             </div>
-            <!-- Grid de Catálogo Responsivo (1 col en celular, 2 en tablet, 4 en desktop) -->
             <div id="catalogoGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"></div>
         </section>
 
         <!-- Banners e Info -->
-        <div id="bannerAntivirus" class="hidden bg-slate-900/60 border border-slate-800/80 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-center space-y-2">
-            <h2 class="text-base sm:text-xl font-bold text-white flex items-center justify-center gap-2">
-                <i class="fa-solid fa-shield-halved text-indigo-400"></i> Próximamente Licencias de Antivirus
-            </h2>
-            <p class="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto">Estamos incorporando las mejores licencias originales para la protección avanzada de tus dispositivos.</p>
-        </div>
-
         <div id="bannerJuegos" class="hidden bg-slate-900/60 border border-slate-800/80 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-center space-y-2">
             <h2 class="text-base sm:text-xl font-bold text-white flex items-center justify-center gap-2">
                 <i class="fa-solid fa-gamepad text-purple-400"></i> Próximamente Juegos Económicos
@@ -394,7 +425,7 @@
                     Misión
                 </h3>
                 <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                    En Lubeltec, facilitamos el acceso a software original y servicios digitales garantizados para estudiantes, profesionales y empresas en Perú. Nos comprometemos a brindar soluciones tecnológicas transparentes, accesibles y con soporte postventa inmediato, garantizando que cada cliente potencie sus herramientas de trabajo sin complicaciones.
+                    En Lubeltec, facilitamos el acceso a software original y servicios digitales garantizados para estudiantes, profesionales y empresas. Nos comprometemos a brindar soluciones tecnológicas transparentes, accesibles y con soporte postventa inmediato, garantizando que cada cliente potencie sus herramientas de trabajo sin complicaciones.
                 </p>
             </div>
             <div class="space-y-2">
@@ -405,7 +436,7 @@
                     Visión
                 </h3>
                 <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                    Ser reconocidos como el catálogo digital líder y más confiable en el mercado peruano para la adquisición de licencias de software, soluciones de inteligencia artificial y entretenimiento digital, destacando por nuestra honestidad, rapidez de entrega y atención personalizada constante.
+                    Ser reconocidos como el catálogo digital líder y más confiable para la adquisición de licencias de software, soluciones de inteligencia artificial y entretenimiento digital, destacando por nuestra honestidad, rapidez de entrega y atención personalizada constante.
                 </p>
             </div>
         </div>
@@ -416,16 +447,47 @@
         <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
             <p>© Catálogo Digital Lubeltec. Todos los derechos reservados.</p>
             <div class="flex items-center space-x-3 text-xs">
-                <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-shield-check"></i> Pagos Seguros Yape / Plin</span>
+                <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-shield-check"></i> Pagos Seguros y Verificados</span>
                 <span>•</span>
-                <span>Perú 🇵🇪</span>
+                <span>Atención Internacional</span>
             </div>
         </div>
     </footer>
 
-    <!-- MODAL: CARRITO DE COMPRAS (Centrado y con Scroll Móvil) -->
-    <div id="cartModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-3 sm:p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl max-w-lg w-full p-4 sm:p-7 space-y-4 shadow-2xl relative max-h-[90vh] flex flex-col">
+    <!-- MODAL: DETALLES RÁPIDOS (QUICK VIEW) -->
+    <div id="quickViewModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-3 sm:p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-5 sm:p-7 space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <button onclick="closeQuickViewModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center text-sm">✕</button>
+            
+            <div class="flex items-center gap-4">
+                <img id="qvImg" src="default.png" alt="Producto" class="w-20 h-20 rounded-2xl object-cover bg-slate-950 border border-slate-800 shrink-0">
+                <div>
+                    <span id="qvBadge" class="bg-indigo-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-md">Original</span>
+                    <h3 id="qvName" class="text-base sm:text-lg font-bold text-white mt-1">Nombre del Producto</h3>
+                    <div id="qvPrice" class="text-lg font-black text-emerald-400">S/. 0.00</div>
+                </div>
+            </div>
+
+            <div class="bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800 space-y-2 text-xs">
+                <h4 class="font-bold text-indigo-400 flex items-center gap-1.5">
+                    <i class="fa-solid fa-circle-info"></i> Detalles y Entrega
+                </h4>
+                <p id="qvDesc" class="text-slate-300 leading-relaxed text-[11px] sm:text-xs">Descripción detallada...</p>
+                <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/80 text-[11px]">
+                    <div class="flex items-center gap-1.5 text-slate-400">
+                        <i class="fa-solid fa-bolt text-amber-400"></i> Entrega: Hasta 20 min
+                    </div>
+                    <div class="flex items-center gap-1.5 text-slate-400">
+                        <i class="fa-solid fa-shield text-emerald-400"></i> Garantía oficial
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CARRITO DE COMPRAS CON BARRA DE DESCUENTO DINÁMICA -->
+    <div id="cartModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-3 sm:p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-4 sm:p-7 space-y-4 shadow-2xl relative max-h-[90vh] flex flex-col">
             <button onclick="closeCartModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center text-sm">✕</button>
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-lg">
@@ -433,36 +495,53 @@
                 </div>
                 <div>
                     <h3 class="text-base sm:text-lg font-bold text-white">Carrito de Compras</h3>
-                    <p class="text-[11px] text-slate-400">Productos seleccionados</p>
+                    <p class="text-[11px] text-slate-400">Revisa tus productos y ahorros</p>
                 </div>
             </div>
 
-            <div id="cartItemsContainer" class="space-y-2 max-h-60 overflow-y-auto pr-1 custom-scrollbar flex-grow">
+            <!-- BARRA DE PROGRESO DE DESCUENTOS DINÁMICA -->
+            <div id="cartDiscountProgressBox" class="bg-slate-950/70 p-3 rounded-2xl border border-indigo-500/30 space-y-2">
+                <div class="flex justify-between items-center text-[11px]">
+                    <span id="discountProgressText" class="font-bold text-indigo-300">¡Agrega productos para desbloquear descuentos!</span>
+                    <span id="discountBadgeValue" class="bg-indigo-600 text-white font-black px-2 py-0.5 rounded-full text-[10px]">0%</span>
+                </div>
+                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div id="discountProgressBar" class="bg-gradient-to-r from-indigo-500 to-emerald-400 h-full w-0 transition-all duration-500"></div>
+                </div>
+            </div>
+
+            <div id="cartItemsContainer" class="space-y-2 max-h-56 overflow-y-auto pr-1 custom-scrollbar flex-grow">
                 <p class="text-xs text-slate-500 text-center py-6">Tu carrito está vacío</p>
             </div>
 
             <div class="border-t border-slate-800 pt-3 space-y-3">
                 <div class="flex items-center justify-between text-xs sm:text-sm">
-                    <button onclick="clearCart()" class="text-red-400 hover:underline">🗑️ Vaciar</button>
-                    <div>
-                        <span class="text-slate-400 mr-1">Total:</span>
-                        <span id="cartTotalPrice" class="text-base sm:text-lg font-black text-emerald-400">S/. 0.00</span>
+                    <button onclick="clearCart()" class="text-red-400 hover:underline">🗑️ Vaciar Carrito</button>
+                    <div class="text-right">
+                        <div id="cartSavingsText" class="text-[10px] text-emerald-400 font-bold hidden">Ahorras: S/. 0.00</div>
+                        <div>
+                            <span class="text-slate-400 mr-1">Total:</span>
+                            <span id="cartTotalPrice" class="text-base sm:text-lg font-black text-emerald-400">S/. 0.00</span>
+                        </div>
                     </div>
                 </div>
-                <button onclick="proceedToCheckout()" class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold py-2.5 sm:py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition-all text-xs sm:text-sm">
-                    <i class="fa-solid fa-qrcode"></i> Pagar con Yape o Plin
+                <button onclick="proceedToCheckout()" class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition-all text-xs sm:text-sm">
+                    <i class="fa-solid fa-qrcode"></i> Finalizar Pedido
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: PAGO YAPE / PLIN -->
-    <div id="paymentModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-3 sm:p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl max-w-md w-full p-4 sm:p-6 space-y-3.5 shadow-2xl relative text-center max-h-[92vh] overflow-y-auto custom-scrollbar">
+    <!-- MODAL: PAGO CON CÓDIGO DE ORDEN ÚNICO -->
+    <div id="paymentModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-3 sm:p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-4 sm:p-6 space-y-3.5 shadow-2xl relative text-center max-h-[92vh] overflow-y-auto custom-scrollbar">
             <button onclick="closePaymentModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center text-sm">✕</button>
             <div>
-                <h3 class="text-base sm:text-lg font-bold text-white">Pagar con Yape o Plin</h3>
-                <p id="modalProductName" class="text-[11px] text-indigo-400 font-semibold mt-0.5 truncate">Producto</p>
+                <div class="inline-block bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 font-mono text-[10px] font-bold px-2.5 py-0.5 rounded-full mb-1">
+                    Orden: <span id="paymentOrderHash">LUB-00000</span>
+                </div>
+                <h3 class="text-base sm:text-lg font-bold text-white">Pago con Yape o Plin</h3>
+                <p id="modalProductName" class="text-[11px] text-slate-400 mt-0.5 truncate">Producto</p>
             </div>
 
             <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 inline-block mx-auto">
@@ -475,11 +554,11 @@
                     <button onclick="copyPhoneNumber()" class="bg-indigo-600 active:scale-95 text-white px-2 py-0.5 rounded text-[10px] font-bold">Copiar</button>
                 </div>
                 <p>Titular: <strong>Luis Valdivieso</strong></p>
-                <p>Total: <strong id="modalProductPrice" class="text-emerald-400 text-sm font-black">S/. 0.00</strong></p>
+                <p>Total a Transferir: <strong id="modalProductPrice" class="text-emerald-400 text-sm font-black">S/. 0.00</strong></p>
             </div>
 
             <p class="text-[10px] text-slate-400 text-left leading-tight">
-                Adjunta tu comprobante por WhatsApp tras transferir para la entrega rápida (aprox. hasta 20 min).
+                📌 <strong>Horario de atención:</strong> Lunes a Sábado de 8:00 AM a 10:00 PM. Envíanos tu comprobante por WhatsApp tras transferir para la verificación y entrega inmediata (aprox. hasta 20 min).
             </p>
 
             <a id="modalConfirmBtn" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold py-2.5 sm:py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition-all text-xs sm:text-sm">
@@ -489,28 +568,20 @@
     </div>
 
     <!-- MODAL: SOPORTE TÉCNICO -->
-    <div id="supportModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-3 sm:p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl max-w-lg w-full p-4 sm:p-6 space-y-3.5 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+    <div id="supportModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-3 sm:p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-4 sm:p-6 space-y-3.5 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
             <button onclick="closeSupportModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center text-sm">✕</button>
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-lg">
                     <i class="fa-solid fa-screwdriver-wrench"></i>
                 </div>
                 <div>
-                    <h3 class="text-base sm:text-lg font-bold text-white">Soporte Técnico</h3>
-                    <p class="text-[11px] text-slate-400">Servicios para PC y Laptop</p>
+                    <h3 class="text-base sm:text-lg font-bold text-white">Soporte Técnico Especializado</h3>
+                    <p class="text-[11px] text-slate-400">Mantenimiento y Reparación de PC / Laptop</p>
                 </div>
             </div>
 
             <div class="space-y-2.5 text-xs text-slate-300">
-                <div class="bg-slate-950/50 p-2.5 rounded-xl border border-slate-800 space-y-0.5 text-[11px]">
-                    <p class="font-bold text-indigo-400">Modalidades:</p>
-                    <ul class="list-disc list-inside text-slate-400">
-                        <li id="supportInfoLima">Lima: Presencial y Remoto.</li>
-                        <li id="supportInfoTrujillo">Trujillo: Presencial y Remoto.</li>
-                    </ul>
-                </div>
-
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <div>
                         <label class="block text-slate-400 mb-0.5 text-[11px]">Ubicación:</label>
@@ -548,15 +619,15 @@
                 </div>
 
                 <a id="supportWhatsappBtn" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold py-2.5 sm:py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition-all text-xs sm:text-sm mt-2">
-                    <i class="fa-brands fa-whatsapp text-base"></i> Contactar por WhatsApp
+                    <i class="fa-brands fa-whatsapp text-base"></i> Contactar al Técnico por WhatsApp
                 </a>
             </div>
         </div>
     </div>
 
     <!-- MODAL: LOGIN -->
-    <div id="adminLoginModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-3 sm:p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl max-w-sm w-full p-5 sm:p-7 space-y-4 shadow-2xl relative">
+    <div id="adminLoginModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-3 sm:p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-sm w-full p-5 sm:p-7 space-y-4 shadow-2xl relative">
             <button onclick="closeAdminLogin()" class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center text-sm">✕</button>
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 text-lg">
@@ -587,9 +658,9 @@
         </div>
     </div>
 
-    <!-- MODAL: PANEL DE ADMINISTRACIÓN -->
-    <div id="adminPanelModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-3 sm:p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl max-w-3xl w-full p-4 sm:p-7 space-y-4 shadow-2xl relative max-h-[92vh] overflow-y-auto custom-scrollbar flex flex-col">
+    <!-- MODAL: PANEL DE ADMINISTRACIÓN COMPLETO CON CONTROL DE BESTSELLERS Y PROMOS -->
+    <div id="adminPanelModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-3 sm:p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-3xl w-full p-4 sm:p-7 space-y-4 shadow-2xl relative max-h-[92vh] overflow-y-auto custom-scrollbar flex flex-col">
             <button onclick="closeAdminPanel()" class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center text-sm">✕</button>
             
             <div class="flex items-center gap-3">
@@ -597,39 +668,103 @@
                     <i class="fa-solid fa-gears"></i>
                 </div>
                 <div>
-                    <h3 class="text-base sm:text-lg font-bold text-white" id="adminPanelTitle">Panel de Control</h3>
+                    <h3 class="text-base sm:text-lg font-bold text-white" id="adminPanelTitle">Panel de Control y Gestión</h3>
                     <p id="adminSessionInfo" class="text-[11px] text-emerald-400 font-semibold"></p>
                 </div>
             </div>
 
-            <!-- Navegación por pestañas con scroll horizontal en móviles -->
+            <!-- Navegación por pestañas -->
             <div class="flex overflow-x-auto gap-1.5 border-b border-slate-800 pb-2 text-xs custom-scrollbar">
-                <button onclick="switchAdminTab('tabDescuentos', this)" id="tabBtnDescuentos" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold admin-tab-btn active whitespace-nowrap">🌐 Config</button>
+                <button onclick="switchAdminTab('tabDescuentos', this)" id="tabBtnDescuentos" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold admin-tab-btn active whitespace-nowrap">🌐 Promos & Top 3</button>
                 <button onclick="switchAdminTab('tabSoporteConfig', this)" id="tabBtnSoporteConfig" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold admin-tab-btn whitespace-nowrap">📱 Soporte</button>
                 <button onclick="switchAdminTab('tabUsuarios', this)" id="tabBtnUsuarios" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold admin-tab-btn whitespace-nowrap">👥 Usuarios</button>
                 <button onclick="switchAdminTab('tabProductos', this)" id="tabBtnProductos" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold admin-tab-btn whitespace-nowrap">📦 Productos</button>
                 <button onclick="switchAdminTab('tabLogs', this)" id="tabBtnLogs" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold admin-tab-btn whitespace-nowrap">📊 Auditoría</button>
             </div>
 
-            <!-- Pestaña 1: Configuración -->
+            <!-- Pestaña 1: Configuración de Promos y Top 3 Bestsellers Editables -->
             <div id="tabDescuentos" class="admin-tab-pane space-y-3 text-xs">
-                <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 space-y-2.5">
+                <!-- SECCIÓN EDITABLE: TOP 3 MÁS VENDIDOS -->
+                <div class="bg-slate-950/60 p-3.5 rounded-xl border border-amber-500/30 space-y-3">
+                    <h4 class="text-sm font-bold text-amber-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-crown"></i> Configuración del Top 3 Más Vendidos
+                    </h4>
+                    <p class="text-slate-400 text-[11px]">Elige qué 3 productos aparecerán destacados en la sección principal:</p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                        <div>
+                            <label class="block text-slate-300 mb-1 font-bold">🥇 Bestseller #1:</label>
+                            <select id="bestsellerSelect1" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white font-medium text-xs"></select>
+                        </div>
+                        <div>
+                            <label class="block text-slate-300 mb-1 font-bold">🥈 Bestseller #2:</label>
+                            <select id="bestsellerSelect2" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white font-medium text-xs"></select>
+                        </div>
+                        <div>
+                            <label class="block text-slate-300 mb-1 font-bold">🥉 Bestseller #3:</label>
+                            <select id="bestsellerSelect3" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white font-medium text-xs"></select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN EDITABLE: DESCUENTOS POR VOLUMEN -->
+                <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 space-y-3">
+                    <h4 class="text-sm font-bold text-indigo-400">🔥 Configuración Dinámica de Descuentos</h4>
+                    
                     <div class="flex items-center justify-between">
                         <div>
                             <strong class="text-white block">Estado de Descuentos</strong>
-                            <span class="text-slate-400 text-[11px]">Activa descuentos por volumen</span>
+                            <span class="text-slate-400 text-[11px]">Activa o desactiva las ofertas automáticas</span>
                         </div>
                         <input type="checkbox" id="settingDiscountsSwitch" class="w-4 h-4 accent-indigo-600 rounded">
                     </div>
-                    <div class="flex items-center justify-between border-t border-slate-800 pt-2">
-                        <div>
-                            <strong class="text-white block">Alertas Flotantes</strong>
-                            <span class="text-slate-400 text-[11px]">Compras recientes</span>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2 border-t border-slate-800">
+                        <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-2">
+                            <span class="font-bold text-emerald-400 block text-center">Nivel 1</span>
+                            <div class="flex gap-2">
+                                <div class="flex-1">
+                                    <label class="text-[10px] text-slate-400 block mb-0.5">Cant. Mín:</label>
+                                    <input type="number" id="gTier1Qty" value="3" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1.5 text-center text-xs text-white font-bold">
+                                </div>
+                                <div class="flex-1">
+                                    <label class="text-[10px] text-slate-400 block mb-0.5">% Dcto:</label>
+                                    <input type="number" id="gTier1Pct" value="5" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1.5 text-center text-xs text-emerald-400 font-bold">
+                                </div>
+                            </div>
                         </div>
-                        <input type="checkbox" id="settingToastsSwitch" class="w-4 h-4 accent-indigo-600 rounded">
+
+                        <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-2">
+                            <span class="font-bold text-emerald-400 block text-center">Nivel 2</span>
+                            <div class="flex gap-2">
+                                <div class="flex-1">
+                                    <label class="text-[10px] text-slate-400 block mb-0.5">Cant. Mín:</label>
+                                    <input type="number" id="gTier2Qty" value="6" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1.5 text-center text-xs text-white font-bold">
+                                </div>
+                                <div class="flex-1">
+                                    <label class="text-[10px] text-slate-400 block mb-0.5">% Dcto:</label>
+                                    <input type="number" id="gTier2Pct" value="10" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1.5 text-center text-xs text-emerald-400 font-bold">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-2">
+                            <span class="font-bold text-emerald-400 block text-center">Nivel 3</span>
+                            <div class="flex gap-2">
+                                <div class="flex-1">
+                                    <label class="text-[10px] text-slate-400 block mb-0.5">Cant. Mín:</label>
+                                    <input type="number" id="gTier3Qty" value="10" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1.5 text-center text-xs text-white font-bold">
+                                </div>
+                                <div class="flex-1">
+                                    <label class="text-[10px] text-slate-400 block mb-0.5">% Dcto:</label>
+                                    <input type="number" id="gTier3Pct" value="15" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1.5 text-center text-xs text-emerald-400 font-bold">
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
                     <div class="border-t border-slate-800 pt-2">
-                        <label class="block text-slate-400 mb-1">Temporada:</label>
+                        <label class="block text-slate-400 mb-1">Temporada Especial:</label>
                         <select id="settingHolidayTheme" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-200">
                             <option value="normal">Estándar</option>
                             <option value="navidad">🎄 Navidad y Año Nuevo</option>
@@ -638,30 +773,8 @@
                             <option value="inocentes">🤡 Día de los Inocentes</option>
                         </select>
                     </div>
-                    <div class="grid grid-cols-3 gap-2 border-t border-slate-800 pt-2">
-                        <div class="bg-slate-900 p-2 rounded-lg border border-slate-800 text-center">
-                            <span class="font-bold text-emerald-400 text-[11px]">Nivel 1</span>
-                            <div class="mt-1 flex gap-1 justify-center">
-                                <input type="number" id="gTier1Qty" value="3" class="w-9 bg-slate-950 border border-slate-700 rounded text-center text-xs">
-                                <input type="number" id="gTier1Pct" value="5" class="w-9 bg-slate-950 border border-slate-700 rounded text-center text-xs">
-                            </div>
-                        </div>
-                        <div class="bg-slate-900 p-2 rounded-lg border border-slate-800 text-center">
-                            <span class="font-bold text-emerald-400 text-[11px]">Nivel 2</span>
-                            <div class="mt-1 flex gap-1 justify-center">
-                                <input type="number" id="gTier2Qty" value="6" class="w-9 bg-slate-950 border border-slate-700 rounded text-center text-xs">
-                                <input type="number" id="gTier2Pct" value="10" class="w-9 bg-slate-950 border border-slate-700 rounded text-center text-xs">
-                            </div>
-                        </div>
-                        <div class="bg-slate-900 p-2 rounded-lg border border-slate-800 text-center">
-                            <span class="font-bold text-emerald-400 text-[11px]">Nivel 3</span>
-                            <div class="mt-1 flex gap-1 justify-center">
-                                <input type="number" id="gTier3Qty" value="10" class="w-9 bg-slate-950 border border-slate-700 rounded text-center text-xs">
-                                <input type="number" id="gTier3Pct" value="15" class="w-9 bg-slate-950 border border-slate-700 rounded text-center text-xs">
-                            </div>
-                        </div>
-                    </div>
-                    <button onclick="saveGlobalSettings()" class="w-full bg-indigo-600 active:scale-95 text-white font-bold py-2 rounded-xl transition-all">💾 Guardar Configuración</button>
+
+                    <button onclick="saveGlobalSettings()" class="w-full bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-bold py-2.5 rounded-xl transition-all shadow-lg shadow-indigo-600/30">💾 Guardar Cambios de Promos y Bestsellers</button>
                 </div>
             </div>
 
@@ -715,7 +828,7 @@
                 </div>
             </div>
 
-            <!-- Pestaña 4: Productos -->
+            <!-- Pestaña 4: Gestión de Productos -->
             <div id="tabProductos" class="admin-tab-pane hidden space-y-3 text-xs">
                 <button onclick="toggleProductForm()" id="toggleFormBtn" class="w-full bg-slate-800 hover:bg-slate-700 text-indigo-300 font-bold py-2 rounded-xl transition-all">
                     📂 Formulario de Nuevo Producto ▼
@@ -734,12 +847,14 @@
                             <input type="number" id="newProdPrice" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white">
                         </div>
                         <div>
-                            <label class="text-slate-400 block mb-0.5">Categoría:</label>
+                            <label class="text-slate-400 block mb-0.5">Categoría Exacta:</label>
                             <select id="newProdCat" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white">
                                 <option value="win">Windows</option>
-                                <option value="diseno">Diseño</option>
+                                <option value="office">Office</option>
                                 <option value="ia">IA</option>
-                                <option value="iptv">IPTV</option>
+                                <option value="diseno">Diseño</option>
+                                <option value="antivirus">Antivirus</option>
+                                <option value="iptv">Streaming & IPTV</option>
                                 <option value="musica">Música</option>
                                 <option value="edu">Educación</option>
                             </select>
@@ -756,8 +871,8 @@
                         <div>
                             <label class="text-slate-400 block mb-0.5">Descuento:</label>
                             <select id="newProdAllowDiscount" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white">
-                                <option value="true">Sí</option>
-                                <option value="false">No (Fijo)</option>
+                                <option value="true">Sí (Aplica Descuento)</option>
+                                <option value="false">No (Precio Fijo)</option>
                             </select>
                         </div>
                     </div>
@@ -771,8 +886,8 @@
                         <input type="text" id="newProdImg" placeholder="windows11.png o URL" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white">
                     </div>
                     <div>
-                        <label class="text-slate-400 block mb-0.5">Descripción:</label>
-                        <textarea id="newProdDesc" rows="2" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white"></textarea>
+                        <label class="text-slate-400 block mb-0.5">Descripción y Duración:</label>
+                        <textarea id="newProdDesc" rows="2" placeholder="Indicar si es de 1 mes, 1 año o de por vida..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white"></textarea>
                     </div>
                     <div class="flex gap-2">
                         <button onclick="saveProduct()" id="saveProdBtn" class="flex-1 bg-indigo-600 active:scale-95 text-white font-bold py-2 rounded-xl transition-all">💾 Guardar</button>
@@ -797,7 +912,7 @@
     </div>
 
     <!-- MODAL: CIERRE DE SESIÓN -->
-    <div id="logoutConfirmModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4">
+    <div id="logoutConfirmModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xs w-full p-5 text-center space-y-3 shadow-2xl">
             <h3 class="text-base font-bold text-red-400">⚠️ Cerrar Sesión</h3>
             <p class="text-xs text-slate-300">¿Estás seguro de salir?</p>
@@ -808,30 +923,52 @@
         </div>
     </div>
 
-    <!-- SCRIPT DE LÓGICA COMPLETA DEL USUARIO -->
+    <!-- SCRIPT DE LÓGICA Y TIENDA PRO -->
     <script>
+        // PRODUCTOS ORGANIZADOS EN SUS CATEGORÍAS REALES CON DURACIÓN EXACTA
         let products = [
-            { id: 'win-pro', name: 'Windows 10/11 Pro (Siempre)', price: 50.00, category: 'win', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'windows11.png', desc: 'Licencia digital permanente (OEM). Reactivación de por vida.' },
-            { id: 'off-365', name: 'Office 365 (1 año)', price: 45.00, category: 'ia', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'office365.png', desc: 'Instálalo en hasta 5 dispositivos. Word, Excel, PowerPoint, Outlook y Teams.' },
-            { id: 'gem-18', name: 'Gemini Pro 3.6 (18 meses)', price: 70.00, category: 'ia', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'gemini18.png', desc: 'Incluye IA avanzada Gemini Pro, video Veo 3 y 5TB Google Drive.' },
-            { id: 'canva-3', name: 'Canva Pro (3 años)', price: 55.00, category: 'diseno', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'canva.png', desc: 'Suscripción por 3 años con herramientas de diseño e IA.' },
-            { id: 'auto-1', name: 'Autodesk All Apps (1 año)', price: 75.00, category: 'diseno', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'autodesk.png', desc: 'AutoCAD, Revit, Inventor, Maya, Fusion 360, etc.' },
-            { id: 'crunch-1', name: 'Crunchyroll 1 Perfil (1 año)', price: 99.00, category: 'iptv', stock: true, allowDiscount: true, badge: '⭐ Destacado', img: 'crunchyroll.png', desc: 'Cuenta Mega Fan individual. Sin anuncios y alta velocidad.' },
-            { id: 'win-home', name: 'Windows 10/11 Home (Siempre)', price: 50.00, category: 'win', stock: true, allowDiscount: true, badge: '', img: 'windows11.png', desc: 'Activación permanente y original para uso doméstico.' },
-            { id: 'canva-1', name: 'Canva Pro (1 año)', price: 35.00, category: 'diseno', stock: true, allowDiscount: true, badge: 'Popular', img: 'canva.png', desc: 'Acceso al contenido premium y plantillas de diseño.' },
-            { id: 'canva-2', name: 'Canva Pro (2 años)', price: 45.00, category: 'diseno', stock: true, allowDiscount: true, badge: '', img: 'canva.png', desc: 'Acceso Pro extendido para plantillas exclusivas y kit de marca.' },
-            { id: 'canva-inf', name: 'Canva Pro (para siempre)', price: 99.00, category: 'diseno', stock: false, allowDiscount: false, badge: '', img: 'canva.png', desc: 'Licencia vitalicia con acceso completo a funciones de diseño.' },
-            { id: 'gem-12', name: 'Gemini Pro 3.6 (12 meses)', price: 50.00, category: 'ia', stock: true, allowDiscount: true, badge: '', img: 'gemini12.png', desc: 'IA de Google One por 1 año y almacenamiento de 5TB.' },
-            { id: 'duo-12', name: 'Duolingo Super (12 meses)', price: 144.00, category: 'edu', stock: true, allowDiscount: true, badge: '', img: 'duolingo.png', desc: 'Vidas ilimitadas y 100% libre de anuncios por 1 año.' },
-            { id: 'capcut-1', name: 'Capcut Pro (1 mes)', price: 23.00, category: 'diseno', stock: true, allowDiscount: true, badge: '', img: 'capcut.png', desc: 'Efectos, plantillas exclusivas y subtítulos sin marca de agua.' },
-            { id: 'auto-6', name: 'Autodesk All Apps (6 meses)', price: 49.00, category: 'diseno', stock: true, allowDiscount: true, badge: '', img: 'autodesk.png', desc: 'Todas las aplicaciones profesionales por medio año.' },
-            { id: 'auto-3', name: 'Autodesk All Apps (3 meses)', price: 29.00, category: 'diseno', stock: true, allowDiscount: true, badge: '', img: 'autodesk.png', desc: 'Acceso trimestral a AutoCAD, Revit y más.' },
-            { id: 'spot-1', name: 'Spotify Premium (1 mes)', price: 15.00, category: 'musica', stock: true, allowDiscount: true, badge: '', img: 'spotify.png', desc: 'Música en alta calidad sin interrupciones de publicidad.' },
-            { id: 'flujo-1', name: 'Flujo TV (1 mes)', price: 20.00, category: 'iptv', stock: true, allowDiscount: true, badge: '', img: 'flujotv.png', desc: 'Para 3 dispositivos. Más de 1000 canales en vivo.' },
-            { id: 'crunch-3', name: 'Crunchyroll 1 Perfil (3 meses)', price: 35.00, category: 'iptv', stock: true, allowDiscount: true, badge: '', img: 'crunchyroll.png', desc: 'Suscripción Mega Fan de 3 meses sin publicidad.' },
-            { id: 'crunch-6', name: 'Crunchyroll Cuenta Completa (6 meses)', price: 89.00, category: 'iptv', stock: true, allowDiscount: true, badge: '', img: 'crunchyroll.png', desc: 'Cuenta completa para múltiples dispositivos en simultáneo.' }
+            // CATEGORÍA WINDOWS ('win')
+            { id: 'win-pro', name: 'Windows 10/11 Pro (De por vida)', price: 50.00, category: 'win', stock: true, allowDiscount: true, badge: '⭐ Bestseller #1', img: 'windows11.png', desc: 'Licencia digital permanente (OEM). Reactivación de por vida en 1 PC.' },
+            { id: 'win-home', name: 'Windows 10/11 Home (De por vida)', price: 50.00, category: 'win', stock: true, allowDiscount: true, badge: 'Original', img: 'windows11.png', desc: 'Activación permanente y original para uso doméstico en 1 PC.' },
+            
+            // CATEGORÍA OFFICE ('office')
+            { id: 'off-365', name: 'Microsoft Office 365 (1 año)', price: 45.00, category: 'office', stock: true, allowDiscount: true, badge: '⭐ Bestseller #2', img: 'office365.png', desc: 'Suscripción por 1 año para hasta 5 dispositivos. Word, Excel, PowerPoint y Teams.' },
+            
+            // CATEGORÍA IA ('ia')
+            { id: 'gem-18', name: 'Gemini Pro 3.6 (18 meses)', price: 70.00, category: 'ia', stock: true, allowDiscount: true, badge: '⭐ Bestseller #3', img: 'gemini18.png', desc: 'Suscripción por 18 meses. Incluye IA avanzada Gemini Pro y 5TB en Google Drive.' },
+            { id: 'gem-12', name: 'Gemini Pro 3.6 (12 meses)', price: 50.00, category: 'ia', stock: true, allowDiscount: true, badge: 'Popular', img: 'gemini12.png', desc: 'Suscripción por 12 meses. IA avanzada de Google One y almacenamiento de 5TB.' },
+            
+            // CATEGORÍA DISEÑO ('diseno')
+            { id: 'canva-1', name: 'Canva Pro (1 año)', price: 35.00, category: 'diseno', stock: true, allowDiscount: true, badge: 'Popular', img: 'canva.png', desc: 'Suscripción por 1 año. Acceso premium a plantillas, kit de marca y herramientas IA.' },
+            { id: 'canva-2', name: 'Canva Pro (2 años)', price: 45.00, category: 'diseno', stock: true, allowDiscount: true, badge: 'Recomendado', img: 'canva.png', desc: 'Suscripción por 2 años con acceso completo a recursos premium.' },
+            { id: 'canva-3', name: 'Canva Pro (3 años)', price: 55.00, category: 'diseno', stock: true, allowDiscount: true, badge: '⭐ Oferta', img: 'canva.png', desc: 'Suscripción por 3 años de Canva Pro con garantía total.' },
+            { id: 'canva-inf', name: 'Canva Pro (De por vida)', price: 99.00, category: 'diseno', stock: false, allowDiscount: false, badge: 'Vitalicio', img: 'canva.png', desc: 'Acceso vitalicio permanente con todas las funciones de diseño habilitadas.' },
+            { id: 'capcut-1', name: 'Capcut Pro (1 mes)', price: 23.00, category: 'diseno', stock: true, allowDiscount: true, badge: 'Edición', img: 'capcut.png', desc: 'Suscripción por 1 mes. Efectos y plantillas exclusivas sin marca de agua.' },
+            { id: 'auto-1', name: 'Autodesk All Apps (1 año)', price: 75.00, category: 'diseno', stock: true, allowDiscount: true, badge: '⭐ Pro', img: 'autodesk.png', desc: 'Suscripción por 1 año: AutoCAD, Revit, Inventor, Maya, 3ds Max y Fusion 360.' },
+            { id: 'auto-6', name: 'Autodesk All Apps (6 meses)', price: 49.00, category: 'diseno', stock: true, allowDiscount: true, badge: 'Pro', img: 'autodesk.png', desc: 'Suscripción por 6 meses con acceso a toda la suite oficial.' },
+            { id: 'auto-3', name: 'Autodesk All Apps (3 meses)', price: 29.00, category: 'diseno', stock: true, allowDiscount: true, badge: 'Pro', img: 'autodesk.png', desc: 'Suscripción por 3 meses a todas las aplicaciones profesionales.' },
+            
+            // CATEGORÍA ANTIVIRUS ('antivirus')
+            { id: 'anti-eset', name: 'ESET NOD32 Antivirus (1 año)', price: 39.00, category: 'antivirus', stock: true, allowDiscount: true, badge: '🛡️ Seguridad', img: 'antivirus.png', desc: 'Licencia original por 1 año. Protección ligera y proactiva contra amenazas.' },
+            { id: 'anti-kasp', name: 'Kaspersky Premium (1 año)', price: 45.00, category: 'antivirus', stock: true, allowDiscount: true, badge: '🛡️ Seguridad', img: 'antivirus.png', desc: 'Licencia oficial por 1 año con VPN ilimitada y protección bancaria.' },
+
+            // CATEGORÍA STREAMING & IPTV ('iptv')
+            { id: 'crunch-1', name: 'Crunchyroll 1 Perfil (1 año)', price: 99.00, category: 'iptv', stock: true, allowDiscount: true, badge: 'Mega Fan', img: 'crunchyroll.png', desc: 'Suscripción Mega Fan por 1 año completo. Sin anuncios y en Full HD.' },
+            { id: 'crunch-3', name: 'Crunchyroll 1 Perfil (3 meses)', price: 35.00, category: 'iptv', stock: true, allowDiscount: true, badge: 'Mega Fan', img: 'crunchyroll.png', desc: 'Suscripción Mega Fan por 3 meses.' },
+            { id: 'crunch-6', name: 'Crunchyroll Cuenta Completa (6 meses)', price: 89.00, category: 'iptv', stock: true, allowDiscount: true, badge: 'Mega Fan', img: 'crunchyroll.png', desc: 'Cuenta completa para varios dispositivos por 6 meses.' },
+            { id: 'flujo-1', name: 'Flujo TV (1 mes)', price: 20.00, category: 'iptv', stock: true, allowDiscount: true, badge: 'En Vivo', img: 'flujotv.png', desc: 'Suscripción por 1 mes para 3 dispositivos. Más de 1000 canales en vivo.' },
+
+            // CATEGORÍA MÚSICA ('musica')
+            { id: 'spot-1', name: 'Spotify Premium (1 mes)', price: 15.00, category: 'musica', stock: true, allowDiscount: true, badge: 'Música', img: 'spotify.png', desc: 'Suscripción por 1 mes. Música en alta calidad sin interrupciones.' },
+
+            // CATEGORÍA EDUCACIÓN ('edu')
+            { id: 'duo-12', name: 'Duolingo Super (12 meses)', price: 144.00, category: 'edu', stock: true, allowDiscount: true, badge: 'Idiomas', img: 'duolingo.png', desc: 'Suscripción por 1 año. Vidas ilimitadas y 100% libre de anuncios.' }
         ];
 
+        // CONFIGURACIÓN DE BESTSELLERS ELEGIBLES POR EL ADMINISTRADOR
+        let bestsellerIds = ['win-pro', 'off-365', 'gem-18'];
+
+        // NIVELES DE DESCUENTO EDITABLES POR EL ADMINISTRADOR
         let globalTiers = [
             { qty: 3, pct: 5 },
             { qty: 6, pct: 10 },
@@ -845,10 +982,10 @@
         let supportLimaActive = true;
         let supportTrujilloActive = true;
         let supportLimaAgents = [
-            { name: "Soporte Lima Principal", phone: "933907930" }
+            { name: "Soporte Principal 1", phone: "933907930" }
         ];
         let supportTrujilloAgents = [
-            { name: "Soporte Trujillo Principal", phone: "929770729" }
+            { name: "Soporte Principal 2", phone: "929770729" }
         ];
 
         let activityLogs = [];
@@ -880,8 +1017,40 @@
         let cart = [];
         let temporaryBase64Img = '';
 
+        function populateAdminTierInputs() {
+            if(globalTiers[0]) {
+                document.getElementById('gTier1Qty').value = globalTiers[0].qty;
+                document.getElementById('gTier1Pct').value = globalTiers[0].pct;
+            }
+            if(globalTiers[1]) {
+                document.getElementById('gTier2Qty').value = globalTiers[1].qty;
+                document.getElementById('gTier2Pct').value = globalTiers[1].pct;
+            }
+            if(globalTiers[2]) {
+                document.getElementById('gTier3Qty').value = globalTiers[2].qty;
+                document.getElementById('gTier3Pct').value = globalTiers[2].pct;
+            }
+        }
+
+        function populateBestsellerSelectors() {
+            const sel1 = document.getElementById('bestsellerSelect1');
+            const sel2 = document.getElementById('bestsellerSelect2');
+            const sel3 = document.getElementById('bestsellerSelect3');
+            if (!sel1 || !sel2 || !sel3) return;
+
+            const optionsHtml = products.map(p => `<option value="${p.id}">${p.name} (S/. ${p.price.toFixed(2)})</option>`).join('');
+
+            sel1.innerHTML = optionsHtml;
+            sel2.innerHTML = optionsHtml;
+            sel3.innerHTML = optionsHtml;
+
+            if (bestsellerIds[0]) sel1.value = bestsellerIds[0];
+            if (bestsellerIds[1]) sel2.value = bestsellerIds[1];
+            if (bestsellerIds[2]) sel3.value = bestsellerIds[2];
+        }
+
         function logAdminAction(actionDescription) {
-            const userName = currentUser ? currentUser.user : 'Sistema / Desconocido';
+            const userName = currentUser ? currentUser.user : 'Sistema';
             const now = new Date();
             const timeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
             
@@ -892,7 +1061,6 @@
             });
 
             if (activityLogs.length > 50) activityLogs.pop();
-
             saveSettingsStorage();
             renderActivityLogs();
         }
@@ -939,6 +1107,7 @@
             if (window.saveSettingsToCloud) {
                 window.saveSettingsToCloud({
                     globalTiers,
+                    bestsellerIds,
                     discountsActive,
                     toastsActive,
                     holidayTheme,
@@ -986,12 +1155,6 @@
             }
         }
 
-        function toggleSidebarSubmenu(submenuId, event) {
-            event.stopPropagation();
-            const submenu = document.getElementById(submenuId);
-            submenu.classList.toggle('hidden');
-        }
-
         function toggleProductForm() {
             const form = document.getElementById('productFormContainer');
             const btn = document.getElementById('toggleFormBtn');
@@ -1026,24 +1189,8 @@
         function populateSupportCityDropdown() {
             const citySelect = document.getElementById('supportCitySelect');
             let html = '';
-            let infoLima = document.getElementById('supportInfoLima');
-            let infoTrujillo = document.getElementById('supportInfoTrujillo');
-
-            if (supportLimaActive) {
-                html += `<option value="lima">Lima (Presencial / Remoto)</option>`;
-                html += `<option value="otras">Otras Provincias (Remoto)</option>`;
-                if(infoLima) infoLima.style.display = 'list-item';
-            } else {
-                if(infoLima) infoLima.style.display = 'none';
-            }
-
-            if (supportTrujilloActive) {
-                html += `<option value="trujillo">Trujillo (Presencial / Remoto)</option>`;
-                if(infoTrujillo) infoTrujillo.style.display = 'list-item';
-            } else {
-                if(infoTrujillo) infoTrujillo.style.display = 'none';
-            }
-
+            if (supportLimaActive) html += `<option value="lima">Soporte y Atención 1</option>`;
+            if (supportTrujilloActive) html += `<option value="trujillo">Soporte y Atención 2</option>`;
             citySelect.innerHTML = html;
         }
 
@@ -1077,13 +1224,10 @@
 
             let agentsList = (city === 'trujillo') ? supportTrujilloAgents : supportLimaAgents;
             let phone = agentSelect.value || (agentsList[0] ? agentsList[0].phone : '933907930');
-            let cityNameText = city === 'trujillo' ? 'Trujillo' : (city === 'otras' ? 'Otras Provincias' : 'Lima');
             let modalityText = 'Remoto';
 
-            if (city === 'otras') document.getElementById('supportModalitySelect').value = 'remoto';
-
             const currentModality = document.getElementById('supportModalitySelect').value;
-            if (currentModality === 'remoto' || city === 'otras') {
+            if (currentModality === 'remoto') {
                 modalityText = 'Remoto';
                 anydeskDiv.classList.remove('hidden');
             } else {
@@ -1091,8 +1235,8 @@
                 anydeskDiv.classList.add('hidden');
             }
 
-            let typeNameText = type === 'mantenimiento' ? 'Mantenimiento y Limpieza General' : (type === 'soporte' ? 'Soporte Técnico' : 'Mantenimiento y Soporte Técnico');
-            const msg = `Hola,%20deseo%20solicitar%20el%20servicio%20de%20${encodeURIComponent(typeNameText)}%20en%20la%20ciudad%20de%20${encodeURIComponent(cityNameText)}%20(Modalidad:%20${encodeURIComponent(modalityText)}).`;
+            let typeNameText = type === 'mantenimiento' ? 'Mantenimiento y Limpieza' : (type === 'soporte' ? 'Soporte Técnico' : 'Mantenimiento y Soporte');
+            const msg = `Hola,%20deseo%20solicitar%20el%20servicio%20de%20${encodeURIComponent(typeNameText)}%20(Modalidad:%20${encodeURIComponent(modalityText)}).`;
             btn.href = `https://wa.me/51${phone}?text=${msg}`;
         }
 
@@ -1113,7 +1257,6 @@
             saveSettingsStorage();
             renderAdminSupportAgents();
             checkSupportAvailability();
-            logAdminAction(`Agregado agente en ${cityType}: ${name}`);
             alert('Agente agregado.');
         }
 
@@ -1165,12 +1308,38 @@
             updateProducts();
         }
 
+        function filterCategoryQuick(category, btn) {
+            currentFilter = category;
+            document.querySelectorAll('.chip-btn').forEach(b => {
+                b.classList.remove('bg-indigo-600', 'text-white', 'font-semibold');
+                b.classList.add('bg-slate-900', 'border', 'border-slate-800', 'text-slate-300');
+            });
+            btn.classList.add('bg-indigo-600', 'text-white', 'font-semibold');
+            btn.classList.remove('bg-slate-900', 'border', 'border-slate-800', 'text-slate-300');
+            
+            document.getElementById('searchInput').value = '';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            renderCatalog();
+            updateProducts();
+        }
+
         function resetToPrincipal() {
             currentFilter = 'principal';
             document.getElementById('searchInput').value = '';
             document.getElementById('clearSearchBtn').classList.add('hidden');
             document.getElementById('sortSelect').value = 'default';
             document.getElementById('stockSelect').value = 'all';
+            
+            document.querySelectorAll('.chip-btn').forEach((b, i) => {
+                if(i === 0) {
+                    b.classList.add('bg-indigo-600', 'text-white', 'font-semibold');
+                    b.classList.remove('bg-slate-900', 'border', 'border-slate-800', 'text-slate-300');
+                } else {
+                    b.classList.remove('bg-indigo-600', 'text-white', 'font-semibold');
+                    b.classList.add('bg-slate-900', 'border', 'border-slate-800', 'text-slate-300');
+                }
+            });
+
             renderCatalog();
             updateProducts();
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1263,6 +1432,8 @@
             resetAdminForm();
             renderAdminProductList();
             renderActivityLogs();
+            populateAdminTierInputs();
+            populateBestsellerSelectors();
             
             const sessionInfo = document.getElementById('adminSessionInfo');
             const tabDescuentosBtn = document.getElementById('tabBtnDescuentos');
@@ -1280,16 +1451,10 @@
                 
                 document.getElementById('globalCollabDiscountInput').value = collabDiscountPct;
                 document.getElementById('settingDiscountsSwitch').checked = discountsActive;
-                document.getElementById('settingToastsSwitch').checked = toastsActive;
                 document.getElementById('settingHolidayTheme').value = holidayTheme;
                 document.getElementById('settingLimaActive').checked = supportLimaActive;
                 document.getElementById('settingTrujilloActive').checked = supportTrujilloActive;
                 renderAdminSupportAgents();
-
-                if(globalTiers[0]) { document.getElementById('gTier1Qty').value = globalTiers[0].qty; document.getElementById('gTier1Pct').value = globalTiers[0].pct; }
-                if(globalTiers[1]) { document.getElementById('gTier2Qty').value = globalTiers[1].qty; document.getElementById('gTier2Pct').value = globalTiers[1].pct; }
-                if(globalTiers[2]) { document.getElementById('gTier3Qty').value = globalTiers[2].qty; document.getElementById('gTier3Pct').value = globalTiers[2].pct; }
-
                 renderUsersList();
                 switchAdminTab('tabDescuentos', tabDescuentosBtn);
             } else {
@@ -1311,10 +1476,10 @@
             updateDynamicBanner();
         }
 
+        // GUARDAR PROMOS Y BESTSELLERS EDITADOS POR EL ADMIN
         function saveGlobalSettings() {
             if (!currentUser || currentUser.role !== 'admin') return;
             discountsActive = document.getElementById('settingDiscountsSwitch').checked;
-            toastsActive = document.getElementById('settingToastsSwitch').checked;
             holidayTheme = document.getElementById('settingHolidayTheme').value;
             supportLimaActive = document.getElementById('settingLimaActive').checked;
             supportTrujilloActive = document.getElementById('settingTrujilloActive').checked;
@@ -1332,13 +1497,18 @@
                 { qty: t3q, pct: t3p }
             ];
 
+            const b1 = document.getElementById('bestsellerSelect1').value;
+            const b2 = document.getElementById('bestsellerSelect2').value;
+            const b3 = document.getElementById('bestsellerSelect3').value;
+            bestsellerIds = [b1, b2, b3];
+
             saveSettingsStorage();
             checkSupportAvailability();
             updateDynamicBanner();
             renderCatalog();
             updateProducts();
-            logAdminAction('Configuración Global actualizada.');
-            alert('¡Guardado con éxito!');
+            logAdminAction(`Promociones y Top 3 Bestsellers actualizados en la nube.`);
+            alert('¡Configuración, Promociones y Top 3 guardados en la nube con éxito!');
         }
 
         function saveCollabDiscountSetting() {
@@ -1367,7 +1537,6 @@
             document.getElementById('newLoginUser').value = '';
             document.getElementById('newLoginPass').value = '';
             renderUsersList();
-            logAdminAction(`Usuario creado: ${u} (${r})`);
             alert('Usuario creado.');
         }
 
@@ -1396,7 +1565,6 @@
                 usersDB = usersDB.filter(u => u.user !== username);
                 if (window.deleteUserFromCloud) await window.deleteUserFromCloud(username);
                 renderUsersList();
-                logAdminAction(`Usuario eliminado: ${username}`);
             }
         }
 
@@ -1435,10 +1603,8 @@
             if (editId) {
                 const p = products.find(prod => prod.id === editId);
                 if (p) Object.assign(p, productData);
-                logAdminAction(`Producto modificado: ${name}`);
             } else {
                 products.push(productData);
-                logAdminAction(`Producto creado: ${name}`);
             }
 
             if (window.saveProductToCloud) await window.saveProductToCloud(productData);
@@ -1447,7 +1613,7 @@
             renderAdminProductList();
             renderCatalog();
             updateProducts();
-            alert('¡Producto guardado!');
+            alert('¡Producto guardado en la nube!');
         }
 
         function editProduct(id) {
@@ -1504,7 +1670,7 @@
                 html += `
                     <div class="flex justify-between items-center bg-slate-900 border border-slate-800 p-2 rounded-lg text-xs">
                         <div>
-                            <strong class="text-white">${p.name}</strong><br>
+                            <strong class="text-white">${p.name}</strong> <span class="text-indigo-400 font-mono text-[10px]">[${p.category}]</span><br>
                             <span class="text-emerald-400 font-bold">S/. ${p.price.toFixed(2)}</span> | <span class="${p.stock?'text-emerald-400':'text-red-400'}">${p.stock?'Disponible':'Sin stock'}</span>
                         </div>
                         <div class="flex gap-1">
@@ -1525,148 +1691,295 @@
                 return;
             }
             let theme = (holidayTheme !== 'normal') ? `🎉 ` : '';
-            banner.innerHTML = `${theme}🚀 ¡Descuentos: 3+ unids (${globalTiers[0].pct}%) | 6+ unids (${globalTiers[1].pct}%) | 10+ unids (${globalTiers[2].pct}%)!`;
+            banner.innerHTML = `${theme}🚀 ¡Descuentos: ${globalTiers[0].qty}+ (${globalTiers[0].pct}%) | ${globalTiers[1].qty}+ (${globalTiers[1].pct}%) | ${globalTiers[2].qty}+ (${globalTiers[2].pct}%)!`;
         }
 
-        function renderCatalog() {
-            const track = document.getElementById('carouselTrack');
-            const grid = document.getElementById('catalogoGrid');
-            if (!track || !grid) return;
+        function openQuickView(id) {
+            const p = products.find(prod => prod.id === id);
+            if (!p) return;
+            document.getElementById('qvImg').src = p.img || 'default.png';
+            document.getElementById('qvBadge').innerText = p.stock ? (p.badge || 'Disponible') : 'Sin Stock';
+            document.getElementById('qvName').innerText = p.name;
+            
+            let effectivePrice = p.price;
+            if (currentUser && currentUser.role === 'colaborador' && discountsActive) {
+                effectivePrice = p.price * (1 - (collabDiscountPct / 100));
+            }
+            document.getElementById('qvPrice').innerText = `S/. ${effectivePrice.toFixed(2)}`;
+            document.getElementById('qvDesc').innerText = p.desc || 'Licencia digital garantizada con soporte postventa.';
 
-            let carouselHtml = '';
-            let gridHtml = '';
+            document.getElementById('quickViewModal').classList.remove('hidden');
+            document.getElementById('quickViewModal').classList.add('flex');
+        }
 
-            products.forEach(p => {
-                const isFeatured = p.badge && p.badge.length > 0;
-                let effectivePrice = p.price;
-                let collabNotice = '';
+        function closeQuickViewModal() {
+            document.getElementById('quickViewModal').classList.remove('flex');
+            document.getElementById('quickViewModal').classList.add('hidden');
+        }
 
-                if (currentUser && currentUser.role === 'colaborador' && discountsActive) {
-                    effectivePrice = p.price * (1 - (collabDiscountPct / 100));
-                    collabNotice = `<div class="text-[10px] text-amber-400 font-bold">✨ Precio Colaborador (-${collabDiscountPct}%)</div>`;
-                }
+        // GENERADOR DE TARJETA CON CONTROLES DIRECTOS DE CANTIDAD
+        function generateProductCardHtml(p, isBestseller = false, rank = 0) {
+            let effectivePrice = p.price;
+            let collabNotice = '';
 
-                const cardHtml = `
-                    <div class="bg-slate-900/80 border border-slate-800/80 hover:border-indigo-500/50 rounded-2xl overflow-hidden shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col group card ${isFeatured?'card-destacada':''}" data-category="${p.category}" data-base-price="${effectivePrice}" data-name="${p.name}" data-stock="${p.stock}" data-id="${p.id}">
-                        <div class="relative h-40 overflow-hidden bg-slate-950">
-                            <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90">
-                            <span class="absolute top-2.5 left-2.5 bg-indigo-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-md shadow-md">
-                                ${p.stock ? (p.badge || 'Original') : 'Sin Stock'}
-                            </span>
+            if (currentUser && currentUser.role === 'colaborador' && discountsActive) {
+                effectivePrice = p.price * (1 - (collabDiscountPct / 100));
+                collabNotice = `<div class="text-[10px] text-amber-400 font-bold">✨ Colaborador (-${collabDiscountPct}%)</div>`;
+            }
+
+            let rankBadge = '';
+            if (isBestseller) {
+                const medals = ['🥇 #1 Más Vendido', '🥈 #2 Más Vendido', '🥉 #3 Más Vendido'];
+                rankBadge = `<span class="absolute top-2.5 right-2.5 bg-amber-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-md shadow-md">${medals[rank]}</span>`;
+            }
+
+            return `
+                <div class="bg-slate-900/80 border ${isBestseller ? 'border-amber-500/40 bg-gradient-to-b from-amber-500/5 to-slate-900/80' : 'border-slate-800'} hover:border-indigo-500/50 rounded-2xl overflow-hidden shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col group card" data-category="${p.category}" data-base-price="${effectivePrice}" data-name="${p.name}" data-stock="${p.stock}" data-id="${p.id}">
+                    <div class="relative h-36 sm:h-40 overflow-hidden bg-slate-950 cursor-pointer" onclick="openQuickView('${p.id}')">
+                        <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90">
+                        <span class="absolute top-2.5 left-2.5 bg-indigo-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-md shadow-md">
+                            ${p.stock ? (p.badge || 'Original') : 'Sin Stock'}
+                        </span>
+                        ${rankBadge}
+                        <div class="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <span class="bg-slate-900/90 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg border border-slate-700">Ver detalles</span>
                         </div>
-                        <div class="p-4 flex flex-col flex-grow space-y-2.5">
-                            <div>
-                                <h3 class="font-bold text-white text-sm leading-snug">${p.name}</h3>
-                                <p class="text-[11px] text-slate-400 line-clamp-2 mt-0.5">${p.desc}</p>
-                                ${collabNotice}
+                    </div>
+
+                    <div class="p-3.5 sm:p-4 flex flex-col flex-grow space-y-2.5">
+                        <div>
+                            <h3 onclick="openQuickView('${p.id}')" class="font-bold text-white text-xs sm:text-sm leading-snug hover:text-indigo-400 cursor-pointer transition-colors">${p.name}</h3>
+                            <p class="text-[11px] text-slate-400 line-clamp-2 mt-0.5">${p.desc}</p>
+                            ${collabNotice}
+                        </div>
+                        
+                        <div class="mt-auto space-y-2.5 pt-2 border-t border-slate-800/80">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <span class="text-[10px] text-slate-400 block">Total a pagar</span>
+                                    <span class="card-total-price text-sm sm:text-base font-black text-emerald-400">S/. ${effectivePrice.toFixed(2)}</span>
+                                </div>
+                                <div class="text-right">
+                                    <span class="card-unit-price text-[10px] text-slate-400">S/. ${effectivePrice.toFixed(2)} c/u</span>
+                                    <span class="card-discount-tag text-[10px] text-indigo-400 font-bold hidden block"></span>
+                                </div>
                             </div>
-                            
-                            <div class="mt-auto space-y-2.5 pt-2.5 border-t border-slate-800/80">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-[11px] text-slate-500">Precio</span>
-                                    <div class="text-base font-black text-emerald-400">S/. ${effectivePrice.toFixed(2)}</div>
-                                </div>
 
-                                <div class="flex items-center justify-between bg-slate-950/60 p-1.5 rounded-xl border border-slate-800/60">
-                                    <span class="text-[11px] text-slate-400 pl-1.5">Cant:</span>
-                                    <div class="flex items-center gap-1">
-                                        <button onclick="changeQty(this, -1)" class="w-6 h-6 bg-slate-800 active:scale-90 text-white rounded-lg font-bold flex items-center justify-center text-xs">-</button>
-                                        <input type="text" class="w-7 text-center bg-transparent text-white font-bold text-xs product-qty-input" value="01" readonly>
-                                        <button onclick="changeQty(this, 1)" class="w-6 h-6 bg-slate-800 active:scale-90 text-white rounded-lg font-bold flex items-center justify-center text-xs">+</button>
-                                    </div>
+                            <!-- Selector de Cantidad Directo en Tarjeta -->
+                            <div class="flex items-center justify-between bg-slate-950/70 p-1.5 rounded-xl border border-slate-800">
+                                <span class="text-[11px] text-slate-400 pl-1.5 font-medium">Cantidad:</span>
+                                <div class="flex items-center gap-1">
+                                    <button onclick="changeCardQty(this, -1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 active:scale-90 text-white rounded-lg font-bold flex items-center justify-center text-xs">-</button>
+                                    <input type="text" class="w-7 text-center bg-transparent text-white font-bold text-xs product-qty-input" value="01" readonly>
+                                    <button onclick="changeCardQty(this, 1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 active:scale-90 text-white rounded-lg font-bold flex items-center justify-center text-xs">+</button>
                                 </div>
+                            </div>
 
-                                <div class="grid grid-cols-2 gap-1.5">
-                                    <button onclick="addToCart(this, '${p.name}', ${effectivePrice}, '${p.id}')" class="bg-slate-800 hover:bg-slate-700 active:scale-95 text-white py-2 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 ${!p.stock?'opacity-50 pointer-events-none':''}">
-                                        <i class="fa-solid fa-cart-plus text-xs"></i> Carrito
-                                    </button>
-                                    <button onclick="openDirectPayment(this, '${p.name}', ${effectivePrice}, '${p.id}')" class="bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white py-2 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 shadow-md shadow-indigo-600/30 ${!p.stock?'opacity-50 pointer-events-none':''}">
-                                        <i class="fa-solid fa-bolt text-xs"></i> Pagar
-                                    </button>
-                                </div>
+                            <!-- Botones de Acción -->
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <button onclick="addCardToCart(this)" class="bg-slate-800 hover:bg-slate-700 active:scale-95 text-white py-2 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 ${!p.stock?'opacity-50 pointer-events-none':''}">
+                                    <i class="fa-solid fa-cart-plus text-xs"></i> Carrito
+                                </button>
+                                <button onclick="payCardDirect(this)" class="bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white py-2 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 shadow-md shadow-indigo-600/30 ${!p.stock?'opacity-50 pointer-events-none':''}">
+                                    <i class="fa-solid fa-bolt text-xs"></i> Comprar
+                                </button>
                             </div>
                         </div>
                     </div>
-                `;
-
-                if(isFeatured) carouselHtml += cardHtml;
-                gridHtml += cardHtml;
-            });
-
-            track.innerHTML = carouselHtml;
-            grid.innerHTML = gridHtml;
+                </div>
+            `;
         }
 
-        function changeQty(btn, delta) {
+        // RENDERIZADO DEL CATÁLOGO
+        function renderCatalog() {
+            const bestsellersGrid = document.getElementById('bestsellersGrid');
+            const grid = document.getElementById('catalogoGrid');
+            if (!grid) return;
+
+            // Renderizar Top 3 Bestsellers Elegidos por el Administrador
+            if (bestsellersGrid) {
+                let selectedBestsellers = [];
+                bestsellerIds.forEach(id => {
+                    const found = products.find(p => p.id === id);
+                    if (found) selectedBestsellers.push(found);
+                });
+                if (selectedBestsellers.length < 3) {
+                    selectedBestsellers = products.slice(0, 3);
+                }
+                bestsellersGrid.innerHTML = selectedBestsellers.map((p, idx) => generateProductCardHtml(p, true, idx)).join('');
+            }
+
+            // Renderizar Catálogo General Completo
+            grid.innerHTML = products.map(p => generateProductCardHtml(p, false)).join('');
+        }
+
+        // CONTROL DE CANTIDAD Y DESCUENTOS EN VIVO EN LA TARJETA
+        function changeCardQty(btn, delta) {
             const card = btn.closest('.card');
             const input = card.querySelector('.product-qty-input');
-            let val = parseInt(input.value) + delta;
-            if (val < 1) val = 1;
-            input.value = val < 10 ? '0' + val : val;
+            let qty = parseInt(input.value) + delta;
+            if (qty < 1) qty = 1;
+            input.value = qty < 10 ? '0' + qty : qty;
+
+            const basePrice = parseFloat(card.getAttribute('data-base-price'));
+            
+            // Determinar descuento aplicable según niveles configurados
+            let discountPct = 0;
+            if (discountsActive) {
+                if (qty >= globalTiers[2].qty) discountPct = globalTiers[2].pct;
+                else if (qty >= globalTiers[1].qty) discountPct = globalTiers[1].pct;
+                else if (qty >= globalTiers[0].qty) discountPct = globalTiers[0].pct;
+            }
+
+            const unitPrice = basePrice * (1 - (discountPct / 100));
+            const totalPrice = unitPrice * qty;
+
+            const totalEl = card.querySelector('.card-total-price');
+            const unitEl = card.querySelector('.card-unit-price');
+            const discEl = card.querySelector('.card-discount-tag');
+
+            totalEl.innerText = `S/. ${totalPrice.toFixed(2)}`;
+            unitEl.innerText = `S/. ${unitPrice.toFixed(2)} c/u`;
+
+            if (discountPct > 0) {
+                discEl.innerText = `${discountPct}% OFF`;
+                discEl.classList.remove('hidden');
+            } else {
+                discEl.classList.add('hidden');
+            }
         }
 
-        function addToCart(btn, name, price, id) {
+        function addCardToCart(btn) {
             const card = btn.closest('.card');
+            const name = card.getAttribute('data-name');
+            const basePrice = parseFloat(card.getAttribute('data-base-price'));
             const qty = parseInt(card.querySelector('.product-qty-input').value);
+
+            addToCart(name, basePrice, qty);
             
-            let descuento = 0;
-            if (qty >= 10) descuento = globalTiers[2].pct / 100;
-            else if (qty >= 6) descuento = globalTiers[1].pct / 100;
-            else if (qty >= 3) descuento = globalTiers[0].pct / 100;
+            card.querySelector('.product-qty-input').value = '01';
+            changeCardQty(card.querySelector('.product-qty-input'), 0);
+        }
 
-            const unitPrice = price * (1 - descuento);
-            const total = unitPrice * qty;
+        function payCardDirect(btn) {
+            const card = btn.closest('.card');
+            const name = card.getAttribute('data-name');
+            const basePrice = parseFloat(card.getAttribute('data-base-price'));
+            const qty = parseInt(card.querySelector('.product-qty-input').value);
 
+            openDirectPayment(name, basePrice, qty);
+        }
+
+        function addToCart(name, basePrice, qty = 1) {
             const existing = cart.find(i => i.name === name);
             if (existing) {
                 existing.qty += qty;
-                existing.total = existing.unitPrice * existing.qty;
             } else {
-                cart.push({ name, basePrice: price, unitPrice, qty, total });
+                cart.push({ name, basePrice, qty });
             }
-
-            updateCartUI();
-            showToastCustom(`¡${qty}x ${name} agregado!`);
-            card.querySelector('.product-qty-input').value = '01';
+            recalculateCart();
+            showToastCustom(`¡${qty}x ${name} añadido al carrito!`);
         }
 
-        function updateCartUI() {
-            document.getElementById('cartCount').innerText = cart.reduce((s, i) => s + i.qty, 0);
+        function recalculateCart() {
+            const totalUnits = cart.reduce((s, i) => s + i.qty, 0);
+            
+            let discountPct = 0;
+            if (discountsActive) {
+                if (totalUnits >= globalTiers[2].qty) discountPct = globalTiers[2].pct;
+                else if (totalUnits >= globalTiers[1].qty) discountPct = globalTiers[1].pct;
+                else if (totalUnits >= globalTiers[0].qty) discountPct = globalTiers[0].pct;
+            }
+
+            let subtotal = 0;
+            cart.forEach(item => {
+                item.unitPrice = item.basePrice * (1 - (discountPct / 100));
+                item.total = item.unitPrice * item.qty;
+                subtotal += item.basePrice * item.qty;
+            });
+
+            const grandTotal = cart.reduce((s, i) => s + i.total, 0);
+            const savings = subtotal - grandTotal;
+
+            updateCartUI(totalUnits, discountPct, grandTotal, savings);
+        }
+
+        function updateCartUI(totalUnits, discountPct, grandTotal, savings) {
+            document.getElementById('cartCount').innerText = totalUnits;
             const container = document.getElementById('cartItemsContainer');
+            
+            // Barra de Descuentos Dinámica
+            const progressText = document.getElementById('discountProgressText');
+            const progressBar = document.getElementById('discountProgressBar');
+            const badgeVal = document.getElementById('discountBadgeValue');
+            const savingsEl = document.getElementById('cartSavingsText');
+
+            if (totalUnits >= globalTiers[2].qty) {
+                progressText.innerText = `🎉 ¡Máximo descuento alcanzado (${globalTiers[2].pct}%)!`;
+                progressBar.style.width = "100%";
+                badgeVal.innerText = `${globalTiers[2].pct}% OFF`;
+            } else if (totalUnits >= globalTiers[1].qty) {
+                progressText.innerText = `¡Agrega ${globalTiers[2].qty - totalUnits} más para obtener ${globalTiers[2].pct}% OFF!`;
+                progressBar.style.width = `${(totalUnits / globalTiers[2].qty) * 100}%`;
+                badgeVal.innerText = `${globalTiers[1].pct}% OFF`;
+            } else if (totalUnits >= globalTiers[0].qty) {
+                progressText.innerText = `¡Agrega ${globalTiers[1].qty - totalUnits} más para obtener ${globalTiers[1].pct}% OFF!`;
+                progressBar.style.width = `${(totalUnits / globalTiers[1].qty) * 100}%`;
+                badgeVal.innerText = `${globalTiers[0].pct}% OFF`;
+            } else {
+                progressText.innerText = `¡Agrega ${globalTiers[0].qty - totalUnits} más para activar ${globalTiers[0].pct}% de descuento!`;
+                progressBar.style.width = `${(totalUnits / globalTiers[0].qty) * 50}%`;
+                badgeVal.innerText = "0%";
+            }
+
+            if (savings > 0) {
+                savingsEl.innerText = `Ahorras: S/. ${savings.toFixed(2)}`;
+                savingsEl.classList.remove('hidden');
+            } else {
+                savingsEl.classList.add('hidden');
+            }
+
             if (cart.length === 0) {
                 container.innerHTML = `<p class="text-xs text-slate-500 text-center py-6">Tu carrito está vacío</p>`;
                 document.getElementById('cartTotalPrice').innerText = 'S/. 0.00';
                 return;
             }
 
-            let total = 0;
-            container.innerHTML = cart.map((item, idx) => {
-                total += item.total;
-                return `
-                    <div class="flex items-center justify-between bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-xs">
-                        <div class="truncate mr-2">
-                            <h4 class="font-bold text-white truncate">${item.name}</h4>
-                            <span class="text-slate-400 text-[10px]">${item.qty} x S/. ${item.unitPrice.toFixed(2)}</span>
-                        </div>
-                        <div class="flex items-center gap-2 shrink-0">
-                            <span class="font-black text-emerald-400 text-xs">S/. ${item.total.toFixed(2)}</span>
-                            <button onclick="removeFromCart(${idx})" class="text-slate-500 hover:text-red-400 p-1">✕</button>
-                        </div>
+            container.innerHTML = cart.map((item, idx) => `
+                <div class="flex items-center justify-between bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-xs">
+                    <div class="truncate mr-2">
+                        <h4 class="font-bold text-white truncate">${item.name}</h4>
+                        <span class="text-slate-400 text-[10px]">${item.qty} x S/. ${item.unitPrice.toFixed(2)}</span>
                     </div>
-                `;
-            }).join('');
+                    <div class="flex items-center gap-2 shrink-0">
+                        <div class="flex items-center gap-1 bg-slate-900 px-1.5 py-0.5 rounded-lg border border-slate-800">
+                            <button onclick="changeCartQty(${idx}, -1)" class="text-slate-400 hover:text-white px-1 font-bold">-</button>
+                            <span class="text-white font-bold px-1">${item.qty}</span>
+                            <button onclick="changeCartQty(${idx}, 1)" class="text-slate-400 hover:text-white px-1 font-bold">+</button>
+                        </div>
+                        <span class="font-black text-emerald-400 text-xs">S/. ${item.total.toFixed(2)}</span>
+                        <button onclick="removeFromCart(${idx})" class="text-slate-500 hover:text-red-400 p-1">✕</button>
+                    </div>
+                </div>
+            `).join('');
 
-            document.getElementById('cartTotalPrice').innerText = `S/. ${total.toFixed(2)}`;
+            document.getElementById('cartTotalPrice').innerText = `S/. ${grandTotal.toFixed(2)}`;
+        }
+
+        function changeCartQty(idx, delta) {
+            cart[idx].qty += delta;
+            if (cart[idx].qty <= 0) cart.splice(idx, 1);
+            recalculateCart();
         }
 
         function removeFromCart(idx) {
             cart.splice(idx, 1);
-            updateCartUI();
+            recalculateCart();
         }
 
         function clearCart() {
             cart = [];
-            updateCartUI();
+            recalculateCart();
         }
 
         function openCartModal() {
@@ -1679,15 +1992,21 @@
             document.getElementById('cartModal').classList.add('hidden');
         }
 
+        function generateOrderHash() {
+            return 'LUB-' + Math.floor(10000 + Math.random() * 90000);
+        }
+
         function proceedToCheckout() {
             if (cart.length === 0) return alert('El carrito está vacío.');
             const total = document.getElementById('cartTotalPrice').innerText;
             const summary = cart.map(i => `${i.qty}x ${i.name}`).join(', ');
-            
+            const orderHash = generateOrderHash();
+
+            document.getElementById('paymentOrderHash').innerText = orderHash;
             document.getElementById('modalProductName').innerText = summary;
             document.getElementById('modalProductPrice').innerText = total;
 
-            const msg = `Hola,%20deseo%20pagar%20mi%20pedido%20del%20carrito:%20${encodeURIComponent(summary)}%20(Total:%20${total}).%20Adjunto%20comprobante.`;
+            const msg = `Hola,%20acabo%20de%20generar%20mi%20pedido%20[${orderHash}]:%20${encodeURIComponent(summary)}%20(Total:%20${total}).%20Adjunto%20comprobante%20de%20pago.`;
             document.getElementById('modalConfirmBtn').href = `https://wa.me/51933907930?text=${msg}`;
 
             closeCartModal();
@@ -1695,20 +2014,24 @@
             document.getElementById('paymentModal').classList.add('flex');
         }
 
-        function openDirectPayment(btn, name, price, id) {
-            const card = btn.closest('.card');
-            const qty = parseInt(card.querySelector('.product-qty-input').value);
+        function openDirectPayment(name, basePrice, qty = 1) {
+            const orderHash = generateOrderHash();
+            
+            let discountPct = 0;
+            if (discountsActive) {
+                if (qty >= globalTiers[2].qty) discountPct = globalTiers[2].pct;
+                else if (qty >= globalTiers[1].qty) discountPct = globalTiers[1].pct;
+                else if (qty >= globalTiers[0].qty) discountPct = globalTiers[0].pct;
+            }
 
-            let descuento = 0;
-            if (qty >= 10) descuento = globalTiers[2].pct / 100;
-            else if (qty >= 6) descuento = globalTiers[1].pct / 100;
-            else if (qty >= 3) descuento = globalTiers[0].pct / 100;
+            const unitPrice = basePrice * (1 - (discountPct / 100));
+            const total = unitPrice * qty;
 
-            const total = (price * (1 - descuento)) * qty;
+            document.getElementById('paymentOrderHash').innerText = orderHash;
             document.getElementById('modalProductName').innerText = `${name} (${qty} unid/es)`;
             document.getElementById('modalProductPrice').innerText = `S/. ${total.toFixed(2)}`;
 
-            const msg = `Hola,%20acabo%20de%20realizar%20el%20pago%20para:%20${encodeURIComponent(name)}%20(Cant:%20${qty},%20Total:%20S/.%20${total.toFixed(2)}).%20Adjunto%20comprobante.`;
+            const msg = `Hola,%20acabo%20de%20pagar%20el%20pedido%20[${orderHash}]:%20${encodeURIComponent(name)}%20(Cant:%20${qty},%20Total:%20S/.%20${total.toFixed(2)}).%20Adjunto%20comprobante%20de%20pago.`;
             document.getElementById('modalConfirmBtn').href = `https://wa.me/51933907930?text=${msg}`;
 
             document.getElementById('paymentModal').classList.remove('hidden');
@@ -1736,11 +2059,32 @@
             const search = document.getElementById('searchInput').value.toLowerCase().trim();
             const stockVal = document.getElementById('stockSelect').value;
 
-            document.getElementById('bannerAntivirus').classList.toggle('hidden', currentFilter !== 'antivirus');
             document.getElementById('bannerJuegos').classList.toggle('hidden', currentFilter !== 'juegos');
             document.getElementById('panelNosotros').classList.toggle('hidden', currentFilter !== 'nosotros');
-            document.getElementById('seccionDestacados').classList.toggle('hidden', currentFilter !== 'principal' || search.length > 0);
-            document.getElementById('seccionCatalogo').classList.toggle('hidden', ['antivirus', 'juegos', 'nosotros'].includes(currentFilter));
+            
+            const isSearching = search.length > 0;
+            const isHome = currentFilter === 'principal' && !isSearching;
+
+            document.getElementById('heroSection').classList.toggle('hidden', !isHome);
+            document.getElementById('bestsellersSection').classList.toggle('hidden', !isHome);
+            document.getElementById('seccionCatalogo').classList.toggle('hidden', ['juegos', 'nosotros'].includes(currentFilter));
+
+            // Actualizar Título de la Sección de Catálogo dinámicamente
+            const titleMap = {
+                'principal': 'Catálogo Completo de Licencias',
+                'win': '💻 Licencias Originales de Windows',
+                'office': '📊 Microsoft Office 365 y Suites',
+                'ia': '🤖 Cuentas de Inteligencia Artificial',
+                'diseno': '🎨 Herramientas de Diseño (Canva, Adobe, Autodesk)',
+                'antivirus': '🛡️ Licencias Originales de Antivirus',
+                'iptv': '📺 Streaming y Cuentas IPTV',
+                'musica': '🎵 Cuentas de Música Premium',
+                'edu': '📚 Cuentas Educativas y Aprendizaje'
+            };
+            const titleEl = document.getElementById('catalogoTitleText');
+            if(titleEl) {
+                titleEl.innerHTML = `<span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-xs sm:text-sm"><i class="fa-solid fa-box-archive"></i></span> ${titleMap[currentFilter] || 'Catálogo de Productos'}`;
+            }
 
             document.querySelectorAll('#catalogoGrid .card').forEach(card => {
                 const cat = card.getAttribute('data-category');
@@ -1756,10 +2100,11 @@
         }
 
         const recentBuyers = [
-            { name: "Carlos en Lima", item: "Gemini Pro" },
-            { name: "Lucía en Trujillo", item: "Office 365" },
-            { name: "Renzo en Arequipa", item: "Windows 11 Pro" },
-            { name: "Andrea en Piura", item: "Canva Pro" }
+            { name: "Carlos", item: "Windows 11 Pro" },
+            { name: "Lucía", item: "Microsoft Office 365" },
+            { name: "Renzo", item: "Kaspersky Premium" },
+            { name: "Andrea", item: "Canva Pro" },
+            { name: "Mateo", item: "Gemini Pro 3.6" }
         ];
 
         function dispararToastCompra() {
