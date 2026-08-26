@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="es" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lubeltec Pro | Plataforma Digital de Licencias & Software</title>
+    <title>Lubeltec Pro | Licencias de Software, Antivirus & Cuentas Digitales</title>
     
     <!-- Favicon -->
     <link rel="icon" href="lubeltec.png" type="image/png">
@@ -203,9 +203,9 @@
     <header class="sticky top-0 z-30 bg-slate-900/90 backdrop-blur-xl border-b border-slate-800/80 transition-all">
         <!-- Barra de avisos de horario oficial y transparencia -->
         <div class="bg-gradient-to-r from-indigo-950/90 via-purple-950/90 to-indigo-950/90 border-b border-indigo-500/20 py-1.5 px-3 text-center text-[11px] sm:text-xs font-medium text-indigo-200 flex flex-wrap items-center justify-center gap-2">
-            <span class="flex items-center gap-1.5"><i class="fa-regular fa-clock text-amber-400"></i> Horario: Lunes a Sábado (8:00 AM a 10:00 PM)</span>
+            <span class="flex items-center gap-1"><i class="fa-regular fa-clock text-amber-400"></i> Horario: Lunes a Sábado (8:00 AM a 10:00 PM)</span>
             <span class="text-slate-600 hidden sm:inline">•</span>
-            <span class="flex items-center gap-1.5"><i class="fa-solid fa-bolt text-indigo-400"></i> Entrega: Hasta 20 min</span>
+            <span class="flex items-center gap-1"><i class="fa-solid fa-bolt text-indigo-400"></i> Entrega: Hasta 20 min</span>
             <span class="text-slate-600 hidden sm:inline">•</span>
             <span id="dynamicPromoBadge" class="text-emerald-400 font-bold bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-500/30 text-[10px] sm:text-xs">
                 🚀 ¡Descuentos automáticos activados!
@@ -358,9 +358,7 @@
         <section id="seccionCatalogo" class="space-y-4">
             <div class="flex items-center justify-between">
                 <h2 id="catalogoTitleText" class="text-lg sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-                    <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-xs sm:text-sm">
-                        <i class="fa-solid fa-box-archive"></i>
-                    </span>
+                    <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-xs sm:text-sm"><i class="fa-solid fa-box-archive"></i></span>
                     Catálogo Completo de Licencias
                 </h2>
             </div>
@@ -1754,6 +1752,17 @@
             document.getElementById('cancelEditBtn').classList.remove('hidden');
         }
 
+        function quickEditProductFromCard(id, event) {
+            event.stopPropagation();
+            if (currentUser && currentUser.role === 'colaborador' && !currentUser.canAddDelete) {
+                alert('No tiene privilegios para editar productos.');
+                return;
+            }
+            openAdminPanel();
+            switchAdminTab('tabProductos', document.getElementById('tabBtnProductos'));
+            editProduct(id);
+        }
+
         function resetAdminForm() {
             document.getElementById('editProductId').value = '';
             document.getElementById('newProdName').value = '';
@@ -1838,7 +1847,7 @@
             document.getElementById('quickViewModal').classList.add('hidden');
         }
 
-        // GENERADOR DE TARJETA CON CONTROLES DIRECTOS DE CANTIDAD
+        // GENERADOR DE TARJETA CON CONTROLES DIRECTOS DE CANTIDAD Y LAPICITO ADMIN
         function generateProductCardHtml(p, isBestseller = false, rank = 0) {
             let effectivePrice = p.price;
             let collabNotice = '';
@@ -1854,8 +1863,19 @@
                 rankBadge = `<span class="absolute top-2.5 right-2.5 bg-amber-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-md shadow-md">${medals[rank]}</span>`;
             }
 
+            // BOTÓN LAPICITO ADMIN VISIBLE SOLO PARA ADMIN
+            let adminEditPencil = '';
+            if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'admin2' || currentUser.canAddDelete)) {
+                adminEditPencil = `
+                    <button onclick="quickEditProductFromCard('${p.id}', event)" class="absolute top-2.5 right-2.5 z-20 w-7 h-7 rounded-full bg-slate-950/80 border border-indigo-500 text-indigo-300 hover:text-white hover:bg-indigo-600 flex items-center justify-center transition-all shadow-lg text-xs" title="Editar producto directamente">
+                        ✏️
+                    </button>
+                `;
+            }
+
             return `
-                <div class="bg-slate-900/80 border ${isBestseller ? 'border-amber-500/40 bg-gradient-to-b from-amber-500/5 to-slate-900/80' : 'border-slate-800'} hover:border-indigo-500/50 rounded-2xl overflow-hidden shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col group card" data-category="${p.category}" data-base-price="${effectivePrice}" data-name="${p.name}" data-stock="${p.stock}" data-id="${p.id}">
+                <div class="bg-slate-900/80 border ${isBestseller ? 'border-amber-500/40 bg-gradient-to-b from-amber-500/5 to-slate-900/80' : 'border-slate-800'} hover:border-indigo-500/50 rounded-2xl overflow-hidden shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col group card relative" data-category="${p.category}" data-base-price="${effectivePrice}" data-name="${p.name}" data-stock="${p.stock}" data-id="${p.id}">
+                    ${adminEditPencil}
                     <div class="relative h-36 sm:h-40 overflow-hidden bg-slate-950 cursor-pointer" onclick="openQuickView('${p.id}')">
                         <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90">
                         <span class="absolute top-2.5 left-2.5 bg-indigo-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-md shadow-md">
@@ -1944,6 +1964,7 @@
 
             const basePrice = parseFloat(card.getAttribute('data-base-price'));
             
+            // Determinar descuento aplicable según niveles configurados
             let discountPct = 0;
             if (discountsActive) {
                 if (qty >= globalTiers[2].qty) discountPct = globalTiers[2].pct;
@@ -2179,7 +2200,7 @@
             document.getElementById('paymentModal').classList.add('hidden');
         }
 
-        // PLUS: RECIBO / PRE-BOLETA DIGITAL
+        // PLUS DE VALOR: RECIBO / PRE-BOLETA DIGITAL
         function openReceiptModalFromPayment() {
             if (!lastGeneratedOrder) return;
             document.getElementById('receiptHash').innerText = lastGeneratedOrder.hash;
@@ -2233,7 +2254,7 @@
             document.getElementById('bestsellersSection').classList.toggle('hidden', !isHome);
             document.getElementById('seccionCatalogo').classList.toggle('hidden', ['juegos', 'nosotros'].includes(currentFilter));
 
-            // Actualizar Título de la Sección dinámicamente según la categoría activa
+            // Actualizar Título dinámicamente según la categoría seleccionada
             const catObj = categories.find(c => c.id === currentFilter);
             const titleEl = document.getElementById('catalogoTitleText');
             if(titleEl) {
