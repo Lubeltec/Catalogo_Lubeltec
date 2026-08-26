@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Lubeltec - Catálogo Digital y Control de Licencias</title>
     
     <!-- Favicon -->
@@ -147,147 +147,150 @@
     </script>
 
     <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        /* Prevención estricta de desborde horizontal en móviles */
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            position: relative;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #090d16; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #334155; }
         
         .carousel-track {
             display: flex;
-            gap: 1.25rem;
+            gap: 1rem;
             transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
             will-change: transform;
         }
         .carousel-track .card-destacada {
-            min-width: 270px;
-            flex: 0 0 calc(25% - 1rem);
+            min-width: 250px;
+            flex: 0 0 250px;
         }
-        @media (max-width: 1024px) {
-            .carousel-track .card-destacada { flex: 0 0 calc(33.333% - 0.85rem); }
+        @media (min-width: 640px) {
+            .carousel-track .card-destacada {
+                min-width: 260px;
+                flex: 0 0 calc(50% - 0.5rem);
+            }
         }
-        @media (max-width: 768px) {
-            .carousel-track .card-destacada { flex: 0 0 calc(85% - 0.5rem); }
+        @media (min-width: 1024px) {
+            .carousel-track .card-destacada {
+                min-width: 270px;
+                flex: 0 0 calc(25% - 0.75rem);
+            }
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white pb-20 sm:pb-12">
 
-    <!-- Notificación Toast de Compras Recientes -->
-    <div id="recentPurchaseToast" class="fixed bottom-6 left-6 z-50 transform -translate-x-[150%] opacity-0 transition-all duration-500 bg-slate-900/90 border border-indigo-500/30 backdrop-blur-md px-4 py-3 rounded-2xl shadow-2xl flex items-center space-x-3">
-        <div class="bg-indigo-500/20 text-indigo-400 p-2 rounded-xl text-base">
+    <!-- Notificación Toast de Compras Recientes (Responsive) -->
+    <div id="recentPurchaseToast" class="fixed bottom-20 sm:bottom-6 left-3 sm:left-6 z-40 max-w-[90vw] sm:max-w-sm transform -translate-x-[150%] opacity-0 transition-all duration-500 bg-slate-900/95 border border-indigo-500/30 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-2xl flex items-center space-x-3 pointer-events-none">
+        <div class="bg-indigo-500/20 text-indigo-400 p-2 rounded-xl text-sm shrink-0">
             <i class="fa-solid fa-cart-shopping"></i>
         </div>
-        <div>
-            <p class="text-xs text-slate-400">Actividad reciente</p>
-            <p class="text-sm font-medium text-slate-200"><span id="purchaseUserText" class="text-indigo-400 font-semibold">Un usuario</span> acaba de adquirir <span id="purchaseItemText" class="text-emerald-400 font-semibold">Gemini Pro</span>.</p>
+        <div class="truncate">
+            <p class="text-[10px] text-slate-400">Actividad reciente</p>
+            <p class="text-xs font-medium text-slate-200 truncate"><span id="purchaseUserText" class="text-indigo-400 font-semibold">Un usuario</span> adquirió <span id="purchaseItemText" class="text-emerald-400 font-semibold">Gemini Pro</span></p>
         </div>
     </div>
 
-    <!-- Notificación Toast General (Agregado al Carrito) -->
-    <div id="toastNotification" class="fixed top-5 right-5 z-50 transform translate-y-[-200%] opacity-0 transition-all duration-300 bg-emerald-950/90 border border-emerald-500/30 backdrop-blur-md px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-3">
-        <div class="bg-emerald-500/20 text-emerald-400 p-2 rounded-xl text-lg">
+    <!-- Notificación Toast General -->
+    <div id="toastNotification" class="fixed top-4 left-4 right-4 sm:left-auto sm:right-5 sm:w-auto z-50 transform -translate-y-40 opacity-0 transition-all duration-300 bg-emerald-950/95 border border-emerald-500/30 backdrop-blur-md px-4 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 justify-center">
+        <div class="bg-emerald-500/20 text-emerald-400 p-2 rounded-xl text-base shrink-0">
             <i class="fa-solid fa-circle-check"></i>
         </div>
         <div>
-            <h4 class="font-semibold text-emerald-200 text-sm">¡Producto Agregado!</h4>
-            <p class="text-xs text-emerald-300/80" id="toastGeneralMsg">Se ha añadido con éxito a tu carrito de compras.</p>
+            <h4 class="font-semibold text-emerald-200 text-xs sm:text-sm">¡Éxito!</h4>
+            <p class="text-[11px] sm:text-xs text-emerald-300/90" id="toastGeneralMsg">Se ha añadido con éxito a tu carrito.</p>
         </div>
     </div>
 
     <!-- Botón Flotante de WhatsApp -->
-    <a href="https://wa.me/51933907930?text=Hola,%20quisiera%20consultar%20sobre%20sus%20licencias%20digitales" target="_blank" title="Contactar por WhatsApp" class="fixed bottom-6 right-6 z-40 bg-emerald-600 hover:bg-emerald-500 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl shadow-emerald-600/50 transition-all hover:scale-110">
-        <i class="fa-brands fa-whatsapp text-2xl"></i>
+    <a href="https://wa.me/51933907930?text=Hola,%20quisiera%20consultar%20sobre%20sus%20licencias%20digitales" target="_blank" title="Contactar por WhatsApp" class="fixed bottom-5 right-5 z-30 bg-emerald-600 hover:bg-emerald-500 text-white w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center shadow-2xl shadow-emerald-600/50 transition-all hover:scale-110 active:scale-95">
+        <i class="fa-brands fa-whatsapp text-xl sm:text-2xl"></i>
     </a>
 
-    <!-- Botón Flotante de Soporte Técnico -->
-    <button id="floatSupportBtn" onclick="openSupportModal()" title="Soporte Técnico y Mantenimiento" class="fixed bottom-6 left-6 z-40 bg-slate-900/90 hover:bg-slate-800 border border-indigo-500/30 text-white px-4 py-2.5 rounded-full flex items-center gap-3 shadow-2xl backdrop-blur-md transition-all hover:scale-105">
-        <span class="text-lg">🛠️</span>
-        <div class="text-left leading-tight hidden sm:block">
-            <div class="text-[11px] text-indigo-300">¿Necesitas ayuda?</div>
-            <div class="text-xs font-bold text-emerald-400">Soporte Técnico</div>
-        </div>
-    </button>
-
-    <!-- Header Estilizado -->
-    <header class="sticky top-0 z-30 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800/80 transition-all">
-        <!-- Barra superior de anuncios y descuentos -->
-        <div class="bg-gradient-to-r from-indigo-950/60 via-purple-950/60 to-indigo-950/60 border-b border-indigo-500/20 py-2 px-4 text-center text-xs sm:text-sm font-medium text-indigo-200 flex flex-wrap items-center justify-center gap-3">
-            <span class="flex items-center gap-1.5"><i class="fa-regular fa-clock text-indigo-400"></i> Horario: 8:00 AM a 10:00 PM</span>
-            <span class="hidden md:inline">•</span>
-            <span class="flex items-center gap-1.5"><i class="fa-solid fa-sparkles text-amber-400"></i> Software Original y Licencias Digitales a tu Alcance</span>
-            <span class="hidden md:inline">•</span>
-            <span id="dynamicPromoBadge" class="text-emerald-400 font-semibold bg-emerald-950/50 px-3 py-0.5 rounded-full border border-emerald-500/30">
-                🚀 ¡Descuentos automáticos: 3+ unids (5%) | 6+ unids (10%) | 10+ unids (15%)!
+    <!-- Header Totalmente Adaptable -->
+    <header class="sticky top-0 z-30 bg-slate-900/90 backdrop-blur-xl border-b border-slate-800/80 transition-all">
+        <!-- Barra de avisos superior -->
+        <div class="bg-gradient-to-r from-indigo-950/80 via-purple-950/80 to-indigo-950/80 border-b border-indigo-500/20 py-1.5 px-3 text-center text-[11px] sm:text-xs font-medium text-indigo-200 flex flex-wrap items-center justify-center gap-1.5 sm:gap-3">
+            <span class="flex items-center gap-1"><i class="fa-regular fa-clock text-indigo-400"></i> 8:00 AM - 10:00 PM</span>
+            <span class="text-slate-600 hidden sm:inline">•</span>
+            <span id="dynamicPromoBadge" class="text-emerald-400 font-bold bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-500/30 text-[10px] sm:text-xs truncate max-w-full">
+                🚀 ¡Descuentos: 3+ (5%) | 6+ (10%) | 10+ (15%)!
             </span>
         </div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <!-- Menú hamburguesa + Logo -->
-            <div class="flex items-center space-x-3">
-                <button onclick="toggleMenu()" id="hamburgerBtn" class="w-10 h-10 rounded-xl bg-slate-800/80 border border-slate-700/60 hover:bg-slate-700 flex items-center justify-center text-slate-200 hover:text-white transition-all">
-                    <i class="fa-solid fa-bars text-lg"></i>
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-2">
+            <!-- Menú + Marca -->
+            <div class="flex items-center space-x-2 sm:space-x-3 shrink-0">
+                <button onclick="toggleMenu()" id="hamburgerBtn" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 flex items-center justify-center text-slate-200 hover:text-white transition-all">
+                    <i class="fa-solid fa-bars text-sm sm:text-base"></i>
                 </button>
-                <div onclick="resetToPrincipal()" class="flex items-center space-x-3 cursor-pointer group">
-                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 p-0.5 shadow-lg shadow-indigo-500/30 group-hover:scale-105 transition-transform flex items-center justify-center">
-                        <img src="lubeltec.png" alt="Logo Lubeltec" class="w-9 h-9 object-contain rounded-xl bg-slate-950">
+                <div onclick="resetToPrincipal()" class="flex items-center space-x-2 cursor-pointer group">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 p-0.5 shadow-md shadow-indigo-500/30 group-hover:scale-105 transition-transform flex items-center justify-center">
+                        <img src="lubeltec.png" alt="Logo Lubeltec" class="w-8 h-8 sm:w-9 sm:h-9 object-contain rounded-lg bg-slate-950">
                     </div>
-                    <div>
-                        <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-white flex items-center gap-2">
-                            Lubeltec <span class="text-[10px] uppercase bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded-md font-bold">Pro</span>
+                    <div class="flex flex-col">
+                        <h1 class="text-base sm:text-xl font-extrabold tracking-tight text-white leading-tight flex items-center gap-1">
+                            Lubeltec <span class="text-[9px] uppercase bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-1.5 py-0.2 rounded font-bold">Pro</span>
                         </h1>
                     </div>
                 </div>
             </div>
 
-            <!-- Botones de Acción: Soporte, Usuario, Carrito -->
-            <div class="flex items-center space-x-3">
-                <button onclick="openSupportModal()" class="hidden md:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/60 text-slate-300 hover:text-white transition-all text-sm font-medium">
+            <!-- Acciones de Cabecera -->
+            <div class="flex items-center space-x-1.5 sm:space-x-2.5">
+                <!-- Botón Soporte -->
+                <button onclick="openSupportModal()" class="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/60 text-slate-300 hover:text-white text-xs sm:text-sm font-medium transition-all">
                     <i class="fa-solid fa-headset text-indigo-400"></i>
-                    <span>Soporte</span>
+                    <span class="hidden md:inline">Soporte</span>
                 </button>
 
-                <!-- Botón Usuario -->
-                <button onclick="openAdminLogin()" id="loginShortcutBtn" class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/60 text-slate-300 hover:text-white transition-all text-sm font-medium">
+                <!-- Botón Login / Usuario -->
+                <button onclick="openAdminLogin()" id="loginShortcutBtn" class="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/60 text-slate-300 hover:text-white text-xs sm:text-sm font-medium transition-all">
                     <i class="fa-solid fa-user-shield text-purple-400"></i>
-                    <span>Ingresar</span>
+                    <span class="hidden sm:inline">Ingresar</span>
                 </button>
 
-                <div id="activeUserBadge" class="hidden items-center gap-2 bg-indigo-950/60 border border-indigo-500/40 px-3 py-1.5 rounded-xl text-xs font-semibold text-indigo-300">
-                    <span onclick="openAdminPanel()" class="cursor-pointer hover:underline flex items-center gap-1.5">
-                        <i class="fa-solid fa-circle-user text-indigo-400 text-sm"></i>
-                        <span id="activeUserNameText">Usuario</span>
+                <div id="activeUserBadge" class="hidden items-center gap-1.5 bg-indigo-950/80 border border-indigo-500/40 px-2.5 py-1.5 rounded-xl text-xs font-semibold text-indigo-300">
+                    <span onclick="openAdminPanel()" class="cursor-pointer hover:underline flex items-center gap-1">
+                        <i class="fa-solid fa-circle-user text-indigo-400"></i>
+                        <span id="activeUserNameText" class="max-w-[70px] truncate">Usuario</span>
                     </span>
-                    <button onclick="promptLogout()" class="text-red-400 hover:text-red-300 ml-1 p-1" title="Cerrar Sesión">
-                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <button onclick="promptLogout()" class="text-red-400 hover:text-red-300 p-0.5 ml-1" title="Cerrar Sesión">
+                        <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
                     </button>
                 </div>
 
-                <!-- Botón Carrito -->
-                <button onclick="openCartModal()" class="relative flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all font-medium text-sm">
+                <!-- Botón Carrito con contador -->
+                <button onclick="openCartModal()" class="relative flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all font-semibold text-xs sm:text-sm shrink-0">
                     <i class="fa-solid fa-cart-shopping"></i>
                     <span class="hidden sm:inline">Carrito</span>
-                    <span id="cartCount" class="absolute -top-1.5 -right-1.5 bg-amber-500 text-slate-950 text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-md">0</span>
+                    <span id="cartCount" class="bg-amber-500 text-slate-950 text-[10px] sm:text-xs font-black px-1.5 py-0.2 rounded-full min-w-[18px] text-center">0</span>
                 </button>
             </div>
         </div>
 
-        <!-- Barra de Búsqueda y Filtros -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div class="relative w-full sm:w-96">
-                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                <input type="text" id="searchInput" placeholder="Buscar programas, licencias, IA..." oninput="handleSearchInput()" class="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-10 pr-9 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all">
-                <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-400 text-xs">✕</button>
+        <!-- Buscador y Filtros Adaptables -->
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pb-3 pt-1 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div class="relative w-full sm:w-80 md:w-96">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input type="text" id="searchInput" placeholder="Buscar programas, licencias, IA..." oninput="handleSearchInput()" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl pl-8 pr-8 py-1.5 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all">
+                <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-400 text-xs">✕</button>
             </div>
 
-            <div class="flex items-center gap-3 w-full sm:w-auto">
-                <select id="sortSelect" onchange="updateProducts()" class="bg-slate-950/60 border border-slate-800 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-300 focus:outline-none focus:border-indigo-500 transition-all">
-                    <option value="default">Ordenar: Destacados</option>
+            <div class="grid grid-cols-2 sm:flex items-center gap-2 w-full sm:w-auto">
+                <select id="sortSelect" onchange="updateProducts()" class="w-full sm:w-auto bg-slate-950/80 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500">
+                    <option value="default">Destacados</option>
                     <option value="price-desc">Precio: Mayor a menor</option>
                     <option value="price-asc">Precio: Menor a mayor</option>
                     <option value="alpha-asc">Nombre: A - Z</option>
                 </select>
 
-                <select id="stockSelect" onchange="updateProducts()" class="bg-slate-950/60 border border-slate-800 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-300 focus:outline-none focus:border-indigo-500 transition-all">
+                <select id="stockSelect" onchange="updateProducts()" class="w-full sm:w-auto bg-slate-950/80 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500">
                     <option value="all">Todo el stock</option>
                     <option value="instock">Disponible</option>
                     <option value="outofstock">Sin stock</option>
@@ -298,22 +301,22 @@
 
     <!-- Menú Lateral (Drawer) -->
     <div id="sidebarOverlay" onclick="toggleMenu()" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden transition-opacity"></div>
-    <div id="sidebarDrawer" class="fixed top-0 -left-80 w-80 h-full bg-slate-900 border-r border-slate-800 z-50 flex flex-col transition-all duration-300 shadow-2xl">
-        <div class="p-6 border-b border-slate-800 flex items-center justify-between">
-            <h3 class="font-bold text-lg text-white flex items-center gap-2">
+    <div id="sidebarDrawer" class="fixed top-0 -left-80 w-72 sm:w-80 h-full bg-slate-900 border-r border-slate-800 z-50 flex flex-col transition-all duration-300 shadow-2xl">
+        <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+            <h3 class="font-bold text-base text-white flex items-center gap-2">
                 <i class="fa-solid fa-layer-group text-indigo-400"></i> Categorías
             </h3>
             <button onclick="toggleMenu()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white">✕</button>
         </div>
-        <div class="p-4 overflow-y-auto space-y-2 flex-grow custom-scrollbar">
-            <button onclick="filterCategory('principal', event); toggleMenu();" class="w-full text-left px-4 py-3 rounded-xl bg-indigo-600 text-white font-medium text-sm flex items-center justify-between sidebar-item active">
+        <div class="p-3 overflow-y-auto space-y-1.5 flex-grow custom-scrollbar">
+            <button onclick="filterCategory('principal', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-indigo-600 text-white font-medium text-xs flex items-center justify-between sidebar-item active">
                 <span>🏠 Principal</span>
             </button>
-            <button onclick="toggleSidebarSubmenu('sidebarSoftwareSubmenu', event)" class="w-full text-left px-4 py-3 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-sm flex items-center justify-between sidebar-item">
+            <button onclick="toggleSidebarSubmenu('sidebarSoftwareSubmenu', event)" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between sidebar-item">
                 <span>📂 Software</span>
-                <i class="fa-solid fa-chevron-down text-xs"></i>
+                <i class="fa-solid fa-chevron-down text-[10px]"></i>
             </button>
-            <div id="sidebarSoftwareSubmenu" class="hidden pl-4 space-y-1">
+            <div id="sidebarSoftwareSubmenu" class="hidden pl-3 space-y-1">
                 <button onclick="filterCategory('all-software', event); toggleMenu();" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-400 hover:text-white hover:bg-slate-800">Todos los Software</button>
                 <button onclick="filterCategory('win', event); toggleMenu();" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-400 hover:text-white hover:bg-slate-800">💻 Windows 10/11</button>
                 <button onclick="filterCategory('diseno', event); toggleMenu();" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-400 hover:text-white hover:bg-slate-800">🎨 Diseño</button>
@@ -323,85 +326,85 @@
                 <button onclick="filterCategory('edu', event); toggleMenu();" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-400 hover:text-white hover:bg-slate-800">📚 Educación</button>
                 <button onclick="filterCategory('antivirus', event); toggleMenu();" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-400 hover:text-white hover:bg-slate-800">🛡️ Antivirus</button>
             </div>
-            <button onclick="filterCategory('juegos', event); toggleMenu();" class="w-full text-left px-4 py-3 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-sm flex items-center justify-between sidebar-item">
+            <button onclick="filterCategory('juegos', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between sidebar-item">
                 <span>🎮 Juegos</span>
             </button>
-            <button onclick="filterCategory('nosotros', event); toggleMenu();" class="w-full text-left px-4 py-3 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-sm flex items-center justify-between sidebar-item">
+            <button onclick="filterCategory('nosotros', event); toggleMenu();" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-950/50 hover:bg-slate-800 text-slate-300 font-medium text-xs flex items-center justify-between sidebar-item">
                 <span>📌 Visión y Misión</span>
             </button>
         </div>
     </div>
 
     <!-- Contenido Principal -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow space-y-12 w-full">
+    <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 flex-grow space-y-8 sm:space-y-12 w-full">
 
         <!-- Programas Destacados -->
-        <section id="seccionDestacados" class="space-y-6">
+        <section id="seccionDestacados" class="space-y-4">
             <div class="flex items-center justify-between">
-                <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
-                    <span class="w-8 h-8 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 text-sm">
+                <h2 class="text-lg sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+                    <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xs sm:text-sm">
                         <i class="fa-solid fa-fire"></i>
                     </span>
                     Programas Destacados
                 </h2>
-                <span class="text-xs text-slate-400 font-medium">Los más pedidos en Perú</span>
+                <span class="text-[11px] sm:text-xs text-slate-400 font-medium">Más solicitados</span>
             </div>
             <!-- Carrusel Track -->
-            <div class="relative overflow-hidden w-full py-2 cursor-grab" id="carouselContainer">
+            <div class="relative overflow-x-auto sm:overflow-hidden w-full py-2 custom-scrollbar cursor-grab" id="carouselContainer">
                 <div class="carousel-track" id="carouselTrack"></div>
             </div>
         </section>
 
         <!-- Catálogo General -->
-        <section id="seccionCatalogo" class="space-y-6">
+        <section id="seccionCatalogo" class="space-y-4">
             <div class="flex items-center justify-between">
-                <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
-                    <span class="w-8 h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-sm">
+                <h2 class="text-lg sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+                    <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-xs sm:text-sm">
                         <i class="fa-solid fa-box-archive"></i>
                     </span>
                     Catálogo General de Licencias
                 </h2>
             </div>
-            <!-- Grid de Catálogo -->
-            <div id="catalogoGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+            <!-- Grid de Catálogo Responsivo (1 col en celular, 2 en tablet, 4 en desktop) -->
+            <div id="catalogoGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"></div>
         </section>
 
-        <!-- Próximamente Antivirus y Juegos -->
-        <div id="bannerAntivirus" class="hidden bg-slate-900/60 border border-slate-800/80 rounded-3xl p-8 text-center space-y-3">
-            <h2 class="text-xl font-bold text-white flex items-center justify-center gap-2">
+        <!-- Banners e Info -->
+        <div id="bannerAntivirus" class="hidden bg-slate-900/60 border border-slate-800/80 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-center space-y-2">
+            <h2 class="text-base sm:text-xl font-bold text-white flex items-center justify-center gap-2">
                 <i class="fa-solid fa-shield-halved text-indigo-400"></i> Próximamente Licencias de Antivirus
             </h2>
-            <p class="text-sm text-slate-400 max-w-xl mx-auto">Estamos incorporando las mejores licencias originales para la protección avanzada de tus dispositivos.</p>
+            <p class="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto">Estamos incorporando las mejores licencias originales para la protección avanzada de tus dispositivos.</p>
         </div>
 
-        <div id="bannerJuegos" class="hidden bg-slate-900/60 border border-slate-800/80 rounded-3xl p-8 text-center space-y-3">
-            <h2 class="text-xl font-bold text-white flex items-center justify-center gap-2">
+        <div id="bannerJuegos" class="hidden bg-slate-900/60 border border-slate-800/80 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-center space-y-2">
+            <h2 class="text-base sm:text-xl font-bold text-white flex items-center justify-center gap-2">
                 <i class="fa-solid fa-gamepad text-purple-400"></i> Próximamente Juegos Económicos
             </h2>
-            <p class="text-sm text-slate-400 max-w-xl mx-auto">Estamos preparando un catálogo especial de licencias y juegos para PC y consolas.</p>
+            <p class="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto">Estamos preparando un catálogo especial de licencias y juegos para PC y consolas.</p>
         </div>
 
         <!-- Misión y Visión -->
-        <div id="panelNosotros" class="bg-gradient-to-b from-slate-900/80 to-slate-900/40 border border-slate-800 rounded-3xl p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="space-y-3">
-                <h3 class="text-lg font-bold text-white flex items-center gap-2.5">
-                    <span class="w-8 h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-sm">
+        <div id="panelNosotros" class="bg-gradient-to-b from-slate-900/80 to-slate-900/40 border border-slate-800 rounded-2xl sm:rounded-3xl p-6 sm:p-8 grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+            <div class="space-y-2">
+                <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-xs">
                         <i class="fa-solid fa-rocket"></i>
                     </span>
                     Misión
                 </h3>
-                <p class="text-sm text-slate-300 leading-relaxed">
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
                     En Lubeltec, facilitamos el acceso a software original y servicios digitales garantizados para estudiantes, profesionales y empresas en Perú. Nos comprometemos a brindar soluciones tecnológicas transparentes, accesibles y con soporte postventa inmediato, garantizando que cada cliente potencie sus herramientas de trabajo sin complicaciones.
                 </p>
             </div>
-            <div class="space-y-3">
-                <h3 class="text-lg font-bold text-white flex items-center gap-2.5">
-                    <span class="w-8 h-8 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 text-sm">
+            <div class="space-y-2">
+                <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 text-xs">
                         <i class="fa-solid fa-eye"></i>
                     </span>
                     Visión
                 </h3>
-                <p class="text-sm text-slate-300 leading-relaxed">
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
                     Ser reconocidos como el catálogo digital líder y más confiable en el mercado peruano para la adquisición de licencias de software, soluciones de inteligencia artificial y entretenimiento digital, destacando por nuestra honestidad, rapidez de entrega y atención personalizada constante.
                 </p>
             </div>
@@ -409,44 +412,44 @@
     </main>
 
     <!-- Footer Moderno -->
-    <footer class="bg-slate-900/80 border-t border-slate-800/80 py-8 mt-auto text-center text-sm text-slate-400">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <footer class="bg-slate-900/80 border-t border-slate-800/80 py-6 mt-auto text-center text-xs text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
             <p>© Catálogo Digital Lubeltec. Todos los derechos reservados.</p>
-            <div class="flex items-center space-x-4 text-xs">
-                <span class="flex items-center gap-1.5 text-emerald-400"><i class="fa-solid fa-shield-check"></i> Pagos Seguros Yape / Plin</span>
+            <div class="flex items-center space-x-3 text-xs">
+                <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-shield-check"></i> Pagos Seguros Yape / Plin</span>
                 <span>•</span>
-                <span class="text-slate-400">Perú 🇵🇪</span>
+                <span>Perú 🇵🇪</span>
             </div>
         </div>
     </footer>
 
-    <!-- MODAL: CARRITO DE COMPRAS -->
-    <div id="cartModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-6 shadow-2xl relative">
-            <button onclick="closeCartModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center">✕</button>
+    <!-- MODAL: CARRITO DE COMPRAS (Centrado y con Scroll Móvil) -->
+    <div id="cartModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-3 sm:p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl max-w-lg w-full p-4 sm:p-7 space-y-4 shadow-2xl relative max-h-[90vh] flex flex-col">
+            <button onclick="closeCartModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center text-sm">✕</button>
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-xl">
+                <div class="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-lg">
                     <i class="fa-solid fa-cart-shopping"></i>
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold text-white">Carrito de Compras</h3>
-                    <p class="text-xs text-slate-400">Revisa tus productos seleccionados</p>
+                    <h3 class="text-base sm:text-lg font-bold text-white">Carrito de Compras</h3>
+                    <p class="text-[11px] text-slate-400">Productos seleccionados</p>
                 </div>
             </div>
 
-            <div id="cartItemsContainer" class="space-y-3 max-h-60 overflow-y-auto pr-1 custom-scrollbar">
-                <p class="text-sm text-slate-500 text-center py-6">Tu carrito está vacío</p>
+            <div id="cartItemsContainer" class="space-y-2 max-h-60 overflow-y-auto pr-1 custom-scrollbar flex-grow">
+                <p class="text-xs text-slate-500 text-center py-6">Tu carrito está vacío</p>
             </div>
 
-            <div class="border-t border-slate-800 pt-4 space-y-4">
-                <div class="flex items-center justify-between text-sm">
-                    <button onclick="clearCart()" class="text-xs text-red-400 hover:underline">🗑️ Vaciar Carrito</button>
+            <div class="border-t border-slate-800 pt-3 space-y-3">
+                <div class="flex items-center justify-between text-xs sm:text-sm">
+                    <button onclick="clearCart()" class="text-red-400 hover:underline">🗑️ Vaciar</button>
                     <div>
-                        <span class="text-slate-400 mr-2">Total:</span>
-                        <span id="cartTotalPrice" class="text-lg font-extrabold text-emerald-400">S/. 0.00</span>
+                        <span class="text-slate-400 mr-1">Total:</span>
+                        <span id="cartTotalPrice" class="text-base sm:text-lg font-black text-emerald-400">S/. 0.00</span>
                     </div>
                 </div>
-                <button onclick="proceedToCheckout()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition-all text-sm">
+                <button onclick="proceedToCheckout()" class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold py-2.5 sm:py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition-all text-xs sm:text-sm">
                     <i class="fa-solid fa-qrcode"></i> Pagar con Yape o Plin
                 </button>
             </div>
@@ -454,285 +457,285 @@
     </div>
 
     <!-- MODAL: PAGO YAPE / PLIN -->
-    <div id="paymentModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-5 shadow-2xl relative text-center">
-            <button onclick="closePaymentModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center">✕</button>
+    <div id="paymentModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-3 sm:p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl max-w-md w-full p-4 sm:p-6 space-y-3.5 shadow-2xl relative text-center max-h-[92vh] overflow-y-auto custom-scrollbar">
+            <button onclick="closePaymentModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center text-sm">✕</button>
             <div>
-                <h3 class="text-lg font-bold text-white">Pagar con Yape o Plin</h3>
-                <p id="modalProductName" class="text-xs text-indigo-400 font-semibold mt-1">Producto</p>
+                <h3 class="text-base sm:text-lg font-bold text-white">Pagar con Yape o Plin</h3>
+                <p id="modalProductName" class="text-[11px] text-indigo-400 font-semibold mt-0.5 truncate">Producto</p>
             </div>
 
-            <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800 inline-block">
-                <img src="qr-pago.png" alt="QR Yape / Plin" class="w-44 h-44 object-contain mx-auto rounded-xl bg-white p-2">
+            <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 inline-block mx-auto">
+                <img src="qr-pago.png" alt="QR Yape / Plin" class="w-36 h-36 sm:w-44 sm:h-44 object-contain mx-auto rounded-lg bg-white p-1.5">
             </div>
 
-            <div class="bg-slate-950/60 p-4 rounded-2xl text-left text-xs space-y-1.5 border border-slate-800">
+            <div class="bg-slate-950/70 p-3 rounded-xl text-left text-[11px] sm:text-xs space-y-1.5 border border-slate-800">
                 <div class="flex items-center justify-between">
                     <span>Número: <strong id="targetPhoneNumber" class="text-indigo-400 font-bold">933 907 930</strong></span>
-                    <button onclick="copyPhoneNumber()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded text-[10px] font-bold">Copiar</button>
+                    <button onclick="copyPhoneNumber()" class="bg-indigo-600 active:scale-95 text-white px-2 py-0.5 rounded text-[10px] font-bold">Copiar</button>
                 </div>
                 <p>Titular: <strong>Luis Valdivieso</strong></p>
-                <p>Monto a pagar: <strong id="modalProductPrice" class="text-emerald-400 text-sm font-extrabold">S/. 0.00</strong></p>
+                <p>Total: <strong id="modalProductPrice" class="text-emerald-400 text-sm font-black">S/. 0.00</strong></p>
             </div>
 
-            <p class="text-[11px] text-slate-400 text-left leading-relaxed">
-                Gracias por comprar, por favor compártanos su comprobante para verificar y proceder con la entrega (tiempo aprox: hasta 20 min).
+            <p class="text-[10px] text-slate-400 text-left leading-tight">
+                Adjunta tu comprobante por WhatsApp tras transferir para la entrega rápida (aprox. hasta 20 min).
             </p>
 
-            <a id="modalConfirmBtn" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition-all text-sm">
-                <i class="fa-brands fa-whatsapp text-lg"></i> Enviar comprobante por WhatsApp
+            <a id="modalConfirmBtn" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold py-2.5 sm:py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition-all text-xs sm:text-sm">
+                <i class="fa-brands fa-whatsapp text-base"></i> Enviar comprobante por WhatsApp
             </a>
         </div>
     </div>
 
     <!-- MODAL: SOPORTE TÉCNICO -->
-    <div id="supportModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-5 shadow-2xl relative">
-            <button onclick="closeSupportModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center">✕</button>
+    <div id="supportModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-3 sm:p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl max-w-lg w-full p-4 sm:p-6 space-y-3.5 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <button onclick="closeSupportModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center text-sm">✕</button>
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-xl">
+                <div class="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-lg">
                     <i class="fa-solid fa-screwdriver-wrench"></i>
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold text-white">Soporte y Mantenimiento</h3>
-                    <p class="text-xs text-slate-400">Servicios especializados para PC y Laptop</p>
+                    <h3 class="text-base sm:text-lg font-bold text-white">Soporte Técnico</h3>
+                    <p class="text-[11px] text-slate-400">Servicios para PC y Laptop</p>
                 </div>
             </div>
 
-            <div class="space-y-3 text-xs text-slate-300">
-                <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800 space-y-1">
-                    <p class="font-bold text-indigo-400">Ubicaciones disponibles:</p>
-                    <ul class="list-disc list-inside space-y-0.5 text-slate-400">
-                        <li id="supportInfoLima">Lima y Otras Provincias: Presencial y Remoto.</li>
+            <div class="space-y-2.5 text-xs text-slate-300">
+                <div class="bg-slate-950/50 p-2.5 rounded-xl border border-slate-800 space-y-0.5 text-[11px]">
+                    <p class="font-bold text-indigo-400">Modalidades:</p>
+                    <ul class="list-disc list-inside text-slate-400">
+                        <li id="supportInfoLima">Lima: Presencial y Remoto.</li>
                         <li id="supportInfoTrujillo">Trujillo: Presencial y Remoto.</li>
                     </ul>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-slate-400 mb-1">Ciudad / Ubicación:</label>
-                        <select id="supportCitySelect" onchange="onSupportCityChange()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500"></select>
+                        <label class="block text-slate-400 mb-0.5 text-[11px]">Ubicación:</label>
+                        <select id="supportCitySelect" onchange="onSupportCityChange()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-slate-200"></select>
                     </div>
                     <div>
-                        <label class="block text-slate-400 mb-1">Agente / Contacto:</label>
-                        <select id="supportAgentSelect" onchange="updateSupportWhatsAppLink()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500"></select>
+                        <label class="block text-slate-400 mb-0.5 text-[11px]">Agente:</label>
+                        <select id="supportAgentSelect" onchange="updateSupportWhatsAppLink()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-slate-200"></select>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-slate-400 mb-1">Modalidad:</label>
-                        <select id="supportModalitySelect" onchange="updateSupportWhatsAppLink()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500">
+                        <label class="block text-slate-400 mb-0.5 text-[11px]">Modalidad:</label>
+                        <select id="supportModalitySelect" onchange="updateSupportWhatsAppLink()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-slate-200">
                             <option value="remoto">💻 Remoto (Distancia)</option>
                             <option value="presencial">🏢 Presencial / Domicilio</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-slate-400 mb-1">Servicio:</label>
-                        <select id="supportTypeSelect" onchange="updateSupportWhatsAppLink()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500">
+                        <label class="block text-slate-400 mb-0.5 text-[11px]">Servicio:</label>
+                        <select id="supportTypeSelect" onchange="updateSupportWhatsAppLink()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-slate-200">
                             <option value="mantenimiento">Mantenimiento y Limpieza</option>
-                            <option value="soporte">Soporte Técnico de Software / Hardware</option>
-                            <option value="ambos">Mantenimiento + Soporte Completo</option>
+                            <option value="soporte">Soporte Software / Hardware</option>
+                            <option value="ambos">Mantenimiento + Soporte</option>
                         </select>
                     </div>
                 </div>
 
-                <div id="anydeskContainer" class="hidden bg-amber-950/30 border border-amber-500/30 p-3 rounded-xl space-y-1.5">
-                    <p class="text-amber-200 text-[11px]">📌 <strong>Modalidad remota:</strong> Descarga AnyDesk para compartir tu código.</p>
+                <div id="anydeskContainer" class="hidden bg-amber-950/30 border border-amber-500/30 p-2.5 rounded-xl space-y-1">
+                    <p class="text-amber-200 text-[10px]">📌 <strong>Remoto:</strong> Descarga AnyDesk para compartir tu código.</p>
                     <a href="https://anydesk.com/es/downloads/thank-you?dv=win_exe" target="_blank" class="text-amber-400 hover:underline font-bold inline-flex items-center gap-1 text-[11px]">
                         <i class="fa-solid fa-download"></i> Descargar AnyDesk para Windows
                     </a>
                 </div>
 
-                <a id="supportWhatsappBtn" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition-all text-sm mt-3">
-                    <i class="fa-brands fa-whatsapp text-lg"></i> Contactar al Técnico por WhatsApp
+                <a id="supportWhatsappBtn" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold py-2.5 sm:py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition-all text-xs sm:text-sm mt-2">
+                    <i class="fa-brands fa-whatsapp text-base"></i> Contactar por WhatsApp
                 </a>
             </div>
         </div>
     </div>
 
     <!-- MODAL: LOGIN -->
-    <div id="adminLoginModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-5 shadow-2xl relative">
-            <button onclick="closeAdminLogin()" class="absolute top-5 right-5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center">✕</button>
+    <div id="adminLoginModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-3 sm:p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl max-w-sm w-full p-5 sm:p-7 space-y-4 shadow-2xl relative">
+            <button onclick="closeAdminLogin()" class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center text-sm">✕</button>
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 text-xl">
+                <div class="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 text-lg">
                     <i class="fa-solid fa-lock"></i>
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold text-white">Acceso al Sistema</h3>
-                    <p class="text-xs text-slate-400">Ingresa tus credenciales autorizadas</p>
+                    <h3 class="text-base font-bold text-white">Acceso al Sistema</h3>
+                    <p class="text-[10px] text-slate-400">Ingresa tus credenciales</p>
                 </div>
             </div>
 
-            <div class="space-y-3 text-xs">
+            <div class="space-y-2.5 text-xs">
                 <div>
                     <label class="block text-slate-400 mb-1">Usuario:</label>
-                    <input type="text" id="adminUser" placeholder="Usuario" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-200 focus:outline-none focus:border-indigo-500 text-sm">
+                    <input type="text" id="adminUser" placeholder="Usuario" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500">
                 </div>
                 <div>
                     <label class="block text-slate-400 mb-1">Contraseña:</label>
                     <div class="relative">
-                        <input type="password" id="adminPass" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-200 focus:outline-none focus:border-indigo-500 text-sm pr-10">
-                        <button type="button" onclick="togglePasswordVisibility('adminPass', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white">👁️</button>
+                        <input type="password" id="adminPass" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500 pr-9">
+                        <button type="button" onclick="togglePasswordVisibility('adminPass', this)" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white">👁️</button>
                     </div>
                 </div>
-                <button onclick="verifyAdminLogin()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-purple-600/30 transition-all text-sm mt-2">
+                <button onclick="verifyAdminLogin()" class="w-full bg-purple-600 hover:bg-purple-500 active:scale-95 text-white font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-purple-600/30 transition-all text-xs mt-2">
                     <i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: PANEL DE ADMINISTRACIÓN (TABS 1-5) -->
-    <div id="adminPanelModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-3xl w-full p-6 sm:p-8 space-y-5 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
-            <button onclick="closeAdminPanel()" class="absolute top-5 right-5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center">✕</button>
+    <!-- MODAL: PANEL DE ADMINISTRACIÓN -->
+    <div id="adminPanelModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-3 sm:p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl max-w-3xl w-full p-4 sm:p-7 space-y-4 shadow-2xl relative max-h-[92vh] overflow-y-auto custom-scrollbar flex flex-col">
+            <button onclick="closeAdminPanel()" class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center text-sm">✕</button>
             
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-xl">
+                <div class="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-lg">
                     <i class="fa-solid fa-gears"></i>
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold text-white" id="adminPanelTitle">Panel de Control y Gestión</h3>
-                    <p id="adminSessionInfo" class="text-xs text-emerald-400 font-semibold"></p>
+                    <h3 class="text-base sm:text-lg font-bold text-white" id="adminPanelTitle">Panel de Control</h3>
+                    <p id="adminSessionInfo" class="text-[11px] text-emerald-400 font-semibold"></p>
                 </div>
             </div>
 
-            <!-- Navegación por pestañas -->
-            <div class="flex flex-wrap gap-2 border-b border-slate-800 pb-3 text-xs">
-                <button onclick="switchAdminTab('tabDescuentos', this)" id="tabBtnDescuentos" class="px-3 py-2 rounded-xl bg-indigo-600 text-white font-semibold admin-tab-btn active">🌐 Configuración</button>
-                <button onclick="switchAdminTab('tabSoporteConfig', this)" id="tabBtnSoporteConfig" class="px-3 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold admin-tab-btn">📱 Soporte</button>
-                <button onclick="switchAdminTab('tabUsuarios', this)" id="tabBtnUsuarios" class="px-3 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold admin-tab-btn">👥 Usuarios</button>
-                <button onclick="switchAdminTab('tabProductos', this)" id="tabBtnProductos" class="px-3 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold admin-tab-btn">📦 Productos</button>
-                <button onclick="switchAdminTab('tabLogs', this)" id="tabBtnLogs" class="px-3 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold admin-tab-btn">📊 Auditoría</button>
+            <!-- Navegación por pestañas con scroll horizontal en móviles -->
+            <div class="flex overflow-x-auto gap-1.5 border-b border-slate-800 pb-2 text-xs custom-scrollbar">
+                <button onclick="switchAdminTab('tabDescuentos', this)" id="tabBtnDescuentos" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold admin-tab-btn active whitespace-nowrap">🌐 Config</button>
+                <button onclick="switchAdminTab('tabSoporteConfig', this)" id="tabBtnSoporteConfig" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold admin-tab-btn whitespace-nowrap">📱 Soporte</button>
+                <button onclick="switchAdminTab('tabUsuarios', this)" id="tabBtnUsuarios" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold admin-tab-btn whitespace-nowrap">👥 Usuarios</button>
+                <button onclick="switchAdminTab('tabProductos', this)" id="tabBtnProductos" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold admin-tab-btn whitespace-nowrap">📦 Productos</button>
+                <button onclick="switchAdminTab('tabLogs', this)" id="tabBtnLogs" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold admin-tab-btn whitespace-nowrap">📊 Auditoría</button>
             </div>
 
-            <!-- Pestaña 1: Configuración Global -->
-            <div id="tabDescuentos" class="admin-tab-pane space-y-4 text-xs">
-                <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800 space-y-3">
+            <!-- Pestaña 1: Configuración -->
+            <div id="tabDescuentos" class="admin-tab-pane space-y-3 text-xs">
+                <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 space-y-2.5">
                     <div class="flex items-center justify-between">
                         <div>
-                            <strong class="text-white block text-sm">Estado de Descuentos</strong>
-                            <span class="text-slate-400">Activa o desactiva los descuentos por volumen</span>
+                            <strong class="text-white block">Estado de Descuentos</strong>
+                            <span class="text-slate-400 text-[11px]">Activa descuentos por volumen</span>
                         </div>
-                        <input type="checkbox" id="settingDiscountsSwitch" class="w-5 h-5 accent-indigo-600 rounded">
+                        <input type="checkbox" id="settingDiscountsSwitch" class="w-4 h-4 accent-indigo-600 rounded">
                     </div>
-                    <div class="flex items-center justify-between border-t border-slate-800/80 pt-3">
+                    <div class="flex items-center justify-between border-t border-slate-800 pt-2">
                         <div>
-                            <strong class="text-white block text-sm">Alertas Flotantes de Compras</strong>
-                            <span class="text-slate-400">Muestra u oculta notificaciones emergentes</span>
+                            <strong class="text-white block">Alertas Flotantes</strong>
+                            <span class="text-slate-400 text-[11px]">Compras recientes</span>
                         </div>
-                        <input type="checkbox" id="settingToastsSwitch" class="w-5 h-5 accent-indigo-600 rounded">
+                        <input type="checkbox" id="settingToastsSwitch" class="w-4 h-4 accent-indigo-600 rounded">
                     </div>
-                    <div class="border-t border-slate-800/80 pt-3">
-                        <label class="block text-slate-400 mb-1">Temporada Especial:</label>
-                        <select id="settingHolidayTheme" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-slate-200">
-                            <option value="normal">Ninguna (Estándar)</option>
+                    <div class="border-t border-slate-800 pt-2">
+                        <label class="block text-slate-400 mb-1">Temporada:</label>
+                        <select id="settingHolidayTheme" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-200">
+                            <option value="normal">Estándar</option>
                             <option value="navidad">🎄 Navidad y Año Nuevo</option>
                             <option value="patrias">🇵🇪 Fiestas Patrias Perú</option>
                             <option value="halloween">🎃 Halloween / Black Friday</option>
                             <option value="inocentes">🤡 Día de los Inocentes</option>
                         </select>
                     </div>
-                    <div class="grid grid-cols-3 gap-3 border-t border-slate-800/80 pt-3">
-                        <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 text-center">
-                            <span class="font-bold text-emerald-400">Nivel 1</span>
+                    <div class="grid grid-cols-3 gap-2 border-t border-slate-800 pt-2">
+                        <div class="bg-slate-900 p-2 rounded-lg border border-slate-800 text-center">
+                            <span class="font-bold text-emerald-400 text-[11px]">Nivel 1</span>
                             <div class="mt-1 flex gap-1 justify-center">
-                                <input type="number" id="gTier1Qty" value="3" class="w-10 bg-slate-950 border border-slate-700 rounded px-1 text-center">
-                                <input type="number" id="gTier1Pct" value="5" class="w-10 bg-slate-950 border border-slate-700 rounded px-1 text-center">
+                                <input type="number" id="gTier1Qty" value="3" class="w-9 bg-slate-950 border border-slate-700 rounded text-center text-xs">
+                                <input type="number" id="gTier1Pct" value="5" class="w-9 bg-slate-950 border border-slate-700 rounded text-center text-xs">
                             </div>
                         </div>
-                        <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 text-center">
-                            <span class="font-bold text-emerald-400">Nivel 2</span>
+                        <div class="bg-slate-900 p-2 rounded-lg border border-slate-800 text-center">
+                            <span class="font-bold text-emerald-400 text-[11px]">Nivel 2</span>
                             <div class="mt-1 flex gap-1 justify-center">
-                                <input type="number" id="gTier2Qty" value="6" class="w-10 bg-slate-950 border border-slate-700 rounded px-1 text-center">
-                                <input type="number" id="gTier2Pct" value="10" class="w-10 bg-slate-950 border border-slate-700 rounded px-1 text-center">
+                                <input type="number" id="gTier2Qty" value="6" class="w-9 bg-slate-950 border border-slate-700 rounded text-center text-xs">
+                                <input type="number" id="gTier2Pct" value="10" class="w-9 bg-slate-950 border border-slate-700 rounded text-center text-xs">
                             </div>
                         </div>
-                        <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 text-center">
-                            <span class="font-bold text-emerald-400">Nivel 3</span>
+                        <div class="bg-slate-900 p-2 rounded-lg border border-slate-800 text-center">
+                            <span class="font-bold text-emerald-400 text-[11px]">Nivel 3</span>
                             <div class="mt-1 flex gap-1 justify-center">
-                                <input type="number" id="gTier3Qty" value="10" class="w-10 bg-slate-950 border border-slate-700 rounded px-1 text-center">
-                                <input type="number" id="gTier3Pct" value="15" class="w-10 bg-slate-950 border border-slate-700 rounded px-1 text-center">
+                                <input type="number" id="gTier3Qty" value="10" class="w-9 bg-slate-950 border border-slate-700 rounded text-center text-xs">
+                                <input type="number" id="gTier3Pct" value="15" class="w-9 bg-slate-950 border border-slate-700 rounded text-center text-xs">
                             </div>
                         </div>
                     </div>
-                    <button onclick="saveGlobalSettings()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-xl transition-all">💾 Guardar Configuración</button>
+                    <button onclick="saveGlobalSettings()" class="w-full bg-indigo-600 active:scale-95 text-white font-bold py-2 rounded-xl transition-all">💾 Guardar Configuración</button>
                 </div>
             </div>
 
-            <!-- Pestaña 2: Soporte WhatsApp -->
-            <div id="tabSoporteConfig" class="admin-tab-pane hidden space-y-4 text-xs">
-                <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800 space-y-3">
+            <!-- Pestaña 2: Soporte -->
+            <div id="tabSoporteConfig" class="admin-tab-pane hidden space-y-3 text-xs">
+                <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 space-y-2.5">
                     <div class="flex items-center justify-between">
                         <strong class="text-indigo-400">📍 Lima y Provincias</strong>
                         <input type="checkbox" id="settingLimaActive" class="w-4 h-4 accent-indigo-600 rounded">
                     </div>
-                    <div id="adminLimaAgentsList" class="space-y-1.5"></div>
-                    <div class="flex gap-2">
-                        <input type="text" id="newLimaAgentName" placeholder="Nombre" class="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5">
-                        <input type="text" id="newLimaAgentPhone" placeholder="WhatsApp" class="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5">
-                        <button onclick="addSupportAgent('lima')" class="bg-indigo-600 text-white px-3 rounded-lg">Agregar</button>
+                    <div id="adminLimaAgentsList" class="space-y-1"></div>
+                    <div class="flex gap-1.5">
+                        <input type="text" id="newLimaAgentName" placeholder="Nombre" class="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-2 py-1">
+                        <input type="text" id="newLimaAgentPhone" placeholder="WhatsApp" class="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-2 py-1">
+                        <button onclick="addSupportAgent('lima')" class="bg-indigo-600 text-white px-2.5 rounded-lg font-bold">Add</button>
                     </div>
 
-                    <div class="flex items-center justify-between border-t border-slate-800 pt-3">
+                    <div class="flex items-center justify-between border-t border-slate-800 pt-2">
                         <strong class="text-indigo-400">📍 Trujillo</strong>
                         <input type="checkbox" id="settingTrujilloActive" class="w-4 h-4 accent-indigo-600 rounded">
                     </div>
-                    <div id="adminTrujilloAgentsList" class="space-y-1.5"></div>
-                    <div class="flex gap-2">
-                        <input type="text" id="newTrujilloAgentName" placeholder="Nombre" class="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5">
-                        <input type="text" id="newTrujilloAgentPhone" placeholder="WhatsApp" class="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5">
-                        <button onclick="addSupportAgent('trujillo')" class="bg-indigo-600 text-white px-3 rounded-lg">Agregar</button>
+                    <div id="adminTrujilloAgentsList" class="space-y-1"></div>
+                    <div class="flex gap-1.5">
+                        <input type="text" id="newTrujilloAgentName" placeholder="Nombre" class="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-2 py-1">
+                        <input type="text" id="newTrujilloAgentPhone" placeholder="WhatsApp" class="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-2 py-1">
+                        <button onclick="addSupportAgent('trujillo')" class="bg-indigo-600 text-white px-2.5 rounded-lg font-bold">Add</button>
                     </div>
-                    <button onclick="saveGlobalSettings()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-xl transition-all mt-2">💾 Guardar Números de Soporte</button>
+                    <button onclick="saveGlobalSettings()" class="w-full bg-indigo-600 active:scale-95 text-white font-bold py-2 rounded-xl transition-all mt-1">💾 Guardar Números</button>
                 </div>
             </div>
 
-            <!-- Pestaña 3: Gestión de Usuarios -->
-            <div id="tabUsuarios" class="admin-tab-pane hidden space-y-4 text-xs">
-                <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800 space-y-3">
-                    <div class="flex items-center gap-3">
-                        <label class="text-slate-400">Descuento Colaborador (%):</label>
-                        <input type="number" id="globalCollabDiscountInput" value="10" class="w-16 bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-center text-white">
-                        <button onclick="saveCollabDiscountSetting()" class="bg-indigo-600 text-white px-3 py-1 rounded-lg">Guardar</button>
+            <!-- Pestaña 3: Usuarios -->
+            <div id="tabUsuarios" class="admin-tab-pane hidden space-y-3 text-xs">
+                <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 space-y-2.5">
+                    <div class="flex items-center gap-2">
+                        <label class="text-slate-400 text-[11px]">Dcto Colaborador (%):</label>
+                        <input type="number" id="globalCollabDiscountInput" value="10" class="w-14 bg-slate-900 border border-slate-800 rounded-lg px-1.5 py-1 text-center text-white">
+                        <button onclick="saveCollabDiscountSetting()" class="bg-indigo-600 text-white px-2.5 py-1 rounded-lg">Guardar</button>
                     </div>
-                    <div class="grid grid-cols-4 gap-2 border-t border-slate-800 pt-3">
-                        <input type="text" id="newLoginUser" placeholder="Usuario" class="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white">
-                        <input type="text" id="newLoginPass" placeholder="Contraseña" class="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white">
-                        <select id="newLoginRole" class="bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-white">
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 border-t border-slate-800 pt-2">
+                        <input type="text" id="newLoginUser" placeholder="Usuario" class="bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-white">
+                        <input type="text" id="newLoginPass" placeholder="Clave" class="bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-white">
+                        <select id="newLoginRole" class="bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-white">
                             <option value="colaborador">Colaborador</option>
                             <option value="admin2">Admin 2</option>
                             <option value="admin">Admin 1</option>
                         </select>
-                        <button onclick="addNewUser()" class="bg-indigo-600 text-white rounded-lg font-bold">Crear</button>
+                        <button onclick="addNewUser()" class="bg-indigo-600 text-white rounded-lg font-bold py-1">Crear</button>
                     </div>
-                    <div id="usersListContainer" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar pt-2"></div>
+                    <div id="usersListContainer" class="space-y-1.5 max-h-40 overflow-y-auto custom-scrollbar pt-1"></div>
                 </div>
             </div>
 
-            <!-- Pestaña 4: Gestión de Productos -->
-            <div id="tabProductos" class="admin-tab-pane hidden space-y-4 text-xs">
+            <!-- Pestaña 4: Productos -->
+            <div id="tabProductos" class="admin-tab-pane hidden space-y-3 text-xs">
                 <button onclick="toggleProductForm()" id="toggleFormBtn" class="w-full bg-slate-800 hover:bg-slate-700 text-indigo-300 font-bold py-2 rounded-xl transition-all">
-                    📂 Desplegar Formulario de Nuevo Producto ▼
+                    📂 Formulario de Nuevo Producto ▼
                 </button>
 
-                <div id="productFormContainer" class="hidden bg-slate-950/60 p-4 rounded-2xl border border-slate-800 space-y-3">
-                    <h4 id="formActionTitle" class="font-bold text-sm text-indigo-400">➕ Agregar Nuevo Producto</h4>
+                <div id="productFormContainer" class="hidden bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 space-y-2.5">
+                    <h4 id="formActionTitle" class="font-bold text-xs text-indigo-400">➕ Agregar Nuevo Producto</h4>
                     <input type="hidden" id="editProductId" value="">
                     <div>
-                        <label class="text-slate-400 block mb-1">Nombre:</label>
-                        <input type="text" id="newProdName" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white">
+                        <label class="text-slate-400 block mb-0.5">Nombre:</label>
+                        <input type="text" id="newProdName" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white">
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="text-slate-400 block mb-1">Precio (S/.):</label>
-                            <input type="number" id="newProdPrice" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white">
+                            <label class="text-slate-400 block mb-0.5">Precio (S/.):</label>
+                            <input type="number" id="newProdPrice" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white">
                         </div>
                         <div>
-                            <label class="text-slate-400 block mb-1">Categoría:</label>
-                            <select id="newProdCat" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white">
+                            <label class="text-slate-400 block mb-0.5">Categoría:</label>
+                            <select id="newProdCat" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white">
                                 <option value="win">Windows</option>
                                 <option value="diseno">Diseño</option>
                                 <option value="ia">IA</option>
@@ -742,65 +745,65 @@
                             </select>
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="text-slate-400 block mb-1">Stock:</label>
-                            <select id="newProdStock" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white">
+                            <label class="text-slate-400 block mb-0.5">Stock:</label>
+                            <select id="newProdStock" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white">
                                 <option value="true">Disponible</option>
                                 <option value="false">Sin stock</option>
                             </select>
                         </div>
                         <div>
-                            <label class="text-slate-400 block mb-1">Permite Descuento:</label>
-                            <select id="newProdAllowDiscount" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white">
+                            <label class="text-slate-400 block mb-0.5">Descuento:</label>
+                            <select id="newProdAllowDiscount" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white">
                                 <option value="true">Sí</option>
-                                <option value="false">No (Precio Fijo)</option>
+                                <option value="false">No (Fijo)</option>
                             </select>
                         </div>
                     </div>
                     <div>
-                        <label class="text-slate-400 block mb-1">Etiqueta Destacada:</label>
-                        <input type="text" id="newProdBadge" placeholder="Ej. ⭐ Destacado" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white">
+                        <label class="text-slate-400 block mb-0.5">Etiqueta:</label>
+                        <input type="text" id="newProdBadge" placeholder="Ej. ⭐ Destacado" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white">
                     </div>
                     <div>
-                        <label class="text-slate-400 block mb-1">Imagen (URL o archivo local):</label>
-                        <input type="file" id="newProdFile" accept="image/*" onchange="previewImage(event)" class="w-full text-slate-400 mb-1">
-                        <input type="text" id="newProdImg" placeholder="windows11.png o URL" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white">
+                        <label class="text-slate-400 block mb-0.5">Imagen (Nombre o URL):</label>
+                        <input type="file" id="newProdFile" accept="image/*" onchange="previewImage(event)" class="w-full text-slate-400 mb-1 text-[10px]">
+                        <input type="text" id="newProdImg" placeholder="windows11.png o URL" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white">
                     </div>
                     <div>
-                        <label class="text-slate-400 block mb-1">Descripción:</label>
-                        <textarea id="newProdDesc" rows="2" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white"></textarea>
+                        <label class="text-slate-400 block mb-0.5">Descripción:</label>
+                        <textarea id="newProdDesc" rows="2" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white"></textarea>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="saveProduct()" id="saveProdBtn" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 rounded-xl transition-all">💾 Guardar Producto</button>
-                        <button onclick="resetAdminForm()" id="cancelEditBtn" class="hidden bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2.5 rounded-xl">Cancelar</button>
+                        <button onclick="saveProduct()" id="saveProdBtn" class="flex-1 bg-indigo-600 active:scale-95 text-white font-bold py-2 rounded-xl transition-all">💾 Guardar</button>
+                        <button onclick="resetAdminForm()" id="cancelEditBtn" class="hidden bg-slate-800 text-slate-300 px-3 py-2 rounded-xl">Cancelar</button>
                     </div>
                 </div>
 
                 <div>
-                    <input type="text" id="adminProductSearchInput" oninput="filterAdminProductList()" placeholder="🔍 Buscar producto..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-white text-xs mb-3">
-                    <div id="adminProductListContainer" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar"></div>
+                    <input type="text" id="adminProductSearchInput" oninput="filterAdminProductList()" placeholder="🔍 Buscar producto..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-white text-xs mb-2">
+                    <div id="adminProductListContainer" class="space-y-1.5 max-h-48 overflow-y-auto custom-scrollbar"></div>
                 </div>
             </div>
 
-            <!-- Pestaña 5: Auditoría / Logs -->
-            <div id="tabLogs" class="admin-tab-pane hidden space-y-3 text-xs">
-                <div id="activityLogsContainer" class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800 space-y-2 max-h-64 overflow-y-auto custom-scrollbar">
+            <!-- Pestaña 5: Auditoría -->
+            <div id="tabLogs" class="admin-tab-pane hidden space-y-2 text-xs">
+                <div id="activityLogsContainer" class="bg-slate-950/60 p-3 rounded-xl border border-slate-800 space-y-1.5 max-h-48 overflow-y-auto custom-scrollbar">
                     <p class="text-slate-500 text-center py-4">No hay registros de cambios todavía.</p>
                 </div>
-                <button id="clearLogsBtn" onclick="clearActivityLogs()" class="hidden text-xs text-red-400 hover:underline">🗑️ Limpiar Historial</button>
+                <button id="clearLogsBtn" onclick="clearActivityLogs()" class="hidden text-[11px] text-red-400 hover:underline">🗑️ Limpiar Historial</button>
             </div>
         </div>
     </div>
 
     <!-- MODAL: CIERRE DE SESIÓN -->
     <div id="logoutConfirmModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl">
-            <h3 class="text-lg font-bold text-red-400">⚠️ Cerrar Sesión</h3>
-            <p class="text-xs text-slate-300">¿Estás seguro de que deseas salir de tu cuenta?</p>
-            <div class="flex gap-3">
-                <button onclick="confirmLogout(true)" class="flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-2.5 rounded-xl text-xs">Sí, salir</button>
-                <button onclick="confirmLogout(false)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2.5 rounded-xl text-xs">Cancelar</button>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xs w-full p-5 text-center space-y-3 shadow-2xl">
+            <h3 class="text-base font-bold text-red-400">⚠️ Cerrar Sesión</h3>
+            <p class="text-xs text-slate-300">¿Estás seguro de salir?</p>
+            <div class="flex gap-2">
+                <button onclick="confirmLogout(true)" class="flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded-xl text-xs">Salir</button>
+                <button onclick="confirmLogout(false)" class="flex-1 bg-slate-800 text-slate-300 font-bold py-2 rounded-xl text-xs">Cancelar</button>
             </div>
         </div>
     </div>
@@ -858,7 +861,6 @@
         };
 
         let collabDiscountPct = 10; 
-        let loginAttempts = {}; 
         let currentUser = null; 
 
         const savedSession = sessionStorage.getItem('lubeltec_current_user');
@@ -905,19 +907,19 @@
             }
 
             if (activityLogs.length === 0) {
-                container.innerHTML = `<p class="text-slate-500 text-center py-4">No hay registros de cambios todavía.</p>`;
+                container.innerHTML = `<p class="text-slate-500 text-center py-4 text-xs">No hay registros de cambios.</p>`;
                 return;
             }
 
             let html = '';
             activityLogs.forEach((log) => {
                 html += `
-                    <div class="bg-slate-900 border border-slate-800 p-2.5 rounded-xl">
-                        <div class="flex justify-between items-center text-xs mb-1">
-                            <strong class="text-indigo-400 font-semibold">👤 ${log.user}</strong>
-                            <span class="text-slate-500 text-[10px]">${log.time}</span>
+                    <div class="bg-slate-900 border border-slate-800 p-2 rounded-lg text-xs">
+                        <div class="flex justify-between items-center text-[10px] mb-0.5">
+                            <strong class="text-indigo-400">👤 ${log.user}</strong>
+                            <span class="text-slate-500">${log.time}</span>
                         </div>
-                        <div class="text-slate-200 text-xs">${log.action}</div>
+                        <div class="text-slate-300">${log.action}</div>
                     </div>
                 `;
             });
@@ -925,11 +927,8 @@
         }
 
         function clearActivityLogs() {
-            if (!currentUser || currentUser.role !== 'admin') {
-                alert('Solo el Administrador Principal puede limpiar el registro.');
-                return;
-            }
-            if (confirm('¿Estás seguro de vaciar el historial de registros?')) {
+            if (!currentUser || currentUser.role !== 'admin') return alert('Solo el Admin Principal.');
+            if (confirm('¿Vaciar historial de auditoría?')) {
                 activityLogs = [];
                 saveSettingsStorage();
                 renderActivityLogs();
@@ -965,11 +964,11 @@
             const msgEl = document.getElementById('toastGeneralMsg');
             if(!toast || !msgEl) return;
             msgEl.innerText = msg;
-            toast.classList.remove('translate-y-[-200%]', 'opacity-0');
+            toast.classList.remove('-translate-y-40', 'opacity-0');
             toast.classList.add('translate-y-0', 'opacity-100');
             setTimeout(() => {
                 toast.classList.remove('translate-y-0', 'opacity-100');
-                toast.classList.add('translate-y-[-200%]', 'opacity-0');
+                toast.classList.add('-translate-y-40', 'opacity-0');
             }, 2500);
         }
 
@@ -998,20 +997,17 @@
             const btn = document.getElementById('toggleFormBtn');
             if (form.classList.contains('hidden')) {
                 form.classList.remove('hidden');
-                btn.innerText = '📂 Ocultar Formulario de Nuevo Producto ▲';
+                btn.innerText = '📂 Ocultar Formulario ▲';
             } else {
                 form.classList.add('hidden');
-                btn.innerText = '📂 Desplegar Formulario de Nuevo Producto ▼';
+                btn.innerText = '📂 Formulario de Nuevo Producto ▼';
             }
         }
 
         function checkSupportAvailability() {
             const floatBtn = document.getElementById('floatSupportBtn');
-            if (!supportLimaActive && !supportTrujilloActive) {
-                floatBtn.classList.add('hidden');
-            } else {
-                floatBtn.classList.remove('hidden');
-            }
+            if (!supportLimaActive && !supportTrujilloActive) floatBtn.classList.add('hidden');
+            else floatBtn.classList.remove('hidden');
         }
 
         function openSupportModal() {
@@ -1035,7 +1031,7 @@
 
             if (supportLimaActive) {
                 html += `<option value="lima">Lima (Presencial / Remoto)</option>`;
-                html += `<option value="otras">Otras Provincias (Solo Remoto)</option>`;
+                html += `<option value="otras">Otras Provincias (Remoto)</option>`;
                 if(infoLima) infoLima.style.display = 'list-item';
             } else {
                 if(infoLima) infoLima.style.display = 'none';
@@ -1084,9 +1080,7 @@
             let cityNameText = city === 'trujillo' ? 'Trujillo' : (city === 'otras' ? 'Otras Provincias' : 'Lima');
             let modalityText = 'Remoto';
 
-            if (city === 'otras') {
-                document.getElementById('supportModalitySelect').value = 'remoto';
-            }
+            if (city === 'otras') document.getElementById('supportModalitySelect').value = 'remoto';
 
             const currentModality = document.getElementById('supportModalitySelect').value;
             if (currentModality === 'remoto' || city === 'otras') {
@@ -1109,11 +1103,7 @@
 
             let name = nameInput.value.trim();
             let phone = phoneInput.value.trim();
-
-            if (!name || !phone) {
-                alert('Por favor ingrese el nombre y teléfono.');
-                return;
-            }
+            if (!name || !phone) return alert('Ingresa nombre y teléfono.');
 
             if (cityType === 'trujillo') supportTrujilloAgents.push({ name, phone });
             else supportLimaAgents.push({ name, phone });
@@ -1123,7 +1113,7 @@
             saveSettingsStorage();
             renderAdminSupportAgents();
             checkSupportAvailability();
-            logAdminAction(`Agregado agente de soporte en ${cityType}: ${name} (${phone})`);
+            logAdminAction(`Agregado agente en ${cityType}: ${name}`);
             alert('Agente agregado.');
         }
 
@@ -1131,9 +1121,9 @@
             let limaHtml = '';
             supportLimaAgents.forEach((ag, idx) => {
                 limaHtml += `
-                    <div class="flex justify-between items-center bg-slate-900 border border-slate-800 p-2 rounded-xl text-xs">
-                        <span>👤 <strong>${ag.name}</strong> - ${ag.phone}</span>
-                        <button onclick="deleteSupportAgent('lima', ${idx})" class="text-red-400 hover:text-red-300">✕</button>
+                    <div class="flex justify-between items-center bg-slate-900 border border-slate-800 p-1.5 rounded-lg text-xs">
+                        <span>👤 ${ag.name} - ${ag.phone}</span>
+                        <button onclick="deleteSupportAgent('lima', ${idx})" class="text-red-400 p-1">✕</button>
                     </div>
                 `;
             });
@@ -1143,9 +1133,9 @@
             let trujilloHtml = '';
             supportTrujilloAgents.forEach((ag, idx) => {
                 trujilloHtml += `
-                    <div class="flex justify-between items-center bg-slate-900 border border-slate-800 p-2 rounded-xl text-xs">
-                        <span>👤 <strong>${ag.name}</strong> - ${ag.phone}</span>
-                        <button onclick="deleteSupportAgent('trujillo', ${idx})" class="text-red-400 hover:text-red-300">✕</button>
+                    <div class="flex justify-between items-center bg-slate-900 border border-slate-800 p-1.5 rounded-lg text-xs">
+                        <span>👤 ${ag.name} - ${ag.phone}</span>
+                        <button onclick="deleteSupportAgent('trujillo', ${idx})" class="text-red-400 p-1">✕</button>
                     </div>
                 `;
             });
@@ -1156,10 +1146,10 @@
         function deleteSupportAgent(cityType, index) {
             if (!currentUser || currentUser.role !== 'admin') return;
             if (cityType === 'trujillo') {
-                if (supportTrujilloAgents.length <= 1) return alert('Debe haber al menos un agente.');
+                if (supportTrujilloAgents.length <= 1) return alert('Mínimo 1 agente.');
                 supportTrujilloAgents.splice(index, 1);
             } else {
-                if (supportLimaAgents.length <= 1) return alert('Debe haber al menos un agente.');
+                if (supportLimaAgents.length <= 1) return alert('Mínimo 1 agente.');
                 supportLimaAgents.splice(index, 1);
             }
             saveSettingsStorage();
@@ -1206,7 +1196,7 @@
         function verifyAdminLogin() {
             const u = document.getElementById('adminUser').value.trim();
             const p = document.getElementById('adminPass').value.trim();
-            if(!u) return alert('Por favor ingrese su usuario.');
+            if(!u) return alert('Por favor ingresa tu usuario.');
 
             const foundUser = usersDB.find(usr => usr.user === u && usr.pass === p);
             if (foundUser) {
@@ -1279,9 +1269,8 @@
             const tabSoporteConfigBtn = document.getElementById('tabBtnSoporteConfig');
             const tabUsuariosBtn = document.getElementById('tabBtnUsuarios');
             const tabProductosBtn = document.getElementById('tabBtnProductos');
-            const tabLogsBtn = document.getElementById('tabBtnLogs');
 
-            let roleName = currentUser.role === 'admin' ? 'Administrador 1 (Principal)' : (currentUser.role === 'admin2' ? 'Administrador 2' : 'Colaborador');
+            let roleName = currentUser.role === 'admin' ? 'Admin 1 (Principal)' : (currentUser.role === 'admin2' ? 'Admin 2' : 'Colaborador');
             sessionInfo.innerText = `Sesión: ${currentUser.user} [${roleName}]`;
 
             if (currentUser.role === 'admin') {
@@ -1349,17 +1338,17 @@
             renderCatalog();
             updateProducts();
             logAdminAction('Configuración Global actualizada.');
-            alert('¡Configuración guardada!');
+            alert('¡Guardado con éxito!');
         }
 
         function saveCollabDiscountSetting() {
             if (!currentUser || currentUser.role !== 'admin') return;
             const val = parseFloat(document.getElementById('globalCollabDiscountInput').value);
-            if(isNaN(val) || val < 0 || val > 100) return alert('Valor no válido.');
+            if(isNaN(val) || val < 0 || val > 100) return alert('Valor inválido.');
             collabDiscountPct = val;
             saveSettingsStorage();
             logAdminAction(`Descuento colaborador fijado en ${collabDiscountPct}%`);
-            alert('Descuento de colaborador actualizado.');
+            alert('Descuento actualizado.');
             renderCatalog();
             updateProducts();
         }
@@ -1369,7 +1358,7 @@
             const u = document.getElementById('newLoginUser').value.trim();
             const p = document.getElementById('newLoginPass').value.trim();
             const r = document.getElementById('newLoginRole').value;
-            if(!u || !p) return alert('Completa los campos.');
+            if(!u || !p) return alert('Completa los datos.');
 
             const newUserObj = { user: u, pass: p, role: r, canAddDelete: false };
             usersDB.push(newUserObj);
@@ -1388,13 +1377,13 @@
             let html = '';
             usersDB.forEach(usr => {
                 html += `
-                    <div class="flex justify-between items-center bg-slate-900 border border-slate-800 p-2.5 rounded-xl">
+                    <div class="flex justify-between items-center bg-slate-900 border border-slate-800 p-2 rounded-lg text-xs">
                         <div>
                             <strong class="text-white">${usr.user}</strong> <span class="text-indigo-400">(${usr.role})</span><br>
-                            <span class="text-amber-400 text-[11px]">Clave: ${usr.pass}</span>
+                            <span class="text-amber-400 text-[10px]">Clave: ${usr.pass}</span>
                         </div>
                         <div>
-                            ${usr.user !== 'luislmvg88' ? `<button onclick="deleteUser('${usr.user}')" class="text-red-400 text-xs px-2 py-1 bg-red-950/40 rounded border border-red-500/30">Eliminar</button>` : ''}
+                            ${usr.user !== 'luislmvg88' ? `<button onclick="deleteUser('${usr.user}')" class="text-red-400 text-[10px] px-2 py-0.5 bg-red-950/40 rounded border border-red-500/30">Eliminar</button>` : ''}
                         </div>
                     </div>
                 `;
@@ -1513,14 +1502,14 @@
             let html = '';
             list.forEach(p => {
                 html += `
-                    <div class="flex justify-between items-center bg-slate-900 border border-slate-800 p-2.5 rounded-xl text-xs">
+                    <div class="flex justify-between items-center bg-slate-900 border border-slate-800 p-2 rounded-lg text-xs">
                         <div>
                             <strong class="text-white">${p.name}</strong><br>
                             <span class="text-emerald-400 font-bold">S/. ${p.price.toFixed(2)}</span> | <span class="${p.stock?'text-emerald-400':'text-red-400'}">${p.stock?'Disponible':'Sin stock'}</span>
                         </div>
-                        <div class="flex gap-1.5">
-                            <button onclick="editProduct('${p.id}')" class="bg-indigo-600 text-white px-2.5 py-1 rounded">Editar</button>
-                            <button onclick="deleteProduct('${p.id}')" class="bg-red-600 text-white px-2.5 py-1 rounded">Eliminar</button>
+                        <div class="flex gap-1">
+                            <button onclick="editProduct('${p.id}')" class="bg-indigo-600 text-white px-2 py-0.5 rounded text-[11px]">Editar</button>
+                            <button onclick="deleteProduct('${p.id}')" class="bg-red-600 text-white px-2 py-0.5 rounded text-[11px]">Eliminar</button>
                         </div>
                     </div>
                 `;
@@ -1554,45 +1543,45 @@
 
                 if (currentUser && currentUser.role === 'colaborador' && discountsActive) {
                     effectivePrice = p.price * (1 - (collabDiscountPct / 100));
-                    collabNotice = `<div class="text-[11px] text-amber-400 font-bold">✨ Precio Colaborador (-${collabDiscountPct}%)</div>`;
+                    collabNotice = `<div class="text-[10px] text-amber-400 font-bold">✨ Precio Colaborador (-${collabDiscountPct}%)</div>`;
                 }
 
                 const cardHtml = `
-                    <div class="bg-slate-900/80 border border-slate-800/80 hover:border-indigo-500/50 rounded-3xl overflow-hidden shadow-xl transition-all duration-300 hover:-translate-y-1.5 flex flex-col group card ${isFeatured?'card-destacada':''}" data-category="${p.category}" data-base-price="${effectivePrice}" data-name="${p.name}" data-stock="${p.stock}" data-id="${p.id}">
-                        <div class="relative h-44 overflow-hidden bg-slate-950">
+                    <div class="bg-slate-900/80 border border-slate-800/80 hover:border-indigo-500/50 rounded-2xl overflow-hidden shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col group card ${isFeatured?'card-destacada':''}" data-category="${p.category}" data-base-price="${effectivePrice}" data-name="${p.name}" data-stock="${p.stock}" data-id="${p.id}">
+                        <div class="relative h-40 overflow-hidden bg-slate-950">
                             <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90">
-                            <span class="absolute top-3 left-3 bg-indigo-600/90 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg backdrop-blur-md shadow-md">
+                            <span class="absolute top-2.5 left-2.5 bg-indigo-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-md shadow-md">
                                 ${p.stock ? (p.badge || 'Original') : 'Sin Stock'}
                             </span>
                         </div>
-                        <div class="p-5 flex flex-col flex-grow space-y-3">
+                        <div class="p-4 flex flex-col flex-grow space-y-2.5">
                             <div>
-                                <h3 class="font-bold text-white text-base leading-snug">${p.name}</h3>
-                                <p class="text-xs text-slate-400 line-clamp-2 mt-1">${p.desc}</p>
+                                <h3 class="font-bold text-white text-sm leading-snug">${p.name}</h3>
+                                <p class="text-[11px] text-slate-400 line-clamp-2 mt-0.5">${p.desc}</p>
                                 ${collabNotice}
                             </div>
                             
-                            <div class="mt-auto space-y-3 pt-3 border-t border-slate-800/80">
+                            <div class="mt-auto space-y-2.5 pt-2.5 border-t border-slate-800/80">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-xs text-slate-500 font-medium">Precio unitario</span>
-                                    <div class="text-lg font-black text-emerald-400">S/. ${effectivePrice.toFixed(2)}</div>
+                                    <span class="text-[11px] text-slate-500">Precio</span>
+                                    <div class="text-base font-black text-emerald-400">S/. ${effectivePrice.toFixed(2)}</div>
                                 </div>
 
                                 <div class="flex items-center justify-between bg-slate-950/60 p-1.5 rounded-xl border border-slate-800/60">
-                                    <span class="text-xs text-slate-400 pl-2">Cantidad:</span>
-                                    <div class="flex items-center gap-1.5">
-                                        <button onclick="changeQty(this, -1)" class="w-7 h-7 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-bold flex items-center justify-center text-sm">-</button>
-                                        <input type="text" class="w-8 text-center bg-transparent text-white font-bold text-xs product-qty-input" value="01" readonly>
-                                        <button onclick="changeQty(this, 1)" class="w-7 h-7 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-bold flex items-center justify-center text-sm">+</button>
+                                    <span class="text-[11px] text-slate-400 pl-1.5">Cant:</span>
+                                    <div class="flex items-center gap-1">
+                                        <button onclick="changeQty(this, -1)" class="w-6 h-6 bg-slate-800 active:scale-90 text-white rounded-lg font-bold flex items-center justify-center text-xs">-</button>
+                                        <input type="text" class="w-7 text-center bg-transparent text-white font-bold text-xs product-qty-input" value="01" readonly>
+                                        <button onclick="changeQty(this, 1)" class="w-6 h-6 bg-slate-800 active:scale-90 text-white rounded-lg font-bold flex items-center justify-center text-xs">+</button>
                                     </div>
                                 </div>
 
-                                <div class="grid grid-cols-2 gap-2">
-                                    <button onclick="addToCart(this, '${p.name}', ${effectivePrice}, '${p.id}')" class="bg-slate-800 hover:bg-slate-700 text-white py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${!p.stock?'opacity-50 pointer-events-none':''}">
-                                        <i class="fa-solid fa-cart-plus"></i> Carrito
+                                <div class="grid grid-cols-2 gap-1.5">
+                                    <button onclick="addToCart(this, '${p.name}', ${effectivePrice}, '${p.id}')" class="bg-slate-800 hover:bg-slate-700 active:scale-95 text-white py-2 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 ${!p.stock?'opacity-50 pointer-events-none':''}">
+                                        <i class="fa-solid fa-cart-plus text-xs"></i> Carrito
                                     </button>
-                                    <button onclick="openDirectPayment(this, '${p.name}', ${effectivePrice}, '${p.id}')" class="bg-indigo-600 hover:bg-indigo-500 text-white py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-md shadow-indigo-600/30 ${!p.stock?'opacity-50 pointer-events-none':''}">
-                                        <i class="fa-solid fa-bolt"></i> Pagar
+                                    <button onclick="openDirectPayment(this, '${p.name}', ${effectivePrice}, '${p.id}')" class="bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white py-2 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 shadow-md shadow-indigo-600/30 ${!p.stock?'opacity-50 pointer-events-none':''}">
+                                        <i class="fa-solid fa-bolt text-xs"></i> Pagar
                                     </button>
                                 </div>
                             </div>
@@ -1637,7 +1626,7 @@
             }
 
             updateCartUI();
-            showToastCustom(`¡${qty}x ${name} agregado al carrito!`);
+            showToastCustom(`¡${qty}x ${name} agregado!`);
             card.querySelector('.product-qty-input').value = '01';
         }
 
@@ -1645,7 +1634,7 @@
             document.getElementById('cartCount').innerText = cart.reduce((s, i) => s + i.qty, 0);
             const container = document.getElementById('cartItemsContainer');
             if (cart.length === 0) {
-                container.innerHTML = `<p class="text-sm text-slate-500 text-center py-6">Tu carrito está vacío</p>`;
+                container.innerHTML = `<p class="text-xs text-slate-500 text-center py-6">Tu carrito está vacío</p>`;
                 document.getElementById('cartTotalPrice').innerText = 'S/. 0.00';
                 return;
             }
@@ -1654,13 +1643,13 @@
             container.innerHTML = cart.map((item, idx) => {
                 total += item.total;
                 return `
-                    <div class="flex items-center justify-between bg-slate-950/60 p-3 rounded-2xl border border-slate-800 text-xs">
-                        <div>
-                            <h4 class="font-bold text-white">${item.name}</h4>
-                            <span class="text-slate-400">${item.qty} x S/. ${item.unitPrice.toFixed(2)}</span>
+                    <div class="flex items-center justify-between bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-xs">
+                        <div class="truncate mr-2">
+                            <h4 class="font-bold text-white truncate">${item.name}</h4>
+                            <span class="text-slate-400 text-[10px]">${item.qty} x S/. ${item.unitPrice.toFixed(2)}</span>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <span class="font-extrabold text-emerald-400">S/. ${item.total.toFixed(2)}</span>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <span class="font-black text-emerald-400 text-xs">S/. ${item.total.toFixed(2)}</span>
                             <button onclick="removeFromCart(${idx})" class="text-slate-500 hover:text-red-400 p-1">✕</button>
                         </div>
                     </div>
@@ -1731,19 +1720,6 @@
             document.getElementById('paymentModal').classList.add('hidden');
         }
 
-        // Carrusel
-        let carouselIndex = 0;
-        function autoSlide() {
-            if (currentFilter !== 'principal') return;
-            const track = document.getElementById('carouselTrack');
-            if(!track) return;
-            const cards = track.getElementsByClassName('card-destacada');
-            if(cards.length === 0) return;
-            carouselIndex = (carouselIndex + 1) % (cards.length - 1 || 1);
-            track.style.transform = `translateX(-${carouselIndex * 280}px)`;
-        }
-        setInterval(autoSlide, 4500);
-
         function handleSearchInput() {
             const val = document.getElementById('searchInput').value;
             document.getElementById('clearSearchBtn').classList.toggle('hidden', val.length === 0);
@@ -1779,7 +1755,6 @@
             });
         }
 
-        // Toast aleatorio de compras
         const recentBuyers = [
             { name: "Carlos en Lima", item: "Gemini Pro" },
             { name: "Lucía en Trujillo", item: "Office 365" },
