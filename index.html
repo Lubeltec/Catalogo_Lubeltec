@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" class="dark">
 <head>
     <meta charset="UTF-8">
@@ -556,9 +556,14 @@
                 <p>Total a Transferir: <strong id="modalProductPrice" class="text-emerald-400 text-sm font-black">S/. 0.00</strong></p>
             </div>
 
-            <p class="text-[10px] text-slate-400 text-left leading-tight">
-                📌 <strong>Horario de atención:</strong> Lunes a Sábado de 8:00 AM a 10:00 PM. Envíanos tu comprobante por WhatsApp tras transferir para la verificación y entrega rápida (aprox. hasta 20 min).
-            </p>
+            <div class="bg-amber-950/40 border border-amber-500/40 p-3 rounded-xl text-left space-y-1">
+                <div class="flex items-center gap-1.5 text-amber-300 font-bold text-[11px]">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Paso obligatorio para la entrega:
+                </div>
+                <p class="text-[10px] sm:text-[11px] text-slate-300 leading-relaxed">
+                    Por favor, compártenos la <strong>captura o comprobante de tu pago por Yape o Plin</strong> a nuestro WhatsApp. Posteriormente estaremos verificando el abono en el sistema antes de proceder con la entrega de tu licencia o cuenta (tiempo estimado: hasta 20 min dentro del horario de atención: Lun - Sáb, 8:00 AM a 10:00 PM).
+                </p>
+            </div>
 
             <div class="flex gap-2">
                 <button onclick="openReceiptModalFromPayment()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1">
@@ -2155,7 +2160,7 @@
             document.getElementById('modalProductName').innerText = summary;
             document.getElementById('modalProductPrice').innerText = total;
 
-            const msg = `Hola,%20acabo%20de%20generar%20mi%20pedido%20[${orderHash}]:%20${encodeURIComponent(summary)}%20(Total:%20${total}).%20Adjunto%20comprobante%20de%20pago.`;
+            const msg = `Hola,%20acabo%20de%20generar%20mi%20pedido%20[${orderHash}]:%20${encodeURIComponent(summary)}%20(Total:%20${total}).%20Adjunto%20mi%20comprobante%20de%20pago%20de%20Yape/Plin%20para%20su%20verificaci%C3%B3n%20y%20posterior%20entrega.`;
             document.getElementById('modalConfirmBtn').href = `https://wa.me/51933907930?text=${msg}`;
 
             closeCartModal();
@@ -2188,7 +2193,7 @@
             document.getElementById('modalProductName').innerText = `${name} (${qty} unid/es)`;
             document.getElementById('modalProductPrice').innerText = `S/. ${total.toFixed(2)}`;
 
-            const msg = `Hola,%20acabo%20de%20pagar%20el%20pedido%20[${orderHash}]:%20${encodeURIComponent(name)}%20(Cant:%20${qty},%20Total:%20S/.%20${total.toFixed(2)}).%20Adjunto%20comprobante%20de%20pago.`;
+            const msg = `Hola,%20acabo%20de%20realizar%20el%20pago%20de%20mi%20pedido%20[${orderHash}]:%20${encodeURIComponent(name)}%20(Cant:%20${qty},%20Total:%20S/.%20${total.toFixed(2)}).%20Adjunto%20mi%20comprobante%20de%20Yape/Plin%20para%20la%20verificaci%C3%B3n%20y%20entrega.`;
             document.getElementById('modalConfirmBtn').href = `https://wa.me/51933907930?text=${msg}`;
 
             document.getElementById('paymentModal').classList.remove('hidden');
@@ -2215,7 +2220,7 @@
                 </div>
             `).join('');
 
-            const msg = `Hola,%20adjunto%20mi%20comprobante%20del%20pedido%20[${lastGeneratedOrder.hash}]:%20${encodeURIComponent(lastGeneratedOrder.summary)}%20(Total:%20${lastGeneratedOrder.total}).`;
+            const msg = `Hola,%20adjunto%20el%20comprobante%20de%20pago%20Yape/Plin%20de%20mi%20pedido%20[${lastGeneratedOrder.hash}]:%20${encodeURIComponent(lastGeneratedOrder.summary)}%20(Total:%20${lastGeneratedOrder.total})%20para%20su%20verificaci%C3%B3n%20y%20posterior%20despacho.`;
             document.getElementById('receiptWhatsappBtn').href = `https://wa.me/51933907930?text=${msg}`;
 
             closePaymentModal();
